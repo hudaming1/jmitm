@@ -39,33 +39,28 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import sun.security.x509.GeneralNames;
 
 /**
- * @author hudaming 参考 https://blog.csdn.net/cwjcsu/article/details/9217139
+ * @author hudaming
  */
 @SuppressWarnings("restriction")
 public class CA_Station {
 
+	private static final String CA_ALIAS = "nickli";
 	private static final String CA_PASS = "123456";
 	private static final String CA_FILE = CA_Station.class.getResource("/server_cert.p12").getFile();
 
-	public static InputStream create(String domain) {
-		try {
-			// 读取CA证书的JKS文件
-			KeyStore caStore = KeyStore.getInstance("PKCS12");
-			File caFile = new File(CA_FILE);
-			caStore.load(new FileInputStream(caFile), CA_PASS.toCharArray());
+	public static ByteArrayInputStream create(String domain) throws Exception {
+		// 读取CA证书的JKS文件
+		KeyStore caStore = KeyStore.getInstance("PKCS12");
+		File caFile = new File(CA_FILE);
+		caStore.load(new FileInputStream(caFile), CA_PASS.toCharArray());
 
-			// 给alice签发证书并存为server_cert.p12的文件
-			PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry("nickli", new PasswordProtection(CA_PASS.toCharArray()));
-			String serverSubject = "CN=" + domain + ", OU=Hudaming, O=Hudaming, ST=Hudaming, C=CN";
-			ByteArrayOutputStream baos = gen(domain, caPrivateKey, serverSubject, "huming");
-			byte[] bytes = baos.toByteArray();
-			baos.close();
-			ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-			return bais;
-		} catch (Exception ce) {
-			ce.printStackTrace();
-			throw new RuntimeException("create ssl failure..");
-		}
+		// 给alice签发证书并存为server_cert.p12的文件
+		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
+		String serverSubject = "CN=" + domain;
+		ByteArrayOutputStream baos = gen(domain, caPrivateKey, serverSubject, "huming");
+		byte[] bytes = baos.toByteArray();
+		baos.close();
+		return new ByteArrayInputStream(bytes);
 	}
 
 	// 用KeyEntry形式存储一个私钥以及对应的证书，并把CA证书加入到它的信任证书列表里面。
@@ -73,7 +68,7 @@ public class CA_Station {
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 		KeyStore store = KeyStore.getInstance("PKCS12");
 		store.load(null, null);
-		store.setKeyEntry("nickli", key, CA_PASS.toCharArray(), new Certificate[] { cert });
+		store.setKeyEntry("wiretiger", key, CA_PASS.toCharArray(), new Certificate[] { cert });
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		store.store(baos, CA_PASS.toCharArray());
 		return baos;
@@ -88,18 +83,7 @@ public class CA_Station {
 
 		KeyStore store = KeyStore.getInstance("PKCS12");
 		store.load(null, null);
-		/**
-		 * ============================================================
-		 * 
-		 * 
-		 * 
-		 * XXX 4.证书生成没有问题，现在看样子应该是我传值传的有问题吧？我传的是DN值，本身就是经过倒序后，现在需要试图拿到
-		 * caCert.info.names字段生成的Subject字符串
-		 * 
-		 * 
-		 * 
-		 * ============================================================
-		 */
+
 		sun.security.x509.X500Name caX500Name = (sun.security.x509.X500Name) caCert.getSubjectDN();
 		// 这里取了rfc2253，下面用的是rfc4519，两者格式能兼容？
 		String issuer = caX500Name.getRFC2253Name();
@@ -136,27 +120,6 @@ public class CA_Station {
 		X509CertificateHolder holder = builder.build(sigGen);
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		InputStream is1 = new ByteArrayInputStream(holder.toASN1Structure().getEncoded());
-		/**
-		 * ============================================================
-		 * 
-		 * 
-		 * 
-		 * XXX 2.这里传入的issuer还没有变化，创建调用 X500Name.generateDN
-		 * 时issuer顺序发生变化（根据rfc1779协议生成？names字段倒序生成，如果是正序就不存在问题，那到底应该是正序还是倒序？还是issuer和cert的配置规则不同导致？）
-		 * 
-		 * 调用链： sun.security.x509.X500Name.generateDN()
-		 * sun.security.x509.X509CertInfo.parse()
-		 * sun.security.x509.X509CertInfo.X509CertInfo()
-		 * sun.security.x509.X509CertImpl.parse()
-		 * sun.security.x509.X509CertImpl.X509CertImpl()
-		 * sun.security.provider.X509Factory.engineGenerateCertificate()
-		 * java.security.cert.CertificateFactory.generateCertificate()
-		 * org.hum.nettyproxy.test.https_client.ca.impl.CreateCert_forJava.generateV3()
-		 * 
-		 * 
-		 * 
-		 * ============================================================
-		 */
 		X509Certificate theCert = (X509Certificate) cf.generateCertificate(is1);
 		is1.close();
 		return theCert;

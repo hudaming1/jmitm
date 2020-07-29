@@ -1,0 +1,8 @@
+
+## high level ##
+1.优化动态颁发证书效率，使用缓存Cache住
+2.连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；
+3.增加控制台
+
+## low level ##
+1.下载CA证书连接

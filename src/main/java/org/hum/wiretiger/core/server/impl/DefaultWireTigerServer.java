@@ -42,12 +42,12 @@ public class DefaultWireTigerServer implements WireTigerServer {
 		EventLoopGroup bossGroup = new NioEventLoopGroup(1);
 		EventLoopGroup masterThreadPool = new NioEventLoopGroup(config.getThreads());
 		try {
-			ServerBootstrap b = new ServerBootstrap();
-			b.option(ChannelOption.SO_BACKLOG, 1024);
-			b.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO));
-			b.childHandler(new HttpsProxyServerInitializer());
+			ServerBootstrap bootStrap = new ServerBootstrap();
+			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
+			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO));
+			bootStrap.childHandler(new HttpsProxyServerInitializer());
 
-			Channel ch = b.bind(config.getPort()).sync().channel();
+			Channel ch = bootStrap.bind(config.getPort()).sync().channel();
 			log.info("wire_tiger server started on port:" + config.getPort());
 
 			ch.closeFuture().sync();

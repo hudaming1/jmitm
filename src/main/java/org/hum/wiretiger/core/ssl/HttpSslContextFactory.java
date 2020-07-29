@@ -6,6 +6,11 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
+import org.hum.wiretiger.exception.WireTigerException;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class HttpSslContextFactory {
 
 	private static final String PROTOCOL = "SSLv3";// 客户端可以指明为SSLv3或者TLSv1.2
@@ -22,8 +27,8 @@ public class HttpSslContextFactory {
 			serverContext = SSLContext.getInstance(PROTOCOL);
 			serverContext.init(kmf.getKeyManagers(), null, null);
 		} catch (Exception e) {
-			System.out.println("初始化server SSL失败 " + e);
-			throw new Error("Failed to initialize the server SSLContext", e);
+			log.error("Failed to initialize the server SSLContext", e);
+			throw new WireTigerException("Failed to initialize the server SSLContext", e);
 		}
 		sslContext = serverContext;
         SSLEngine sslEngine = sslContext.createSSLEngine();

@@ -11,14 +11,11 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
-import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
@@ -37,13 +34,6 @@ public class HttpsClient {
 		bootstrap.option(ChannelOption.SO_KEEPALIVE, false);
 		bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 5000);
 		return bootstrap;
-	}
-	
-	public static void main(String[] args) throws Exception {
-		HttpRequest httpRequest = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/");
-		FullHttpResponse resp = send("www.baidu.com", 443, httpRequest);
-		System.out.println("read resp=");
-		System.out.println(resp);
 	}
 	
 	public static FullHttpResponse send(String host, int port, HttpRequest httpRequest) throws Exception {
