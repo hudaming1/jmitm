@@ -48,7 +48,7 @@ public class DefaultWireTigerServer implements WireTigerServer {
 			b.childHandler(new HttpsProxyServerInitializer());
 
 			Channel ch = b.bind(config.getPort()).sync().channel();
-
+			log.info("wire_tiger server started on port:" + config.getPort());
 
 			ch.closeFuture().sync();
 		} catch (Exception e) {
