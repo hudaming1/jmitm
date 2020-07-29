@@ -5,6 +5,7 @@ import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hum.wiretiger.config.WireTigerConfig;
 import org.hum.wiretiger.core.server.WireTigerServer;
+import org.hum.wiretiger.exception.WireTigerException;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -50,6 +51,9 @@ public class DefaultWireTigerServer implements WireTigerServer {
 
 
 			ch.closeFuture().sync();
+		} catch (Exception e) {
+			log.error("start occur error, config=" + config, e);
+			throw new WireTigerException("DefaultWireTigerServer start failed.", e);
 		} finally {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();
