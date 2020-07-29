@@ -12,7 +12,7 @@ public class HttpsKeyStore {
 	public static InputStream getKeyStoreStream(String domain) {
 		try {
 			// 创建证书
-			return CA_Station.create(domain);
+			return CA_Station.createWithCache(domain);
 		} catch (Exception e) {
 			log.error("init key_store failure, domain=" + domain, e);
 			throw new WireTigerException("init key store failed", e);
