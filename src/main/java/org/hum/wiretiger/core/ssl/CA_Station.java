@@ -14,20 +14,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CA_Station {
 
-	private static final ConcurrentHashMap<String, FutureTask<ByteArrayInputStream>> CERT_CACHE = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<String, FutureTask<byte[]>> CERT_CACHE = new ConcurrentHashMap<>();
 
 	public static ByteArrayInputStream createWithCache(String domain) {
-		FutureTask<ByteArrayInputStream> futureTask = CERT_CACHE.get(domain);
+		FutureTask<byte[]> futureTask = CERT_CACHE.get(domain);
 		if (futureTask == null) {
-			futureTask = new FutureTask<ByteArrayInputStream>(new CA_Creator(domain));
-			FutureTask<ByteArrayInputStream> task = CERT_CACHE.putIfAbsent(domain, futureTask);
+			futureTask = new FutureTask<byte[]>(new CA_Creator(domain));
+			FutureTask<byte[]> task = CERT_CACHE.putIfAbsent(domain, futureTask);
 			if (task == null) {
 				task = futureTask;
 				task.run();
 			}
 		}
 		try {
-			return futureTask.get();
+			return new ByteArrayInputStream(futureTask.get());
 		} catch (Exception e) {
 			CERT_CACHE.remove(domain);
 			log.error("create cert error, domain=" + domain, e);

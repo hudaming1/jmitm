@@ -40,7 +40,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import sun.security.x509.GeneralNames;
 
 @SuppressWarnings("restriction")
-public class CA_Creator implements Callable<ByteArrayInputStream> {
+public class CA_Creator implements Callable<byte[]> {
 	
 	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "nickli";
@@ -52,7 +52,7 @@ public class CA_Creator implements Callable<ByteArrayInputStream> {
 		this.domain = domain;
 	}
 
-	private static ByteArrayInputStream _create(String domain) throws Exception {
+	private static byte[] _create(String domain) throws Exception {
 		// 读取CA证书的JKS文件
 		KeyStore caStore = KeyStore.getInstance("PKCS12");
 		File caFile = new File(CA_FILE);
@@ -64,7 +64,7 @@ public class CA_Creator implements Callable<ByteArrayInputStream> {
 		ByteArrayOutputStream baos = gen(domain, caPrivateKey, serverSubject, CERT_ALIAS);
 		byte[] bytes = baos.toByteArray();
 		baos.close();
-		return new ByteArrayInputStream(bytes);
+		return bytes;
 	}
 
 	// 用KeyEntry形式存储一个私钥以及对应的证书，并把CA证书加入到它的信任证书列表里面。
@@ -130,7 +130,7 @@ public class CA_Creator implements Callable<ByteArrayInputStream> {
 	}
 	
 	@Override
-	public ByteArrayInputStream call() throws Exception {
+	public byte[] call() throws Exception {
 		return _create(domain);
 	}
 }
