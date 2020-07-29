@@ -41,6 +41,7 @@ import sun.security.x509.GeneralNames;
 /**
  * @author hudaming 参考 https://blog.csdn.net/cwjcsu/article/details/9217139
  */
+@SuppressWarnings("restriction")
 public class CA_Station {
 
 	private static final String CA_PASS = "123456";
