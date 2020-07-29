@@ -9,6 +9,8 @@ import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpObject> {
 
@@ -42,7 +44,12 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 			System.out.println(response);
 			System.out.println("==============HTTPS_END=========");
 			response.headers().set(CONNECTION, CLOSE);
-			ctx.writeAndFlush(response);
+			ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
+				@Override
+				public void operationComplete(Future<? super Void> future) throws Exception {
+					// TODO close
+				}
+			});
 		}
 	}
 

@@ -37,24 +37,15 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 				public void operationComplete(Future<? super Channel> future) throws Exception {
 					ctx.pipeline().addLast(new HttpServerCodec());
 					ctx.pipeline().addLast(new HttpServerExpectContinueHandler());
-					ctx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), 443));
+					ctx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
 				}
 			});
 			ctx.pipeline().addLast("sslHandler", sslHandler);
 			ctx.pipeline().remove(this);
-
-			// 注意：这里要用first啊，pipeline顺序不要错
-			ctx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()))
-					.addListener(new GenericFutureListener<Future<? super Void>>() {
-						@Override
-						public void operationComplete(Future<? super Void> future) throws Exception {
-							System.out.println("flush connect-line");
-						}
-					});
+			ctx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 		} else {
 			// 建立远端转发连接（远端收到响应后，一律转发给本地）
-			Forward forward = new Forward(ctx, request.getHost(), 80);
-			forward.start().addListener(new ChannelFutureListener() {
+			new Forward(ctx, request.getHost(), request.getPort()).start().addListener(new ChannelFutureListener() {
 				@Override
 				public void operationComplete(ChannelFuture remoteFuture) throws Exception {
 					// forward request

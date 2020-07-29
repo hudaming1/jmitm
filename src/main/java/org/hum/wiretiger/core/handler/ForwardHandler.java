@@ -3,6 +3,8 @@ package org.hum.wiretiger.core.handler;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 
 /**
  * remote -> local
@@ -26,7 +28,12 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext remoteCtx, Object msg) throws Exception {
     	// forward response
     	if (channel.isActive()) {
-    		this.channel.writeAndFlush(msg);
+    		this.channel.writeAndFlush(msg).addListener(new GenericFutureListener<Future<? super Void>>() {
+				@Override
+				public void operationComplete(Future<? super Void> future) throws Exception {
+					// TODO close
+				}
+			});
     	}
     }
 
