@@ -1,11 +1,13 @@
 package org.hum.wiretiger.core.external.conmonitor;
 
 import java.util.Date;
+import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.netty.channel.Channel;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -58,6 +60,9 @@ public class ConnectMonitor {
 		@Override
 		public void run() {
 			log.info("connection.size=" + connections.size());
+			for (Entry<Channel, Long> entry : connections.entrySet()) {
+				log.info("con_status=" + entry.getKey().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).get());
+			}
 		}
 	}
 }

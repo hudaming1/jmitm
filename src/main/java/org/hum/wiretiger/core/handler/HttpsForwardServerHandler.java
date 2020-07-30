@@ -1,8 +1,6 @@
 package org.hum.wiretiger.core.handler;
 
-import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
-import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
-
+import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
 import org.hum.wiretiger.core.handler.helper.HttpsClient;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +9,7 @@ import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -32,10 +31,9 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
-		System.out.println("HttpsForwardServerHandler.channelRead0.enter");
-
 		if (msg instanceof DefaultHttpRequest) {
 			DefaultHttpRequest req = (DefaultHttpRequest) msg;
+			ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
 			FullHttpResponse response = HttpsClient.send(host, port, (HttpRequest) msg);
 			System.out.println("resp=" + response);
 
@@ -45,11 +43,10 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 			System.out.println();
 			System.out.println(response);
 			System.out.println("==============HTTPS_END=========");
-			response.headers().set(CONNECTION, CLOSE);
 			ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
-					// TODO close
+					ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Read);
 				}
 			});
 		}
