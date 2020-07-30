@@ -14,7 +14,6 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -26,7 +25,6 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext sourceCtx, Object msg) throws Exception {
 		// TODO 这里解析的port，最好从clientCtx中获取
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
-		sourceCtx.channel().attr(AttributeKey.newInstance(""));
 
 		if (request.getMethod().equalsIgnoreCase("CONNECT")) {
 			// 根据域名颁发证书

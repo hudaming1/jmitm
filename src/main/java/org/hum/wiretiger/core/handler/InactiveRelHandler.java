@@ -4,11 +4,11 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
-public class InactiveHandler extends ChannelInboundHandlerAdapter {
+public class InactiveRelHandler extends ChannelInboundHandlerAdapter {
 
 	private Channel needNoticeCloseChannel;
 	
-	public InactiveHandler(Channel channel) {
+	public InactiveRelHandler(Channel channel) {
 		this.needNoticeCloseChannel = channel;
 	}
 	

@@ -3,8 +3,9 @@ package org.hum.wiretiger.core.external.conmonitor;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ConcurrentHashMap;
 
+import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConnectMonitor {
 
-	private CopyOnWriteArrayList<Connection> connections = new CopyOnWriteArrayList<>();
+	private ConcurrentHashMap<Channel, Long> connections = new ConcurrentHashMap<>();
 	private Timer timer = new Timer();
 	
 	private ConnectMonitor() {
@@ -30,19 +31,27 @@ public class ConnectMonitor {
 		return ConnectMonitorHodler.instance;
 	}
 	
-	public void add(String host, int port) {
-		connections.add(new Connection(host, port));
+	public boolean isExists(Channel channel) {
+		return connections.containsKey(channel);
 	}
 	
-	public void remove(String host, int port) {
-		connections.remove(new Connection(host, port));
+	public void add(Channel channel) {
+		connections.put(channel, System.currentTimeMillis());
+	}
+	
+	public void remove(Channel channel) {
+		connections.remove(channel);
+	}
+	
+	public long get(Channel channel) {
+		return connections.get(channel);
 	}
 	
 	private class SchedulePrinter extends TimerTask {
 		
-		private CopyOnWriteArrayList<Connection> connections;
+		private ConcurrentHashMap<Channel, Long> connections;
 		
-		public SchedulePrinter(CopyOnWriteArrayList<Connection> connections) {
+		public SchedulePrinter(ConcurrentHashMap<Channel, Long> connections) {
 			this.connections = connections;
 		}
 

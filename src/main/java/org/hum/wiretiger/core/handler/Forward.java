@@ -21,7 +21,7 @@ public class Forward {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new ForwardHandler(ctx.channel()), new InactiveHandler(ctx.channel()));
+				ch.pipeline().addLast(new ForwardHandler(ctx.channel()), new InactiveRelHandler(ctx.channel()));
 			}
 		});
 	}
