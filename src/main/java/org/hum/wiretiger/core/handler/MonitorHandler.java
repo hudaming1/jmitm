@@ -15,14 +15,14 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
 
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Active);
+		ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Active);
 		connectMonitor.add(ctx.channel());
 		ctx.fireChannelActive();
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.InActive);
+		ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.InActive);
 		if (!connectMonitor.isExists(ctx.channel())) {
 			log.info("found uncatched connection..");
 			ctx.fireChannelInactive();

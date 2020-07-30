@@ -27,7 +27,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 	public void channelRead(ChannelHandlerContext sourceCtx, Object msg) throws Exception {
 		// TODO 这里解析的port，最好从clientCtx中获取
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
-		sourceCtx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Parsed);
+		sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Parsed);
 
 		if (request.getMethod().equalsIgnoreCase("CONNECT")) {
 			// 根据域名颁发证书
@@ -39,22 +39,22 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 					sourceCtx.pipeline().addLast(new HttpServerCodec());
 					sourceCtx.pipeline().addLast(new HttpServerExpectContinueHandler());
 					sourceCtx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
-					sourceCtx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
+					sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
 				}
 			});
 			sourceCtx.pipeline().addLast("sslHandler", sslHandler);
 			sourceCtx.pipeline().remove(this);
 			sourceCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
-			sourceCtx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Flushed);
+			sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Flushed);
 		} else {
 			// 建立远端转发连接（远端收到响应后，一律转发给本地）
 			new Forward(sourceCtx, request.getHost(), request.getPort()).start().addListener(new ChannelFutureListener() {
 				@Override
 				public void operationComplete(ChannelFuture targetChannelFuture) throws Exception {
-					sourceCtx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
+					sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
 					// forward request
 					targetChannelFuture.channel().pipeline().firstContext().writeAndFlush(msg);
-					sourceCtx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
+					sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
 					System.err.println("=============HTTP_REQUEST_BEGIN=============");
 					System.err.println(msg);
 					System.err.println("=============HTTP_REQUEST_END=============");

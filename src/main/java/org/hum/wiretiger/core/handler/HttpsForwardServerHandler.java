@@ -33,7 +33,7 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 
 		if (msg instanceof DefaultHttpRequest) {
 			DefaultHttpRequest req = (DefaultHttpRequest) msg;
-			ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
+			ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
 			FullHttpResponse response = HttpsClient.send(host, port, (HttpRequest) msg);
 			System.out.println("resp=" + response);
 
@@ -46,7 +46,7 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 			ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
-					ctx.channel().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).set(ConnectionStatus.Read);
+					ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Read);
 				}
 			});
 		}

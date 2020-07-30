@@ -61,7 +61,7 @@ public class ConnectMonitor {
 		public void run() {
 			log.info("connection.size=" + connections.size());
 			for (Entry<Channel, Long> entry : connections.entrySet()) {
-				log.info("con_status=" + entry.getKey().attr(AttributeKey.newInstance(ConnectionStatus.STATUS)).get());
+				log.info("con_status=" + entry.getKey().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).get());
 			}
 		}
 	}
