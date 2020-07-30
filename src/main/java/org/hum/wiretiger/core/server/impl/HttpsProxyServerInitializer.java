@@ -16,9 +16,10 @@
 package org.hum.wiretiger.core.server.impl;
 
 import org.hum.wiretiger.core.handler.HttpProxyHandshakeHandler;
+import org.hum.wiretiger.core.handler.MonitorHandler;
+import org.hum.wiretiger.core.handler.TipsHandler;
 
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 
 public class HttpsProxyServerInitializer extends ChannelInitializer<SocketChannel> {
@@ -28,8 +29,8 @@ public class HttpsProxyServerInitializer extends ChannelInitializer<SocketChanne
 
 	@Override
 	public void initChannel(SocketChannel ch) {
-		ChannelPipeline p = ch.pipeline();
-		// 如果需要https代理，则开启这个handler(如果不用https代理，则需要注释以下代码)
-		p.addLast(new HttpProxyHandshakeHandler());
+		ch.pipeline().addLast(new TipsHandler());
+		ch.pipeline().addLast(new MonitorHandler());
+		ch.pipeline().addLast(new HttpProxyHandshakeHandler());
 	}
 }

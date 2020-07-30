@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.handler;
+package org.hum.wiretiger.core.handler.helper;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelHandler;

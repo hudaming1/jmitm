@@ -1,6 +1,6 @@
 package org.hum.wiretiger.test;
 
-import org.hum.wiretiger.core.handler.HttpsClient;
+import org.hum.wiretiger.core.handler.helper.HttpsClient;
 import org.junit.Test;
 
 import io.netty.handler.codec.http.DefaultHttpRequest;

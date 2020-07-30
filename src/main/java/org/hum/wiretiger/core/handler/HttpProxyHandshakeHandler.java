@@ -14,6 +14,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
@@ -21,12 +22,11 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
 	
-	/**
-	 * 这里的msg是CONNECT方法头
-	 */
 	@Override
-	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+	public void channelRead(ChannelHandlerContext sourceCtx, Object msg) throws Exception {
+		// TODO 这里解析的port，最好从clientCtx中获取
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
+		sourceCtx.channel().attr(AttributeKey.newInstance(""));
 
 		if (request.getMethod().equalsIgnoreCase("CONNECT")) {
 			// 根据域名颁发证书
@@ -35,21 +35,21 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
-					ctx.pipeline().addLast(new HttpServerCodec());
-					ctx.pipeline().addLast(new HttpServerExpectContinueHandler());
-					ctx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
+					sourceCtx.pipeline().addLast(new HttpServerCodec());
+					sourceCtx.pipeline().addLast(new HttpServerExpectContinueHandler());
+					sourceCtx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
 				}
 			});
-			ctx.pipeline().addLast("sslHandler", sslHandler);
-			ctx.pipeline().remove(this);
-			ctx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			sourceCtx.pipeline().addLast("sslHandler", sslHandler);
+			sourceCtx.pipeline().remove(this);
+			sourceCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 		} else {
 			// 建立远端转发连接（远端收到响应后，一律转发给本地）
-			new Forward(ctx, request.getHost(), request.getPort()).start().addListener(new ChannelFutureListener() {
+			new Forward(sourceCtx, request.getHost(), request.getPort()).start().addListener(new ChannelFutureListener() {
 				@Override
-				public void operationComplete(ChannelFuture remoteFuture) throws Exception {
+				public void operationComplete(ChannelFuture targetChannelFuture) throws Exception {
 					// forward request
-					remoteFuture.channel().pipeline().firstContext().writeAndFlush(msg);
+					targetChannelFuture.channel().pipeline().firstContext().writeAndFlush(msg);
 					System.err.println("=============HTTP_REQUEST_BEGIN=============");
 					System.err.println(msg);
 					System.err.println("=============HTTP_REQUEST_END=============");

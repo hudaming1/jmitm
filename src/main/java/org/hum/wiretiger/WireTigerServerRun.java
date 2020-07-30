@@ -3,7 +3,7 @@ package org.hum.wiretiger;
 import org.hum.wiretiger.config.WireTigerConfig;
 import org.hum.wiretiger.core.server.ServerFactory;
 
-public class ServerRun {
+public class WireTigerServerRun {
 
 	public static void main(String[] args) {
 		// config

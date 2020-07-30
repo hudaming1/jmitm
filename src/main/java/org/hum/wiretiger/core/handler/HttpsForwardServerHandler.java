@@ -3,6 +3,8 @@ package org.hum.wiretiger.core.handler;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONNECTION;
 import static io.netty.handler.codec.http.HttpHeaderValues.CLOSE;
 
+import org.hum.wiretiger.core.handler.helper.HttpsClient;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultHttpRequest;
