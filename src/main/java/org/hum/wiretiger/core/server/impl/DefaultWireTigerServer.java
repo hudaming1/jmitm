@@ -4,6 +4,7 @@ import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hum.wiretiger.config.WireTigerConfig;
+import org.hum.wiretiger.core.server.ConsoleServer;
 import org.hum.wiretiger.core.server.WireTigerServer;
 import org.hum.wiretiger.exception.WireTigerException;
 
@@ -49,6 +50,11 @@ public class DefaultWireTigerServer implements WireTigerServer {
 
 			Channel ch = bootStrap.bind(config.getPort()).sync().channel();
 			log.info("wire_tiger server started on port:" + config.getPort());
+			
+			// 启动控制台
+			if (config.getConsolePort() != null) {
+				startConsole(config.getConsolePort());
+			}
 
 			ch.closeFuture().sync();
 		} catch (Exception e) {
@@ -58,6 +64,11 @@ public class DefaultWireTigerServer implements WireTigerServer {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();
 		}
+	}
+	
+	private void startConsole(int port) throws Exception {
+		ConsoleServer.startJetty(port);
+		log.info("console server started on port:" + port);
 	}
 
 	@Override
