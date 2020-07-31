@@ -6,6 +6,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hum.wiretiger.core.handler.bean.Pipe;
+
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -15,22 +17,21 @@ import lombok.extern.slf4j.Slf4j;
  * @author hudaming
  */
 @Slf4j
-public class ConnectMonitor {
+public class PipeMonitor {
 
-	public static String REQ_ATTR_NAME = "REQ_ATTR";
-	private ConcurrentHashMap<Channel, Long> connections = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Channel, Pipe> connections = new ConcurrentHashMap<>();
 	private Timer timer = new Timer();
 	
-	private ConnectMonitor() {
+	private PipeMonitor() {
 		timer.scheduleAtFixedRate(new SchedulePrinter(connections), new Date(), 5000L);
 		log.info("ConnectMonitor started..");
 	}
 
 	private static class ConnectMonitorHodler {
-		private static ConnectMonitor instance = new ConnectMonitor();
+		private static PipeMonitor instance = new PipeMonitor();
 	}
 
-	public static ConnectMonitor get() {
+	public static PipeMonitor get() {
 		return ConnectMonitorHodler.instance;
 	}
 	
@@ -38,32 +39,32 @@ public class ConnectMonitor {
 		return connections.containsKey(channel);
 	}
 	
-	public void add(Channel channel) {
-		connections.put(channel, System.currentTimeMillis());
+	public void add(Pipe pipe) {
+		connections.put(pipe.getSourceCtx().channel(), pipe);
 	}
 	
 	public void remove(Channel channel) {
 		connections.remove(channel);
 	}
 	
-	public long get(Channel channel) {
+	public Pipe get(Channel channel) {
 		return connections.get(channel);
 	}
 	
 	private class SchedulePrinter extends TimerTask {
 		
-		private ConcurrentHashMap<Channel, Long> connections;
+		private ConcurrentHashMap<Channel, Pipe> connections;
 		
-		public SchedulePrinter(ConcurrentHashMap<Channel, Long> connections) {
+		public SchedulePrinter(ConcurrentHashMap<Channel, Pipe> connections) {
 			this.connections = connections;
 		}
 
 		@Override
 		public void run() {
 			log.info("connection.size=" + connections.size());
-			for (Entry<Channel, Long> entry : connections.entrySet()) {
-				//log.info("con_status=" + entry.getKey().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).get() + ", alived times=" + (System.currentTimeMillis() - entry.getValue()) + "ms");
-				//log.info("request=" + entry.getKey().attr(AttributeKey.valueOf(ConnectMonitor.REQ_ATTR_NAME)).get());
+			for (Entry<Channel, Pipe> entry : connections.entrySet()) {
+				log.info("con_status=" + entry.getValue().getStatus() + ", alived times=" + (System.currentTimeMillis() - entry.getValue().getBirthday()) + "ms");
+				log.info("request=" + entry.getValue().getRequest().getClass());
 			}
 		}
 	}

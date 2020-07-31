@@ -1,7 +1,7 @@
 package org.hum.wiretiger.core.handler.https;
 
-import org.hum.wiretiger.core.external.conmonitor.ConnectMonitor;
 import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
+import org.hum.wiretiger.core.handler.bean.Pipe;
 import org.hum.wiretiger.core.handler.helper.HttpsClient;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -33,22 +33,13 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 	public void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
 
 		if (msg instanceof DefaultHttpRequest) {
-			DefaultHttpRequest req = (DefaultHttpRequest) msg;
-			ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
-			ctx.channel().attr(AttributeKey.valueOf(ConnectMonitor.REQ_ATTR_NAME)).set(msg);
+			((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Forward);
+			((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setRequest((DefaultHttpRequest) msg);
 			FullHttpResponse response = HttpsClient.send(host, port, (HttpRequest) msg);
-//			System.out.println("resp=" + response);
-//
-//			System.out.println("==============HTTPS_BEGIN===================");
-//			System.out.println(req);
-//			System.out.println();
-//			System.out.println();
-//			System.out.println(response);
-//			System.out.println("==============HTTPS_END=========");
 			ctx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
-					ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Read);
+					((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Read);
 				}
 			});
 		}

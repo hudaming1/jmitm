@@ -1,12 +1,13 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.external.conmonitor.ConnectMonitor;
 import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
+import org.hum.wiretiger.core.handler.bean.Pipe;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.util.AttributeKey;
 
@@ -27,19 +28,18 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 
 	@Override
 	public void channelRead0(ChannelHandlerContext sourceCtx, HttpObject msg) throws Exception {
-		System.out.println("HttpForwardHandler.requet=" + msg);
+		System.out.println("forward->" + msg);
 		// 建立远端转发连接（远端收到响应后，一律转发给本地）
 		new Forward(sourceCtx, host, port).start().addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture targetChannelFuture) throws Exception {
-				sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
+				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Connected);
 				// forward request
 				targetChannelFuture.channel().pipeline().firstContext().writeAndFlush(msg);
-				sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
-				sourceCtx.channel().attr(AttributeKey.valueOf(ConnectMonitor.REQ_ATTR_NAME)).set(msg);
-//							System.err.println("=============HTTP_REQUEST_BEGIN=============");
-//							System.err.println(msg);
-//							System.err.println("=============HTTP_REQUEST_END=============");
+				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Forward);
+				if (msg instanceof DefaultHttpRequest) {
+					((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setRequest((DefaultHttpRequest) msg);
+				}
 			}
 		});
 	}

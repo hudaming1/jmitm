@@ -17,6 +17,4 @@ public enum ConnectionStatus {
 	// 断开连接
 	InActive
 	;
-
-	public final static String STATUS = "CON_STATUS";
 }
