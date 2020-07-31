@@ -64,7 +64,9 @@ public class PipeMonitor {
 			log.info("connection.size=" + connections.size());
 			for (Entry<Channel, Pipe> entry : connections.entrySet()) {
 				log.info("con_status=" + entry.getValue().getStatus() + ", alived times=" + (System.currentTimeMillis() - entry.getValue().getBirthday()) + "ms");
-				log.info("request=" + entry.getValue().getRequest().getClass());
+				if (entry.getValue().getRequest() != null) {
+					log.info("request=" + entry.getValue().getRequest().getClass());
+				}
 			}
 		}
 	}

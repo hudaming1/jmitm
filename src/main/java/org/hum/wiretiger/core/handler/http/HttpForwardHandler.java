@@ -9,6 +9,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
+import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.util.AttributeKey;
 
 public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> {
@@ -27,18 +28,18 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 	}
 
 	@Override
-	public void channelRead0(ChannelHandlerContext sourceCtx, HttpObject msg) throws Exception {
-		System.out.println("forward->" + msg);
+	public void channelRead0(ChannelHandlerContext sourceCtx, HttpObject clientRequest) throws Exception {
 		// 建立远端转发连接（远端收到响应后，一律转发给本地）
 		new Forward(sourceCtx, host, port).start().addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture targetChannelFuture) throws Exception {
 				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Connected);
 				// forward request
-				targetChannelFuture.channel().pipeline().firstContext().writeAndFlush(msg);
+				targetChannelFuture.channel().pipeline().addFirst(new HttpRequestEncoder());
+				targetChannelFuture.channel().writeAndFlush(clientRequest);
 				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Forward);
-				if (msg instanceof DefaultHttpRequest) {
-					((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setRequest((DefaultHttpRequest) msg);
+				if (clientRequest instanceof DefaultHttpRequest) {
+					((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setRequest((DefaultHttpRequest) clientRequest);
 				}
 			}
 		});

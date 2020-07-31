@@ -11,25 +11,24 @@ import io.netty.util.concurrent.GenericFutureListener;
  * @author hudaming
  */
 public class ForwardHandler extends ChannelInboundHandlerAdapter {
-	private Channel channel;
+	private Channel remove2Local;
 	@SuppressWarnings("unused")
 	private String name;
 	
 	public ForwardHandler(Channel channel) {
-		this.channel = channel;
+		this.remove2Local = channel;
 	}
 	
 	public ForwardHandler(String name, Channel channel) {
-		this.channel = channel;
+		this.remove2Local = channel;
 		this.name = name;
 	}
 	
     @Override
-    public void channelRead(ChannelHandlerContext remoteCtx, Object msg) throws Exception {
-    	System.out.println(msg);
+    public void channelRead(ChannelHandlerContext remoteCtx, Object resp) throws Exception {
     	// forward response
-    	if (channel.isActive()) {
-    		this.channel.writeAndFlush(msg).addListener(new GenericFutureListener<Future<? super Void>>() {
+    	if (remove2Local.isActive()) {
+    		this.remove2Local.writeAndFlush(resp).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
 					// TODO close

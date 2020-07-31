@@ -8,6 +8,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpResponseDecoder;
 
 public class Forward {
@@ -24,7 +25,8 @@ public class Forward {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new HttpResponseDecoder(), new ForwardHandler(ctx.channel()), new InactiveRelHandler(ctx.channel()));
+				ctx.channel().pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
+				ch.pipeline().addLast(new ForwardHandler(ctx.channel()), new InactiveRelHandler(ctx.channel()));
 			}
 		});
 	}
