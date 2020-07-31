@@ -28,8 +28,22 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
 			ctx.fireChannelInactive();
 			return ;
 		}
-		log.info("Connection has alived " + (System.currentTimeMillis() - connectMonitor.get(ctx.channel())) + "ms");
 		connectMonitor.remove(ctx.channel());
+		log.info("Connection removed");
 		ctx.fireChannelInactive();
 	}
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+            throws Exception {
+    	ctx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.InActive);
+		if (!connectMonitor.isExists(ctx.channel())) {
+			log.info("found uncatched connection..");
+			ctx.fireChannelInactive();
+			return ;
+		}
+		connectMonitor.remove(ctx.channel());
+		log.info("Connection exception caught..");
+        ctx.fireExceptionCaught(cause);
+    }
 }

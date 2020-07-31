@@ -1,4 +1,6 @@
-package org.hum.wiretiger.core.handler;
+package org.hum.wiretiger.core.handler.http;
+
+import org.hum.wiretiger.core.handler.InactiveRelHandler;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -6,6 +8,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.http.HttpResponseDecoder;
 
 public class Forward {
 	
@@ -21,7 +24,7 @@ public class Forward {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel ch) throws Exception {
-				ch.pipeline().addLast(new ForwardHandler(ctx.channel()), new InactiveRelHandler(ctx.channel()));
+				ch.pipeline().addLast(new HttpResponseDecoder(), new ForwardHandler(ctx.channel()), new InactiveRelHandler(ctx.channel()));
 			}
 		});
 	}

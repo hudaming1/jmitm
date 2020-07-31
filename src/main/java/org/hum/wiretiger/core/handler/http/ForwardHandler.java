@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.handler;
+package org.hum.wiretiger.core.handler.http;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,6 +26,7 @@ public class ForwardHandler extends ChannelInboundHandlerAdapter {
 	
     @Override
     public void channelRead(ChannelHandlerContext remoteCtx, Object msg) throws Exception {
+    	System.out.println(msg);
     	// forward response
     	if (channel.isActive()) {
     		this.channel.writeAndFlush(msg).addListener(new GenericFutureListener<Future<? super Void>>() {

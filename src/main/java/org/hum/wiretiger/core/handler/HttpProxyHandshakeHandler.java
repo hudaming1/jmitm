@@ -1,8 +1,12 @@
 package org.hum.wiretiger.core.handler;
 
+import org.hum.wiretiger.core.external.conmonitor.ConnectMonitor;
 import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
+import org.hum.wiretiger.core.handler.http.Forward;
+import org.hum.wiretiger.core.handler.http.HttpForwardHandler;
+import org.hum.wiretiger.core.handler.https.HttpsForwardServerHandler;
 import org.hum.wiretiger.core.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.ByteBuf;
@@ -47,19 +51,9 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 			sourceCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 			sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Flushed);
 		} else {
-			// 建立远端转发连接（远端收到响应后，一律转发给本地）
-			new Forward(sourceCtx, request.getHost(), request.getPort()).start().addListener(new ChannelFutureListener() {
-				@Override
-				public void operationComplete(ChannelFuture targetChannelFuture) throws Exception {
-					sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Connected);
-					// forward request
-					targetChannelFuture.channel().pipeline().firstContext().writeAndFlush(msg);
-					sourceCtx.channel().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).set(ConnectionStatus.Forward);
-					System.err.println("=============HTTP_REQUEST_BEGIN=============");
-					System.err.println(msg);
-					System.err.println("=============HTTP_REQUEST_END=============");
-				}
-			});
+			sourceCtx.pipeline().addLast(new HttpServerCodec());
+			sourceCtx.pipeline().addLast(new HttpForwardHandler(request.getHost(), request.getPort()));
+			sourceCtx.fireChannelRead(msg);
 		}
 	}
 }

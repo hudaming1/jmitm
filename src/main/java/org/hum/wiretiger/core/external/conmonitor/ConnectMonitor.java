@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ConnectMonitor {
 
+	public static String REQ_ATTR_NAME = "REQ_ATTR";
 	private ConcurrentHashMap<Channel, Long> connections = new ConcurrentHashMap<>();
 	private Timer timer = new Timer();
 	
@@ -61,7 +62,8 @@ public class ConnectMonitor {
 		public void run() {
 			log.info("connection.size=" + connections.size());
 			for (Entry<Channel, Long> entry : connections.entrySet()) {
-				log.info("con_status=" + entry.getKey().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).get());
+				//log.info("con_status=" + entry.getKey().attr(AttributeKey.valueOf(ConnectionStatus.STATUS)).get() + ", alived times=" + (System.currentTimeMillis() - entry.getValue()) + "ms");
+				//log.info("request=" + entry.getKey().attr(AttributeKey.valueOf(ConnectMonitor.REQ_ATTR_NAME)).get());
 			}
 		}
 	}
