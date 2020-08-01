@@ -28,11 +28,6 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.InActive);
-		if (!connectionMonitor.isExists(ctx.channel())) {
-			log.info("found uncatched connection..");
-			ctx.fireChannelInactive();
-			return ;
-		}
 		connectionMonitor.remove(ctx.channel());
 		log.info("Connection removed");
 		ctx.fireChannelInactive();
@@ -41,13 +36,7 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-		((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.InActive);
-		if (!connectionMonitor.isExists(ctx.channel())) {
-			log.info("found uncatched connection..");
-			ctx.fireChannelInactive();
-			return ;
-		}
-		connectionMonitor.remove(ctx.channel());
+		((Pipe) ctx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Error);
 		log.info("Connection exception caught..");
         ctx.fireExceptionCaught(cause);
     }

@@ -15,6 +15,8 @@ public enum ConnectionStatus {
 	// 将最终结果输出给客户端 proxy -> client
 	Flushed,
 	// 断开连接
-	InActive
+	InActive,
+	// ERROR
+	Error
 	;
 }
