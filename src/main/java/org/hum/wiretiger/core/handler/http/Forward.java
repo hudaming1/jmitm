@@ -26,9 +26,6 @@ public class Forward {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
-				System.out.println(this + " init pipeline");
-//				client2ProxyCtx.channel().pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
-//				client2ProxyCtx.channel().pipeline().addFirst(new HttpResponseEncoder());
 				proxy2ServerChannel.pipeline().addFirst(new HttpRequestEncoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
 				proxy2ServerChannel.pipeline().addLast(new ForwardHandler(client2ProxyCtx.channel()), new InactiveRelHandler(client2ProxyCtx.channel()));
