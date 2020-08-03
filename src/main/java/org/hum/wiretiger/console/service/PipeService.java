@@ -24,7 +24,7 @@ public class PipeService {
 			WireTigerConnectionVO vo = new WireTigerConnectionVO();
 			vo.setReqeustId(item.getId());
 			vo.setUri(item.getRequest() == null ? "waitting.." : getPath(item.getRequest().uri()));
-			vo.setResponseCode(item.getResponse() == null ? "pending.." : item.getResponse().status().code() + "");
+			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
 			requestList.add(vo);
 		});
 		return requestList;

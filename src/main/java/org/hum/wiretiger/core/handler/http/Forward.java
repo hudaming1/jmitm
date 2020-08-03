@@ -9,8 +9,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 
 public class Forward {
 	
@@ -25,10 +25,13 @@ public class Forward {
 		bootStrap.group(client2ProxyCtx.channel().eventLoop());
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
-			protected void initChannel(Channel ch) throws Exception {
-				client2ProxyCtx.channel().pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
-				ch.pipeline().addFirst(new HttpResponseEncoder());
-				ch.pipeline().addLast(new ForwardHandler(client2ProxyCtx.channel()), new InactiveRelHandler(client2ProxyCtx.channel()));
+			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
+				System.out.println(this + " init pipeline");
+//				client2ProxyCtx.channel().pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
+//				client2ProxyCtx.channel().pipeline().addFirst(new HttpResponseEncoder());
+				proxy2ServerChannel.pipeline().addFirst(new HttpRequestEncoder());
+				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
+				proxy2ServerChannel.pipeline().addLast(new ForwardHandler(client2ProxyCtx.channel()), new InactiveRelHandler(client2ProxyCtx.channel()));
 			}
 		});
 	}

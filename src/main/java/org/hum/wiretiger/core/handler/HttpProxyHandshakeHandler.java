@@ -14,6 +14,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.ssl.SslHandler;
@@ -26,9 +27,9 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
 	
 	@Override
-	public void channelRead(ChannelHandlerContext sourceCtx, Object msg) throws Exception {
+	public void channelRead(ChannelHandlerContext client2ProxyCtx, Object msg) throws Exception {
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
-		((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Parsed);
+		((Pipe) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Parsed);
 		// 区分HTTP和HTTPS
 		if (request.getMethod().equalsIgnoreCase("CONNECT")) {
 			// 根据域名颁发证书
@@ -37,22 +38,23 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
-					sourceCtx.pipeline().addLast(new HttpServerCodec());
-					sourceCtx.pipeline().addLast(new HttpServerExpectContinueHandler());
-					sourceCtx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
-					((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Connected);
+					client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
+					client2ProxyCtx.pipeline().addLast(new HttpServerExpectContinueHandler());
+					client2ProxyCtx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
+					((Pipe) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Connected);
 				}
 			});
-			sourceCtx.pipeline().addLast("sslHandler", sslHandler);
-			sourceCtx.pipeline().remove(this);
-			sourceCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
-			((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Flushed);
+			client2ProxyCtx.pipeline().addLast("sslHandler", sslHandler);
+			client2ProxyCtx.pipeline().remove(this);
+			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			((Pipe) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Flushed);
 		} else {
 			// HTTP
-			sourceCtx.pipeline().addLast(new HttpRequestDecoder());
-			sourceCtx.pipeline().addLast(new HttpForwardHandler(request.getHost(), request.getPort()));
-			sourceCtx.pipeline().remove(this);
-			sourceCtx.fireChannelRead(msg);
+			client2ProxyCtx.pipeline().addFirst(new HttpResponseEncoder());
+			client2ProxyCtx.pipeline().addLast(new HttpRequestDecoder());
+			client2ProxyCtx.pipeline().addLast(new HttpForwardHandler(request.getHost(), request.getPort()));
+			client2ProxyCtx.pipeline().remove(this);
+			client2ProxyCtx.fireChannelRead(msg);
 		}
 	}
 }
