@@ -1,1 +1,35 @@
-hello world
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>WireTiger</title>
+		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.8.1/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.8.1/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../demo.css">
+		<script type="text/javascript" src="jquery-easyui-1.8.1/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery-easyui-1.8.1/jquery.easyui.min.js"></script>
+	</head>
+	<body class="easyui-layout">
+		<div data-options="region:'east',split:true,title:'East',collapsible:false" style="width:250px;">
+			<table id="tt" class="easyui-propertygrid" data-options="
+						url: 'propertygrid_data1.json',
+						method: 'get',
+						showGroup: true,
+						fit: true,
+						border: false
+					">
+			</table>
+		</div>
+		<div data-options="region:'center'" style="padding:0px">
+			<table class="easyui-datagrid" data-options="border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+				<thead>
+					<tr>
+						<th data-options="field:'reqeustId', hidden:true">reqeustId</th>
+						<th data-options="field:'uri'">uri</th>
+						<th data-options="field:'responseCode',width:80">Code</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+	</body>
+</html>
