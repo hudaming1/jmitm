@@ -3,6 +3,7 @@
 	xmlns="http://java.sun.com/xml/ns/javaee"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
 	id="WebApp_ID" version="3.0">
+	<!-- list -->
 	<servlet>
 		<servlet-name>pipeListServelet</servlet-name>
 		<servlet-class>org.hum.wiretiger.console.servlet.PipeListServlet</servlet-class>
@@ -10,5 +11,14 @@
 	<servlet-mapping>
 		<servlet-name>pipeListServelet</servlet-name>
 		<url-pattern>/pipe/list</url-pattern>
+	</servlet-mapping>
+	<!-- detail -->
+	<servlet>
+		<servlet-name>pipeDetailServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.servlet.PipeDetailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>pipeDetailServlet</servlet-name>
+		<url-pattern>/pipe/get</url-pattern>
 	</servlet-mapping>
 </web-app>

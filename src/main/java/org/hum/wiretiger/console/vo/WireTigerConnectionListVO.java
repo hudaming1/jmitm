@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class WireTigerConnectionVO implements Serializable {
+public class WireTigerConnectionListVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

@@ -54,6 +54,10 @@ public class PipeMonitor {
 		return pipes4Channel.get(channel);
 	}
 	
+	public Pipe getById(Integer id) {
+		return pipes4Id.get(id);
+	}
+	
 	public Collection<Pipe> getAll() {
 		return Collections.unmodifiableCollection(pipes4Channel.values());
 	}
