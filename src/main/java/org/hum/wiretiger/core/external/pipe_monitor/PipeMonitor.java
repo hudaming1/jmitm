@@ -1,7 +1,10 @@
 package org.hum.wiretiger.core.external.pipe_monitor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -56,8 +59,22 @@ public class PipeMonitor {
 		return pipes4Id.get(id);
 	}
 	
-	public Collection<Pipe> getAll() {
-		return Collections.unmodifiableCollection(pipes4Channel.values());
+	public List<Pipe> getAll() {
+		List<Pipe> list = new ArrayList<>();
+		list.addAll(pipes4Channel.values());
+		// 按照Id顺序展示
+		Collections.sort(list, new Comparator<Pipe>() {
+			@Override
+			public int compare(Pipe o1, Pipe o2) {
+				if (o1 == null) {
+					return -1;
+				} else if (o2 == null) {
+					return 1;
+				}
+				return o1.getId() > o2.getId() ? 1 : -1;
+			}
+		});
+		return list;
 	}
 	
 	private class SchedulePrinter extends TimerTask {

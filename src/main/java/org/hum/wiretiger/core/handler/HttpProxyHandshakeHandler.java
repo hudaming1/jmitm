@@ -2,6 +2,7 @@ package org.hum.wiretiger.core.handler;
 
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
+import org.hum.wiretiger.core.external.pipe_monitor.Protocol;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
 import org.hum.wiretiger.core.handler.http.HttpForwardHandler;
@@ -47,8 +48,10 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
-			PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Flushed);
+			PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Forward);
+			PipeMonitor.get().get(client2ProxyCtx.channel()).setProtocol(Protocol.HTTPS.getCode());
 		} else {
+			PipeMonitor.get().get(client2ProxyCtx.channel()).setProtocol(Protocol.HTTP.getCode());
 			// HTTP
 			client2ProxyCtx.pipeline().addFirst(new HttpResponseEncoder());
 			client2ProxyCtx.pipeline().addLast(new HttpRequestDecoder());

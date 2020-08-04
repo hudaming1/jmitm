@@ -11,6 +11,7 @@ import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
 import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.Protocol;
 
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,8 @@ public class PipeService {
 			vo.setRequestId(item.getId());
 			vo.setUri(item.getRequest() == null ? "waitting.." : getPath(item.getRequest().uri()));
 			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
+			vo.setProtocol(Protocol.getEnum(item.getProtocol()).getDesc());
+			vo.setStatus(item.getStatus().toString());
 			requestList.add(vo);
 		});
 		return requestList;

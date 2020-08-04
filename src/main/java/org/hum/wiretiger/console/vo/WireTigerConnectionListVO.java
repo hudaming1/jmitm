@@ -11,8 +11,12 @@ public class WireTigerConnectionListVO implements Serializable {
 	
 	// id
 	private Integer requestId;
+	// 协议
+	private String protocol;
 	// uri
 	private String uri;
 	// 
 	private String responseCode;
+	//
+	private String status;
 }

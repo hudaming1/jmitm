@@ -39,7 +39,7 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 			client2ProxyCtx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
-					PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Read);
+					PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Flushed);
 				}
 			});
 		}

@@ -28,6 +28,11 @@ public class Pipe {
 	private long birthday;
 	// pipeId
 	private int id;
+	/**
+	 * 1-http; 2-https
+	 * {@link Protocol}
+	 */
+	private int protocol;
 	
 	public Pipe() {
 		this.birthday = System.currentTimeMillis();

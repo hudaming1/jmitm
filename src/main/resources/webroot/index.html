@@ -20,7 +20,7 @@
 		</script>
 	</head>
 	<body class="easyui-layout">
-		<div class="easyui-layout" id="eastPannel" data-options="collapsible:true, region:'east',split:true" style="width:70%;">
+		<div class="easyui-layout" id="eastPannel" data-options="collapsible:true, region:'east',split:true" style="width:60%;">
 			<div id="requestPannel" data-options="title:'Request', region:'north',split:true,collapsible:false" style="height:50%;padding:5px">
 			
 			</div>
@@ -28,13 +28,15 @@
 			
 			</div>
 		</div>
-		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:30%">
+		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:40%">
 			<table class="easyui-datagrid" data-options="remoteSort: false, width:'100%',onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
 				<thead>
 					<tr>
 						<th data-options="field:'requestId', hidden:true">reqeustId</th>
-						<th data-options="field:'uri', width: '90%'">Name</th>
+						<th data-options="field:'uri', width: '80%'">Name</th>
 						<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
+						<th data-options="field:'protocol', width:55, align: 'center'">/</th>
+						<th data-options="field:'status', width:80, align: 'center'">Status</th>
 					</tr>
 				</thead>
 			</table>
