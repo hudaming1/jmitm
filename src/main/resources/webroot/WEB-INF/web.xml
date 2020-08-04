@@ -21,4 +21,13 @@
 		<servlet-name>pipeDetailServlet</servlet-name>
 		<url-pattern>/pipe/get</url-pattern>
 	</servlet-mapping>
+	<!-- download_cert -->
+	<servlet>
+		<servlet-name>certDownloadServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.servlet.CertDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>certDownloadServlet</servlet-name>
+		<url-pattern>/cert/download</url-pattern>
+	</servlet-mapping>
 </web-app>
