@@ -1,8 +1,9 @@
 
+控制台使用Tab现实Pipe生命周期
+
 ## high level ##
 2.连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；
 3.增加控制台
-  控制台HTTP没有区分出http和https协议
   控制台Response内容没有展示
 
 ## low level ##

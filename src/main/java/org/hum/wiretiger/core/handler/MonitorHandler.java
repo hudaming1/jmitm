@@ -16,21 +16,21 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
 		// init pipe
 		Pipe newPipe = new Pipe();
 		newPipe.setSourceCtx(ctx);
-		newPipe.setStatus(PipeStatus.Active);
+		newPipe.recordStatus(PipeStatus.Init);
 		PipeMonitor.get().add(newPipe);
 		ctx.fireChannelActive();
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		PipeMonitor.get().get(ctx.channel()).setStatus(PipeStatus.InActive);
+		PipeMonitor.get().get(ctx.channel()).recordStatus(PipeStatus.Closed);
 		ctx.fireChannelInactive();
 	}
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-		PipeMonitor.get().get(ctx.channel()).setStatus(PipeStatus.Error);
+		PipeMonitor.get().get(ctx.channel()).recordStatus(PipeStatus.Error);
 		log.error("Connection exception caught..", cause);
         ctx.fireExceptionCaught(cause);
     }

@@ -32,14 +32,14 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 	public void channelRead0(ChannelHandlerContext client2ProxyCtx, HttpObject msg) throws Exception {
 
 		if (msg instanceof DefaultHttpRequest) {
-			PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Forward);
+			PipeMonitor.get().get(client2ProxyCtx.channel()).recordStatus(PipeStatus.Forward);
 			PipeMonitor.get().get(client2ProxyCtx.channel()).setRequest((DefaultHttpRequest) msg);
 			FullHttpResponse response = HttpsClient.send(host, port, (HttpRequest) msg);
 			PipeMonitor.get().get(client2ProxyCtx.channel()).addResponse(response);
 			client2ProxyCtx.writeAndFlush(response).addListener(new GenericFutureListener<Future<? super Void>>() {
 				@Override
 				public void operationComplete(Future<? super Void> future) throws Exception {
-					PipeMonitor.get().get(client2ProxyCtx.channel()).setStatus(PipeStatus.Flushed);
+					PipeMonitor.get().get(client2ProxyCtx.channel()).recordStatus(PipeStatus.Flushed);
 				}
 			});
 		}

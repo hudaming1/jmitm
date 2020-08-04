@@ -2,15 +2,24 @@ package org.hum.wiretiger.console.service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
 import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
 import org.hum.wiretiger.core.external.pipe_monitor.Protocol;
 
 import io.netty.util.internal.StringUtil;
@@ -20,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PipeService {
 	
 	private PipeMonitor pipeMonitor = PipeMonitor.get();
+	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
 	public List<WireTigerConnectionListVO> list() {
 		Collection<Pipe> all = pipeMonitor.getAll();
@@ -53,6 +63,29 @@ public class PipeService {
 		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
 		detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
 		return detailVo;
+	}
+	
+	private List<Map<String, String>> parseTimeLine(Map<PipeStatus, Long> pipeStatus) {
+		List<Map<String, String>> result = new ArrayList<>();
+		for (Entry<PipeStatus, Long> entry : pipeStatus.entrySet()) {
+			Map<String, String> map = new HashMap<String, String>();
+			map.put("status", entry.getKey().toString());
+			map.put("time", DATE_TIME_FORMATTER.format(new Date(entry.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
+			result.add(map);
+		}
+		Collections.sort(result, new Comparator<Map<String, String>>() {
+			@Override
+			public int compare(Map<String, String> o1, Map<String, String> o2) {
+				if (o1 == null) {
+					return -1;
+				} else if (o2 == null) {
+					return 1;
+				}
+				return o1.get("time").compareTo(o2.get("time"));
+			}
+		});
+		return result;
 	}
 }

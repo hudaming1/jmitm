@@ -9,7 +9,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> {
 	
 	private String host;
@@ -31,13 +33,16 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 		new Forward(sourceCtx, host, port).start().addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture proxy2RemoteFuture) throws Exception {
-				PipeMonitor.get().get(sourceCtx.channel()).setStatus(PipeStatus.Connected);
-				// forward request
+				// HTTP协议与对端建立连接
+				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Connected);
 				proxy2RemoteFuture.channel().writeAndFlush(clientRequest);
-				PipeMonitor.get().get(sourceCtx.channel()).setStatus(PipeStatus.Forward);
 				if (clientRequest instanceof DefaultHttpRequest) {
 					PipeMonitor.get().get(sourceCtx.channel()).setRequest((DefaultHttpRequest) clientRequest);
+				} else {
+					log.warn("found unknown request-type=" + clientRequest.getClass().getName() + ", instance=" + clientRequest);
 				}
+				// HTTP协议转发了请求
+				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Forward);
 			}
 		});
 	}

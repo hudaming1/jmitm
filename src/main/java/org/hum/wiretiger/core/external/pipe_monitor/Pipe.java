@@ -2,14 +2,16 @@ package org.hum.wiretiger.core.external.pipe_monitor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Pipe {
 	
 	private static final AtomicInteger counter = new AtomicInteger(1);
@@ -33,6 +35,8 @@ public class Pipe {
 	 * {@link Protocol}
 	 */
 	private int protocol;
+	// 状态时间轴
+	private Map<PipeStatus, Long> statusTimeline = new ConcurrentHashMap<>();
 	
 	public Pipe() {
 		this.birthday = System.currentTimeMillis();
@@ -41,5 +45,22 @@ public class Pipe {
 	
 	public void addResponse(FullHttpResponse resp) {
 		this.responseList.add(resp);
+	}
+	
+	public void recordStatus(PipeStatus status) {
+		this.status = status;
+		statusTimeline.put(status, System.currentTimeMillis());
+	}
+
+	public void setSourceCtx(ChannelHandlerContext ctx) {
+		this.sourceCtx = ctx;
+	}
+
+	public void setProtocol(int protocol) {
+		this.protocol = protocol;
+	}
+
+	public void setRequest(DefaultHttpRequest request) {
+		this.request = request;
 	}
 }

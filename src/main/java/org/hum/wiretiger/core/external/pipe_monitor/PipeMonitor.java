@@ -51,6 +51,11 @@ public class PipeMonitor {
 		pipes4Channel.remove(channel);
 	}
 	
+	/**
+	 * PipeMonotir一切以clientChannel为标识
+	 * @param channel
+	 * @return
+	 */
 	public Pipe get(Channel channel) {
 		return pipes4Channel.get(channel);
 	}
