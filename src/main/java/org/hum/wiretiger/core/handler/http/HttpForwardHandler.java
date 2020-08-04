@@ -45,7 +45,6 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-		cause.printStackTrace();
 		ctx.close();
 	}
 }

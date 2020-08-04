@@ -21,20 +21,20 @@
 	</head>
 	<body class="easyui-layout">
 		<div class="easyui-layout" id="eastPannel" data-options="collapsible:true, region:'east',split:true" style="width:70%;">
-			<div id="requestPannel" data-options="title:'Request', region:'north',split:true,collapsible:false" style="height:50%;">
+			<div id="requestPannel" data-options="title:'Request', region:'north',split:true,collapsible:false" style="height:50%;padding:5px">
 			
 			</div>
-			<div id="responsePannel" data-options="title:'Response', region:'center',split:true,collapsible:false" style="height:50%;">
+			<div id="responsePannel" data-options="title:'Response', region:'center',split:true,collapsible:false" style="height:50%;padding:5px">
 			
 			</div>
 		</div>
 		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:30%">
-			<table class="easyui-datagrid" data-options="width:'100%',onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+			<table class="easyui-datagrid" data-options="remoteSort: false, width:'100%',onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
 				<thead>
 					<tr>
 						<th data-options="field:'requestId', hidden:true">reqeustId</th>
 						<th data-options="field:'uri', width: '90%'">Name</th>
-						<th data-options="field:'responseCode'">Code</th>
+						<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
 					</tr>
 				</thead>
 			</table>

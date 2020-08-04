@@ -2,7 +2,6 @@ package org.hum.wiretiger.core.external.conmonitor;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -18,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author hudaming
  */
 @Slf4j
+@SuppressWarnings("unused")
 public class PipeMonitor {
 
 	private ConcurrentHashMap<Channel, Pipe> pipes4Channel = new ConcurrentHashMap<>();
@@ -25,7 +25,7 @@ public class PipeMonitor {
 	private Timer timer = new Timer();
 	
 	private PipeMonitor() {
-		timer.scheduleAtFixedRate(new SchedulePrinter(pipes4Channel), new Date(), 5000L);
+		// timer.scheduleAtFixedRate(new SchedulePrinter(pipes4Channel), new Date(), 5000L);
 		log.info("ConnectMonitor started..");
 	}
 

@@ -46,7 +46,7 @@ public class PipeService {
 		Pipe pipe = pipeMonitor.getById(id);
 		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
 		detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-		detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList().get(0)).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		return detailVo;
 	}
 }

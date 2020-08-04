@@ -1,12 +1,12 @@
 package org.hum.wiretiger.console.helper;
 
+import java.util.List;
 import java.util.Map;
 
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaders;
-import io.netty.handler.codec.http.HttpMessage;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.internal.StringUtil;
@@ -18,6 +18,19 @@ public class HttpMessageUtil {
         appendHeaders(buf, req.headers());
         removeLastNewLine(buf);
         return buf;
+    }
+    
+    public static StringBuilder appendResponse(StringBuilder buf, List<? extends HttpResponse> resList) {
+    	if (resList.size() > 1) {
+    		System.out.println(resList.size());
+    	}
+    	for (HttpResponse res : resList) {
+	    	appendInitialLine(buf, res);
+	    	appendHeaders(buf, res.headers());
+	    	removeLastNewLine(buf);
+	    	buf.append(StringUtil.NEWLINE);
+    	}
+    	return buf;
     }
 
     public static StringBuilder appendResponse(StringBuilder buf, HttpResponse res) {
