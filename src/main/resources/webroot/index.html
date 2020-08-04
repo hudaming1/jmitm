@@ -3,31 +3,38 @@
 	<head>
 		<meta charset="UTF-8">
 		<title>WireTiger</title>
-		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.8.1/themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.8.1/themes/metro/easyui.css">
 		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.8.1/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="../demo.css">
 		<script type="text/javascript" src="jquery-easyui-1.8.1/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery-easyui-1.8.1/jquery.easyui.min.js"></script>
+		<script type="text/javascript">
+			function dgClickRow(index, row) {
+				$.get("/pipe/get?id=" + row.requestId, function(resp) {
+					$("body").layout("expand", "east");
+					var jsonObj = eval("(" + resp + ")");
+					$("#requestPannel").html(jsonObj.requestString);
+					$("#responsePannel").html(jsonObj.responseString);
+				});
+			}
+		</script>
 	</head>
 	<body class="easyui-layout">
-		<div data-options="region:'east',split:true,title:'East',collapsible:false" style="width:350px;">
-			<!--table id="tt" class="easyui-propertygrid" data-options="
-						url: 'propertygrid_data1.json',
-						method: 'get',
-						showGroup: true,
-						fit: true,
-						border: false
-					">
-			</table-->
+		<div class="easyui-layout" id="eastPannel" data-options="collapsible:true, region:'east',split:true" style="width:70%;">
+			<div id="requestPannel" data-options="title:'Request', region:'north',split:true,collapsible:false" style="height:50%;">
 			
+			</div>
+			<div id="responsePannel" data-options="title:'Response', region:'center',split:true,collapsible:false" style="height:50%;">
+			
+			</div>
 		</div>
-		<div data-options="region:'center'" style="padding:0px">
-			<table class="easyui-datagrid" data-options="border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:30%">
+			<table class="easyui-datagrid" data-options="width:'100%',onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
 				<thead>
 					<tr>
-						<th data-options="field:'reqeustId'">reqeustId</th>
-						<th data-options="field:'uri'">uri</th>
-						<th data-options="field:'responseCode',width:80">Code</th>
+						<th data-options="field:'requestId', hidden:true">reqeustId</th>
+						<th data-options="field:'uri', width: '90%'">Name</th>
+						<th data-options="field:'responseCode'">Code</th>
 					</tr>
 				</thead>
 			</table>

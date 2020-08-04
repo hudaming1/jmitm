@@ -10,7 +10,7 @@ public class WireTigerConnectionListVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// id
-	private Integer reqeustId;
+	private Integer requestId;
 	// uri
 	private String uri;
 	// 
