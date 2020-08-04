@@ -14,7 +14,6 @@ import lombok.Data;
 @Data
 public class Pipe {
 	
-	public static final String PIPE_ATTR_NAME = "PIPE";
 	private static final AtomicInteger counter = new AtomicInteger(1);
 
 	// 

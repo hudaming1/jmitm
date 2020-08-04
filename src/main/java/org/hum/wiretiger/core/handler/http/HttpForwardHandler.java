@@ -1,7 +1,7 @@
 package org.hum.wiretiger.core.handler.http;
 
 import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
-import org.hum.wiretiger.core.handler.bean.Pipe;
+import org.hum.wiretiger.core.external.conmonitor.PipeMonitor;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -9,7 +9,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.HttpObject;
-import io.netty.util.AttributeKey;
 
 public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> {
 	
@@ -32,12 +31,12 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 		new Forward(sourceCtx, host, port).start().addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture proxy2RemoteFuture) throws Exception {
-				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Connected);
+				PipeMonitor.get().get(sourceCtx.channel()).setStatus(ConnectionStatus.Connected);
 				// forward request
 				proxy2RemoteFuture.channel().writeAndFlush(clientRequest);
-				((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setStatus(ConnectionStatus.Forward);
+				PipeMonitor.get().get(sourceCtx.channel()).setStatus(ConnectionStatus.Forward);
 				if (clientRequest instanceof DefaultHttpRequest) {
-					((Pipe) sourceCtx.channel().attr(AttributeKey.valueOf(Pipe.PIPE_ATTR_NAME)).get()).setRequest((DefaultHttpRequest) clientRequest);
+					PipeMonitor.get().get(sourceCtx.channel()).setRequest((DefaultHttpRequest) clientRequest);
 				}
 			}
 		});
