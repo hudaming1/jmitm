@@ -1,7 +1,7 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
-import org.hum.wiretiger.core.external.conmonitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -31,10 +31,10 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 		new Forward(sourceCtx, host, port).start().addListener(new ChannelFutureListener() {
 			@Override
 			public void operationComplete(ChannelFuture proxy2RemoteFuture) throws Exception {
-				PipeMonitor.get().get(sourceCtx.channel()).setStatus(ConnectionStatus.Connected);
+				PipeMonitor.get().get(sourceCtx.channel()).setStatus(PipeStatus.Connected);
 				// forward request
 				proxy2RemoteFuture.channel().writeAndFlush(clientRequest);
-				PipeMonitor.get().get(sourceCtx.channel()).setStatus(ConnectionStatus.Forward);
+				PipeMonitor.get().get(sourceCtx.channel()).setStatus(PipeStatus.Forward);
 				if (clientRequest instanceof DefaultHttpRequest) {
 					PipeMonitor.get().get(sourceCtx.channel()).setRequest((DefaultHttpRequest) clientRequest);
 				}

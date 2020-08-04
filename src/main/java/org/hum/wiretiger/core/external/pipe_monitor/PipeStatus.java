@@ -1,6 +1,6 @@
-package org.hum.wiretiger.core.external.conmonitor;
+package org.hum.wiretiger.core.external.pipe_monitor;
 
-public enum ConnectionStatus {
+public enum PipeStatus {
 
 	// 建立连接
 	Active,

@@ -1,6 +1,6 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.external.conmonitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;

@@ -9,8 +9,8 @@ import java.util.List;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
-import org.hum.wiretiger.core.external.conmonitor.PipeMonitor;
-import org.hum.wiretiger.core.handler.bean.Pipe;
+import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;

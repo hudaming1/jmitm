@@ -1,8 +1,8 @@
 package org.hum.wiretiger.core.handler;
 
-import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
-import org.hum.wiretiger.core.external.conmonitor.PipeMonitor;
-import org.hum.wiretiger.core.handler.bean.Pipe;
+import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
+import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -16,21 +16,21 @@ public class MonitorHandler extends ChannelInboundHandlerAdapter {
 		// init pipe
 		Pipe newPipe = new Pipe();
 		newPipe.setSourceCtx(ctx);
-		newPipe.setStatus(ConnectionStatus.Active);
+		newPipe.setStatus(PipeStatus.Active);
 		PipeMonitor.get().add(newPipe);
 		ctx.fireChannelActive();
 	}
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		PipeMonitor.get().get(ctx.channel()).setStatus(ConnectionStatus.InActive);
+		PipeMonitor.get().get(ctx.channel()).setStatus(PipeStatus.InActive);
 		ctx.fireChannelInactive();
 	}
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
             throws Exception {
-		PipeMonitor.get().get(ctx.channel()).setStatus(ConnectionStatus.Error);
+		PipeMonitor.get().get(ctx.channel()).setStatus(PipeStatus.Error);
 		log.error("Connection exception caught..", cause);
         ctx.fireExceptionCaught(cause);
     }

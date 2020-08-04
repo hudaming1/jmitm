@@ -1,10 +1,8 @@
-package org.hum.wiretiger.core.handler.bean;
+package org.hum.wiretiger.core.external.pipe_monitor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.hum.wiretiger.core.external.conmonitor.ConnectionStatus;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultHttpRequest;
@@ -16,19 +14,19 @@ public class Pipe {
 	
 	private static final AtomicInteger counter = new AtomicInteger(1);
 
-	// 
+	// client->proxy
 	private ChannelHandlerContext sourceCtx;
-	// 
+	// proxy->server
 	private ChannelHandlerContext targetCtx;
-	//
+	// request
 	private DefaultHttpRequest request;
-	//
+	// responseList
 	private List<FullHttpResponse> responseList = new ArrayList<FullHttpResponse>();
-	//
-	private ConnectionStatus status;
-	//
+	// pipe status
+	private PipeStatus status;
+	// create time
 	private long birthday;
-	//
+	// pipeId
 	private int id;
 	
 	public Pipe() {

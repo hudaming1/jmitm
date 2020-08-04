@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.external.conmonitor;
+package org.hum.wiretiger.core.external.pipe_monitor;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,8 +6,6 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
-
-import org.hum.wiretiger.core.handler.bean.Pipe;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
