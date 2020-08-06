@@ -1,5 +1,8 @@
 
-控制台使用Tab现实Pipe生命周期
+【OK】控制台使用Tab现实Pipe生命周期
+显示连接存活状态
+部分连接无法flush后无法Read，例如：https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/ms-language-packs/records/cfr-v1-zh-CN
+重制CA
 
 ## high level ##
 2.连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；

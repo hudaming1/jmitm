@@ -36,7 +36,7 @@ public class Pipe {
 	 */
 	private int protocol;
 	// 状态时间轴
-	private Map<PipeStatus, Long> statusTimeline = new ConcurrentHashMap<>();
+	private Map<Long, PipeStatus> statusTimeline = new ConcurrentHashMap<>();
 	
 	public Pipe() {
 		this.birthday = System.currentTimeMillis();
@@ -49,7 +49,7 @@ public class Pipe {
 	
 	public void recordStatus(PipeStatus status) {
 		this.status = status;
-		statusTimeline.put(status, System.currentTimeMillis());
+		statusTimeline.put(System.currentTimeMillis(), status);
 	}
 
 	public void setSourceCtx(ChannelHandlerContext ctx) {

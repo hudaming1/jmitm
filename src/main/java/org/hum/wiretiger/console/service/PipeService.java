@@ -61,18 +61,25 @@ public class PipeService {
 			return new WireTigerConnectionDetailVO();
 		}
 		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
-		detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-		detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		if (pipe.getRequest() != null) {
+			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		}
+		if (pipe.getResponseList() != null && !pipe.getResponseList().isEmpty()) {
+			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		}
 		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
 		return detailVo;
 	}
 	
-	private List<Map<String, String>> parseTimeLine(Map<PipeStatus, Long> pipeStatus) {
+	private List<Map<String, String>> parseTimeLine(Map<Long, PipeStatus> pipeStatus) {
+		if (pipeStatus == null || pipeStatus.isEmpty()) {
+			return Collections.emptyList();
+		}
 		List<Map<String, String>> result = new ArrayList<>();
-		for (Entry<PipeStatus, Long> entry : pipeStatus.entrySet()) {
+		for (Entry<Long, PipeStatus> entry : pipeStatus.entrySet()) {
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("status", entry.getKey().toString());
-			map.put("time", DATE_TIME_FORMATTER.format(new Date(entry.getValue()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
+			map.put("status", entry.getValue().toString());
+			map.put("time", DATE_TIME_FORMATTER.format(new Date(entry.getKey()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
 			result.add(map);
 		}
 		Collections.sort(result, new Comparator<Map<String, String>>() {
