@@ -90,7 +90,7 @@ public class HttpsClient {
 			newHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
-					System.out.println("handshake over");
+					System.out.println("handshake over=" + future.isSuccess());
 					ch.writeAndFlush(request);
 				}
 			});
