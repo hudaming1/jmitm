@@ -45,7 +45,10 @@ public class DefaultWireTigerServer implements WireTigerServer {
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
-			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class).handler(new LoggingHandler(LogLevel.INFO));
+			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class);
+			if (config.isDebug()) {
+				bootStrap.handler(new LoggingHandler(LogLevel.INFO));
+			}
 			bootStrap.childHandler(new HttpsProxyServerInitializer());
 
 			Channel ch = bootStrap.bind(config.getPort()).sync().channel();

@@ -11,4 +11,6 @@ public class WireTigerConfig {
 	private Integer threads;
 	// 控制台端口
 	private Integer consolePort;
+	//
+	private boolean isDebug;
 }

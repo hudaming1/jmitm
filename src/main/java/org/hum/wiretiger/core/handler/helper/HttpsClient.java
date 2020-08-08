@@ -99,7 +99,8 @@ public class HttpsClient {
 					ch.writeAndFlush(request);
 				}
 			});
-			ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
+			// TODO 根据config判断
+			// ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
 			ch.pipeline().addLast(newHandler);
 			ch.pipeline().addLast(new HttpResponseDecoder());
 			ch.pipeline().addLast(new HttpRequestEncoder());

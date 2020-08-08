@@ -11,6 +11,7 @@ public class WireTigerServerRun {
 		config.setPort(52007);
 		config.setConsolePort(8080);
 		config.setThreads(Runtime.getRuntime().availableProcessors());
+		config.setDebug(false);
 		// start
 		ServerFactory.create(config).start();
 	}
