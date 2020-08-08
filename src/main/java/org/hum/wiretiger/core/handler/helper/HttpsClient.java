@@ -17,9 +17,12 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
@@ -28,8 +31,8 @@ import io.netty.util.concurrent.Promise;
 
 public class HttpsClient {
 
-	private static final EventLoopGroup WORKER_GROUP = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
-	private static final EventLoopGroup WORKER_GROUP2 = new NioEventLoopGroup(1);
+	private static final EventLoopGroup WORKER_GROUP = new NioEventLoopGroup(1);
+	private static final EventLoopGroup WORKER_GROUP2 = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
 
 	public static Bootstrap newBootStrap() {
 		Bootstrap bootstrap = new Bootstrap();
@@ -43,7 +46,8 @@ public class HttpsClient {
 	public static FullHttpResponse send(String host, int port, HttpRequest httpRequest) throws Exception {
 		final Bootstrap b = newBootStrap();
 		Promise<FullHttpResponse> promise = new DefaultPromise<FullHttpResponse>(WORKER_GROUP2.next());
-		b.handler(new ClientInit(new MainHandler(promise), SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build(), httpRequest));
+		SslContext sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+		b.handler(new ClientInit(new MainHandler(promise), sslContext, httpRequest));
 		b.connect(host, port);
 		return promise.get();
 	}
@@ -90,10 +94,13 @@ public class HttpsClient {
 			newHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
+					// java.nio.channels.ClosedChannelException
 					System.out.println("handshake over=" + future.isSuccess());
+//					future.cause().printStackTrace();
 					ch.writeAndFlush(request);
 				}
 			});
+			ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
 			ch.pipeline().addLast(newHandler);
 			ch.pipeline().addLast(new HttpResponseDecoder());
 			ch.pipeline().addLast(new HttpRequestEncoder());

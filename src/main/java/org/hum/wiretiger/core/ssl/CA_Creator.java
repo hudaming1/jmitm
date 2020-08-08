@@ -77,10 +77,6 @@ public class CA_Creator implements Callable<byte[]> {
 		store.store(baos, CA_PASS.toCharArray());
 		return baos;
 	}
-	
-	public static void main(String[] args) throws IOException {
-		System.out.println(new sun.security.x509.DNSName("*.163.net"));
-	}
 
 	// 用ke所代表的CA给subject签发证书，并存储到名称为name的jks文件里面。
 	public static ByteArrayOutputStream gen(String domain, PrivateKeyEntry caPrivateKey, String serverSubject, String name) throws Exception {
