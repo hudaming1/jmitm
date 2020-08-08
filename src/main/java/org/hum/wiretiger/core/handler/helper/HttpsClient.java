@@ -17,8 +17,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
@@ -104,7 +102,7 @@ public class HttpsClient {
 			ch.pipeline().addLast(newHandler);
 			ch.pipeline().addLast(new HttpResponseDecoder());
 			ch.pipeline().addLast(new HttpRequestEncoder());
-			ch.pipeline().addLast(new HttpObjectAggregator(1024 * 1024));
+			ch.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
 			ch.pipeline().addLast(handler);
 		}
 	}
