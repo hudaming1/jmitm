@@ -13,6 +13,7 @@ import java.util.List;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 
@@ -32,45 +33,12 @@ public class MyTest {
 		System.out.println("rawpath            : " + uri.getRawPath());
 	}
 
-	public static Byte[] hexToByteArray(String inHex) {
-		int hexlen = inHex.length();
-		Byte[] result;
-		if (hexlen % 2 == 1) {
-			// 奇数
-			hexlen++;
-			result = new Byte[(hexlen / 2)];
-			inHex = "0" + inHex;
-		} else {
-			// 偶数
-			result = new Byte[(hexlen / 2)];
-		}
-		int j = 0;
-		for (int i = 0; i < hexlen; i += 2) {
-			result[j] = hexToByte(inHex.substring(i, i + 2));
-			j++;
-		}
-		return result;
-	}
-
-	public static Byte hexToByte(String inHex) {
-		return (byte) Integer.parseInt(inHex, 16);
-	}
-
 	// ip.src_host==54.230.175.67||ip.dst_host==54.230.175.67
 	@Test
 	public void test3() throws UnknownHostException, IOException {
 //		String hexStreamString = "16030300f5010000f103035f2e1cfc3316dc8b626126bfc8d9e81f37fb7ec79d00b1cc6146bdd3ef2aba3a000056c024c028003dc026c02a006b006ac00ac0140035c005c00f00390038c023c027003cc025c02900670040c009c013002fc004c00e00330032c02cc02bc030009dc02ec032009f00a3c02f009cc02dc031009e00a200ff01000072000a001600140017001800190009000a000b000c000d000e0016000b00020100000d001c001a0603060105030501040304010402030303010302020302010202001700000000002a002800002566697265666f782e73657474696e67732e73657276696365732e6d6f7a696c6c612e636f6d";
 		String hexStreamString = "16030300cb010000c703035f2e1cfc3316dc8b626126bfc8d9e81f37fb7ec79d00b1cc6146bdd3ef2aba3a000056c024c028003dc026c02a006b006ac00ac0140035c005c00f00390038c023c027003cc025c02900670040c009c013002fc004c00e00330032c02cc02bc030009dc02ec032009f00a3c02f009cc02dc031009e00a200ff01000048000a001600140017001800190009000a000b000c000d000e0016000b00020100000d001c001a060306010503050104030401040203030301030202030201020200170000";
-		List<Byte> list = new ArrayList<>();
-		for (int i = 0; i < hexStreamString.length(); i += 2) {
-			list.addAll(Arrays.asList(hexToByteArray(hexStreamString.substring(i, i + 2))));
-		}
-		Byte[] byteList = list.toArray(new Byte[list.size()]);
-		byte[] bytes = new byte[byteList.length];
-		int cur = 0;
-		for (Byte b : byteList) {
-			bytes[cur ++] = b;
-		}
+		byte[] bytes = DatatypeConverter.parseHexBinary(hexStreamString);
 		Socket socket = new Socket("54.230.175.67", 443);
 		socket.getOutputStream().write(bytes);
 		socket.getOutputStream().flush();
@@ -91,16 +59,7 @@ public class MyTest {
 //		String hexStreamString = "16030300860100008203035f2e1cb8b70645dc0a5fa33cb24fb5c2d31515a1e7fa6987af0949391bb080c3000010c02cc02bc02fc013c014009c002f003501000049000a001600140017001800190009000a000b000c000d000e0016000b00020100000d001c001a060306010503050104030401040203030301030202030201020200170000ff01000100";
 		String hexStreamString = "16030300b4010000b003035f2e1cb8b70645dc0a5fa33cb24fb5c2d31515a1e7fa6987af0949391bb080c3000010c02cc02bc02fc013c014009c002f003501000077000a001600140017001800190009000a000b000c000d000e0016000b00020100000d001c001a060306010503050104030401040203030301030202030201020200170000ff01000100";
 		hexStreamString += "0000002a002800002566697265666f782e73657474696e67732e73657276696365732e6d6f7a696c6c612e636f6d";
-		List<Byte> list = new ArrayList<>();
-		for (int i = 0; i < hexStreamString.length(); i += 2) {
-			list.addAll(Arrays.asList(hexToByteArray(hexStreamString.substring(i, i + 2))));
-		}
-		Byte[] byteList = list.toArray(new Byte[list.size()]);
-		byte[] bytes = new byte[byteList.length];
-		int cur = 0;
-		for (Byte b : byteList) {
-			bytes[cur ++] = b;
-		}
+		byte[] bytes = DatatypeConverter.parseHexBinary(hexStreamString);
 		Socket socket = new Socket("54.230.175.67", 443);
 		socket.getOutputStream().write(bytes);
 		socket.getOutputStream().flush();
