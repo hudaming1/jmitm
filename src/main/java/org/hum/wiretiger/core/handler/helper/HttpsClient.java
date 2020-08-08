@@ -97,7 +97,7 @@ public class HttpsClient {
 					// java.nio.channels.ClosedChannelException
 					System.out.println("handshake over=" + future.isSuccess());
 //					future.cause().printStackTrace();
-					ch.writeAndFlush(request);
+//					ch.writeAndFlush(request);
 				}
 			});
 			ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
