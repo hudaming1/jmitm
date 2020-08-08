@@ -22,7 +22,6 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
-import io.netty.handler.ssl.SslProvider;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.DefaultPromise;
 import io.netty.util.concurrent.Future;
@@ -47,7 +46,7 @@ public class HttpsClient {
 		final Bootstrap b = newBootStrap();
 		Promise<FullHttpResponse> promise = new DefaultPromise<FullHttpResponse>(WORKER_GROUP2.next());
 		SslContext sslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
-		b.handler(new ClientInit(new MainHandler(promise), sslContext, httpRequest));
+		b.handler(new ClientInit(host, new MainHandler(promise), sslContext, httpRequest));
 		b.connect(host, port);
 		return promise.get();
 	}
@@ -81,8 +80,10 @@ public class HttpsClient {
 		private HttpRequest request;
 		private ChannelInboundHandler handler;
 		private SslContext context;
+		private String host;
 
-		public ClientInit(ChannelInboundHandler handler, SslContext context, HttpRequest request) {
+		public ClientInit(String host, ChannelInboundHandler handler, SslContext context, HttpRequest request) {
+			this.host = host;
 			this.handler = handler;
 			this.context = context;
 			this.request = request;
@@ -90,14 +91,12 @@ public class HttpsClient {
 
 		@Override
 		protected void initChannel(SocketChannel ch) throws Exception {
-			SslHandler newHandler = context.newHandler(ch.alloc());
+			// fixbug: jdk8在ssl的handshake时没有sni的bug
+			SslHandler newHandler = context.newHandler(ch.alloc(), host, -1);
 			newHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
-					// java.nio.channels.ClosedChannelException
-					System.out.println("handshake over=" + future.isSuccess());
-//					future.cause().printStackTrace();
-//					ch.writeAndFlush(request);
+					ch.writeAndFlush(request);
 				}
 			});
 			ch.pipeline().addLast(new LoggingHandler(LogLevel.DEBUG));
