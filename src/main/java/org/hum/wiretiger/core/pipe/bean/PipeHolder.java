@@ -14,12 +14,19 @@ public class PipeHolder {
 
 	private Pipe pipe = new Pipe();
 
-	public static PipeHolder create(Channel channel) {
+	public static PipeHolder create() {
 		PipeHolder holder = new PipeHolder();
 		holder.pipe.setId(counter.getAndIncrement());
-		holder.pipe.setSourceCtx(channel);
 		holder.pipe.addStatus(PipeStatus.Init);
 		return holder;
+	}
+	
+	public void registClient(Channel channel) {
+		this.pipe.setSourceCtx(channel);
+	}
+	
+	public void registServer(Channel channel) {
+		this.pipe.setTargetCtx(channel);
 	}
 
 	public void onConnect4BackChannel(Channel channel) {
@@ -65,6 +72,10 @@ public class PipeHolder {
 	
 	public Channel getClientChannel() {
 		return pipe.getSourceCtx();
+	}
+	
+	public Channel getServerChannel() {
+		return pipe.getTargetCtx();
 	}
 	
 	public String getUri() {

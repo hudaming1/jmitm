@@ -1,9 +1,8 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.pipe.bean.PipeHolder;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -21,7 +20,7 @@ public class Forward {
 	private int port;
 	
 	
-	public Forward(PipeHolder pipeHolder, String host, int port) {
+	public Forward(ChannelDuplexHandler duplexHandler, String host, int port) {
 		this.host = host;
 		this.port = port;
 		bootStrap = new Bootstrap();
@@ -32,7 +31,7 @@ public class Forward {
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
 				proxy2ServerChannel.pipeline().addFirst(new HttpRequestEncoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
-				proxy2ServerChannel.pipeline().addLast(new ForwardHandler(pipeHolder));
+				proxy2ServerChannel.pipeline().addLast(duplexHandler);
 			}
 		});
 	}

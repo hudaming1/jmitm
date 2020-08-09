@@ -4,8 +4,8 @@ import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
-import org.hum.wiretiger.core.handler.http.HttpForwardHandler;
 import org.hum.wiretiger.core.handler.https.HttpsForwardServerHandler;
+import org.hum.wiretiger.core.pipe.DefaultPipeHandler;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.ssl.HttpSslContextFactory;
@@ -30,7 +30,8 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.fireChannelActive();
-        PipeHolder pipeHolder = PipeHolder.create(ctx.channel());
+        PipeHolder pipeHolder = PipeHolder.create();
+        pipeHolder.registClient(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         PipeManager.get().add(pipeHolder);
     }
@@ -66,7 +67,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     	} else {
     		client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).set(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-    		client2ProxyCtx.pipeline().addLast(new HttpForwardHandler(pipeHolder, request.getHost(), request.getPort()));
+    		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(pipeHolder, request.getHost(), request.getPort()));
     		client2ProxyCtx.pipeline().fireChannelRead(msg);
     	}
 	}
