@@ -13,8 +13,6 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.HttpRequestDecoder;
-import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.ssl.SslHandler;
@@ -46,8 +44,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 		} else {
 			// HTTP
-			client2ProxyCtx.pipeline().addFirst(new HttpResponseEncoder());
-			client2ProxyCtx.pipeline().addLast(new HttpRequestDecoder());
+			client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
 			client2ProxyCtx.pipeline().addLast(new HttpForwardHandler(request.getHost(), request.getPort()));
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.fireChannelRead(msg);

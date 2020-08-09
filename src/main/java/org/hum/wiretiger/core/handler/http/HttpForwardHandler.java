@@ -33,15 +33,12 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 			@Override
 			public void operationComplete(ChannelFuture proxy2RemoteFuture) throws Exception {
 				// HTTP协议与对端建立连接
-//				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Connected);
 				proxy2RemoteFuture.channel().writeAndFlush(clientRequest);
 				if (clientRequest instanceof DefaultHttpRequest) {
 					PipeMonitor.get().get(sourceCtx.channel()).setRequest((DefaultHttpRequest) clientRequest);
 				} else {
 					log.warn("found unknown request-type=" + clientRequest.getClass().getName() + ", instance=" + clientRequest);
 				}
-				// HTTP协议转发了请求
-//				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Forward);
 			}
 		});
 	}

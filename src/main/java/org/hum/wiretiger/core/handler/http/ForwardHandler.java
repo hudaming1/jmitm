@@ -28,7 +28,6 @@ public class ForwardHandler extends SimpleChannelInboundHandler<FullHttpResponse
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse resp) throws Exception {
 		
-		
 		PipeMonitor.get().get(client2ProxyChannel).addResponse(resp);
 		
 		// forward response
