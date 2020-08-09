@@ -1,11 +1,11 @@
-package org.hum.wiretiger.core.server.impl;
+package org.hum.wiretiger.core.server.wiretiger;
 
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hum.wiretiger.config.WireTigerConfig;
-import org.hum.wiretiger.core.server.ConsoleServer;
 import org.hum.wiretiger.core.server.WireTigerServer;
+import org.hum.wiretiger.core.server.console.ConsoleServer;
 import org.hum.wiretiger.exception.WireTigerException;
 
 import io.netty.bootstrap.ServerBootstrap;

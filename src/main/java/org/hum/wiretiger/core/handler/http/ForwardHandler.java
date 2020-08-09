@@ -1,8 +1,7 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
+import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -12,10 +11,10 @@ import io.netty.handler.codec.http.FullHttpResponse;
  * @author hudaming
  */
 public class ForwardHandler extends SimpleChannelInboundHandler<FullHttpResponse> {
-	private Channel client2ProxyChannel;
+	private PipeHolder pipeHolder;
 	
-	public ForwardHandler(Channel client2ProxyCtx) {
-		this.client2ProxyChannel = client2ProxyCtx;
+	public ForwardHandler(PipeHolder pipeHolder) {
+		this.pipeHolder = pipeHolder;
 	}
 	
     @Override
@@ -23,16 +22,24 @@ public class ForwardHandler extends SimpleChannelInboundHandler<FullHttpResponse
         if (ctx.channel().isActive()) {
         	ctx.channel().close();
         }
+        ctx.fireExceptionCaught(cause);
+        pipeHolder.onError4BackChannel();
     }
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, FullHttpResponse resp) throws Exception {
-		
-		PipeMonitor.get().get(client2ProxyChannel).addResponse(resp);
-		
-		// forward response
-    	if (client2ProxyChannel.isActive()) {
-    		this.client2ProxyChannel.writeAndFlush(resp);
-    	}
+        pipeHolder.onReadResponse(resp);
 	}
+
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        ctx.fireChannelInactive();
+        pipeHolder.onDisconnect4BackChannel();
+    }
+
+    @Override
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.fireChannelActive();
+        pipeHolder.onConnect4BackChannel(ctx.channel());
+    }
 }

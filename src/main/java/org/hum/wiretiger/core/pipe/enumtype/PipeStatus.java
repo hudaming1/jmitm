@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.external.pipe_monitor;
+package org.hum.wiretiger.core.pipe.enumtype;
 
 /**
  * 管道状态

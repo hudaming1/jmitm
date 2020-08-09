@@ -18,9 +18,10 @@ import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
-import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
-import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
-import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
+import org.hum.wiretiger.core.pipe.PipeManager;
+import org.hum.wiretiger.core.pipe.bean.Pipe;
+import org.hum.wiretiger.core.pipe.bean.PipeHolder;
+import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -28,22 +29,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipeService {
 	
-	private PipeMonitor pipeMonitor = PipeMonitor.get();
+	private PipeManager pipeMonitor = PipeManager.get();
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
 	public List<WireTigerConnectionListVO> list() {
-		Collection<Pipe> all = pipeMonitor.getAll();
-		List<WireTigerConnectionListVO> requestList = new ArrayList<>();
-		all.forEach(item -> {
-			WireTigerConnectionListVO vo = new WireTigerConnectionListVO();
-			vo.setRequestId(item.getId());
-			vo.setUri(item.getRequest() == null ? "waitting.." : getPath(item.getRequest().uri()));
-			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
-			vo.setProtocol(Protocol.getEnum(item.getProtocol()).getDesc());
-			vo.setStatus(item.getStatus().toString());
-			requestList.add(vo);
-		});
-		return requestList;
+//		Collection<PipeHolder> all = pipeMonitor.getAll();
+//		List<WireTigerConnectionListVO> requestList = new ArrayList<>();
+//		all.forEach(item -> {
+//			WireTigerConnectionListVO vo = new WireTigerConnectionListVO();
+//			vo.setRequestId(item.getId());
+//			vo.setUri(item.getRequest() == null ? "waitting.." : getPath(item.getRequest().uri()));
+//			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
+//			vo.setProtocol(Protocol.getEnum(item.getProtocol()).getDesc());
+//			vo.setStatus(item.getStatus().toString());
+//			requestList.add(vo);
+//		});
+//		return requestList;
+		return null;
 	}
 	
 	private String getPath(String uri) {
@@ -56,19 +58,20 @@ public class PipeService {
 	}
 
 	public WireTigerConnectionDetailVO getById(int id) {
-		Pipe pipe = pipeMonitor.getById(id);
-		if (pipe == null) {
-			return new WireTigerConnectionDetailVO();
-		}
-		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
-		if (pipe.getRequest() != null) {
-			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-		}
-		if (pipe.getResponseList() != null && !pipe.getResponseList().isEmpty()) {
-			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-		}
-		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
-		return detailVo;
+//		Pipe pipe = pipeMonitor.getById(id);
+//		if (pipe == null) {
+//			return new WireTigerConnectionDetailVO();
+//		}
+//		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
+//		if (pipe.getRequest() != null) {
+//			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+//		}
+//		if (pipe.getResponseList() != null && !pipe.getResponseList().isEmpty()) {
+//			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+//		}
+//		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
+//		return detailVo;
+		return null;
 	}
 	
 	private List<Map<String, String>> parseTimeLine(Map<Long, PipeStatus> pipeStatus) {

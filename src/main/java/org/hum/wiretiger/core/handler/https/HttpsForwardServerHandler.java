@@ -1,7 +1,7 @@
 package org.hum.wiretiger.core.handler.https;
 
-import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 import org.hum.wiretiger.core.handler.helper.HttpsClient;
+import org.hum.wiretiger.core.pipe.PipeManager;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -28,9 +28,9 @@ public class HttpsForwardServerHandler extends SimpleChannelInboundHandler<HttpO
 	@Override
 	public void channelRead0(ChannelHandlerContext client2ProxyCtx, HttpObject msg) throws Exception {
 		if (msg instanceof DefaultHttpRequest) {
-			PipeMonitor.get().get(client2ProxyCtx.channel()).setRequest((DefaultHttpRequest) msg);
+//			PipeMonitor.get().get(client2ProxyCtx.channel()).setRequest((DefaultHttpRequest) msg);
 			FullHttpResponse response = HttpsClient.send(host, port, (HttpRequest) msg);
-			PipeMonitor.get().get(client2ProxyCtx.channel()).addResponse(response);
+//			PipeMonitor.get().get(client2ProxyCtx.channel()).addResponse(response);
 			client2ProxyCtx.writeAndFlush(response);
 		}
 	}

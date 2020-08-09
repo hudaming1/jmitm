@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.server;
+package org.hum.wiretiger.core.server.console;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
