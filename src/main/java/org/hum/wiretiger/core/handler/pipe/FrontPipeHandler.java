@@ -1,9 +1,10 @@
 package org.hum.wiretiger.core.handler.pipe;
 
+import org.hum.wiretiger.common.Constant;
+import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
-import org.hum.wiretiger.core.external.pipe_monitor.Protocol;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
 
@@ -11,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -39,8 +41,10 @@ public class FrontPipeHandler extends ChannelDuplexHandler {
     	HttpRequest request = HttpHelper.decode((ByteBuf) msg);
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
     		PipeMonitor.get().get(ctx.channel()).setProtocol(Protocol.HTTPS.getCode());
+    		ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).set(Protocol.HTTPS);
     	} else {
     		PipeMonitor.get().get(ctx.channel()).setProtocol(Protocol.HTTP.getCode());
+    		ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).set(Protocol.HTTP);
     	}
     	PipeMonitor.get().get(ctx.channel()).recordStatus(PipeStatus.Parsed);
         ctx.fireChannelRead(msg);

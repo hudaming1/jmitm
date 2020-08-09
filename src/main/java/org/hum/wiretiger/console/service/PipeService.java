@@ -14,13 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
 import org.hum.wiretiger.core.external.pipe_monitor.Pipe;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
 import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
-import org.hum.wiretiger.core.external.pipe_monitor.Protocol;
 
 import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;

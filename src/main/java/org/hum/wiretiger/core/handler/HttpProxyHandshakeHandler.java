@@ -1,5 +1,7 @@
 package org.hum.wiretiger.core.handler;
 
+import org.hum.wiretiger.common.Constant;
+import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
 import org.hum.wiretiger.core.handler.http.HttpForwardHandler;
@@ -16,22 +18,21 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 
 public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
-	private static final String HTTPS_HANDSHAKE_METHOD = "CONNECT";
 	
 	@Override
 	public void channelRead(ChannelHandlerContext client2ProxyCtx, Object msg) throws Exception {
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
 		// 区分HTTP和HTTPS
-		if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
+		if (client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).get() == Protocol.HTTPS) {
 			// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(request.getHost()));
-			// 确保SSL握手完成后，将业务Handler加入pipeline
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
