@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
@@ -44,6 +45,9 @@ public class PipeHolder {
 	}
 	
 	public String getUri() {
+		if (pipe.getRequest() == null) {
+			return null;
+		}
 		return pipe.getRequest().uri();
 	}
 	
@@ -54,9 +58,13 @@ public class PipeHolder {
 	public Protocol getProtocol() {
 		return pipe.getProtocol();
 	}
+	
+	public Map<Long, PipeStatus> getStatusTimeline() {
+		return Collections.unmodifiableMap(pipe.getStatusMap());
+	}
 
 	public PipeStatus getCurrentStatus() {
-		List<PipeStatus> status = new ArrayList<>(pipe.getStatusMap().keySet());
+		List<PipeStatus> status = new ArrayList<>(pipe.getStatusMap().values());
 		Collections.sort(status, new Comparator<PipeStatus>() {
 			@Override
 			public int compare(PipeStatus o1, PipeStatus o2) {

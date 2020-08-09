@@ -65,8 +65,8 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 			channelWrite4Server(ctx, msg, promise);
 		} else {
 			log.warn("unknown channel type");
-			ctx.write(msg, promise);
 		}
+		ctx.write(msg, promise);
 	}
 	
 	public abstract void channelActive4Server(ChannelHandlerContext ctx) throws Exception;

@@ -12,10 +12,10 @@ public enum PipeStatus {
 	Init(1, "Init"),
 	// 已经解析HTTP请求 client -> proxy
 	Parsed(2, "Parsed"), 
-	// 读取客户端请求
-	Read(3, "Read"),
 	// 已经与对端Server建立间接
-	Connected(4, "Connected"),
+	Connected(3, "Connected"),
+	// 读取客户端请求
+	Read(4, "Read"),
 	// 请求已经转发 proxy -> server
 	Forward(5, "Forward"),
 	// 收到了对端Server的响应，server -> proxy

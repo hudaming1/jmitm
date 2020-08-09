@@ -55,10 +55,10 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 				public void operationComplete(Future<? super Channel> future) throws Exception {
 		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
 					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(pipeHolder, request.getHost(), request.getPort()));
-					client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 				}
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
+			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
     		pipeHolder.setProtocol(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());

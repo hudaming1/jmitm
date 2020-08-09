@@ -25,7 +25,7 @@ public class Pipe {
 	// responseList
 	private List<FullHttpResponse> responseList = new ArrayList<FullHttpResponse>();
 	// pipe status
-	private Map<PipeStatus, Long> statusMap = new HashMap<>();
+	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// create time
 	private long birthday;
 	// pipeId
@@ -34,7 +34,7 @@ public class Pipe {
 	private Protocol protocol;
 	
 	public void addStatus(PipeStatus status) {
-		this.statusMap.put(status,System.currentTimeMillis());
+		this.statusMap.put(System.currentTimeMillis(), status);
 	}
 
 	void setSourceCtx(Channel sourceCtx) {
@@ -53,7 +53,7 @@ public class Pipe {
 		this.responseList = responseList;
 	}
 
-	void setStatusMap(Map<PipeStatus, Long> statusMap) {
+	void setStatusMap(Map<Long, PipeStatus> statusMap) {
 		this.statusMap = statusMap;
 	}
 

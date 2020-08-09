@@ -73,9 +73,9 @@ public class Forward {
 		}
 	}
 	
-	public Future<?> start() {
+	public Future<?> start() throws InterruptedException {
 		if (isHttps) {
-			bootStrap.connect(host, port);
+			bootStrap.connect(host, port).sync();
 			return sslHandler.handshakeFuture();
 		} else {
 			return bootStrap.connect(host, port);

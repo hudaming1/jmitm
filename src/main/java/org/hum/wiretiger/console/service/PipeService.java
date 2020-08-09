@@ -14,16 +14,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.hum.wiretiger.common.enumtype.Protocol;
-import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
-import org.hum.wiretiger.core.pipe.bean.Pipe;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
-import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -57,20 +53,19 @@ public class PipeService {
 	}
 
 	public WireTigerConnectionDetailVO getById(int id) {
-//		Pipe pipe = pipeMonitor.getById(id);
-//		if (pipe == null) {
-//			return new WireTigerConnectionDetailVO();
-//		}
-//		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
+		PipeHolder pipe = pipeMonitor.getById(id);
+		if (pipe == null) {
+			return new WireTigerConnectionDetailVO();
+		}
+		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
 //		if (pipe.getRequest() != null) {
 //			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 //		}
 //		if (pipe.getResponseList() != null && !pipe.getResponseList().isEmpty()) {
 //			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 //		}
-//		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
-//		return detailVo;
-		return null;
+		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
+		return detailVo;
 	}
 	
 	private List<Map<String, String>> parseTimeLine(Map<Long, PipeStatus> pipeStatus) {
@@ -80,7 +75,7 @@ public class PipeService {
 		List<Map<String, String>> result = new ArrayList<>();
 		for (Entry<Long, PipeStatus> entry : pipeStatus.entrySet()) {
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("status", entry.getValue().toString());
+			map.put("status", entry.getValue().getDesc());
 			map.put("time", DATE_TIME_FORMATTER.format(new Date(entry.getKey()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
 			result.add(map);
 		}

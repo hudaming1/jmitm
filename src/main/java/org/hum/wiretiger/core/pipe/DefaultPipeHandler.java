@@ -1,5 +1,6 @@
 package org.hum.wiretiger.core.pipe;
 
+import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
@@ -14,7 +15,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
 		try {
-			new Forward(this, host, port).start().sync();
+			new Forward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
