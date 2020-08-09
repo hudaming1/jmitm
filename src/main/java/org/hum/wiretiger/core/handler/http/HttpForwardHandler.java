@@ -1,7 +1,6 @@
 package org.hum.wiretiger.core.handler.http;
 
 import org.hum.wiretiger.core.external.pipe_monitor.PipeMonitor;
-import org.hum.wiretiger.core.external.pipe_monitor.PipeStatus;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -34,7 +33,7 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 			@Override
 			public void operationComplete(ChannelFuture proxy2RemoteFuture) throws Exception {
 				// HTTP协议与对端建立连接
-				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Connected);
+//				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Connected);
 				proxy2RemoteFuture.channel().writeAndFlush(clientRequest);
 				if (clientRequest instanceof DefaultHttpRequest) {
 					PipeMonitor.get().get(sourceCtx.channel()).setRequest((DefaultHttpRequest) clientRequest);
@@ -42,7 +41,7 @@ public class HttpForwardHandler extends SimpleChannelInboundHandler<HttpObject> 
 					log.warn("found unknown request-type=" + clientRequest.getClass().getName() + ", instance=" + clientRequest);
 				}
 				// HTTP协议转发了请求
-				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Forward);
+//				PipeMonitor.get().get(sourceCtx.channel()).recordStatus(PipeStatus.Forward);
 			}
 		});
 	}

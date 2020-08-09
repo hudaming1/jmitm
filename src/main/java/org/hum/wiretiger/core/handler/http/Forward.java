@@ -1,6 +1,6 @@
 package org.hum.wiretiger.core.handler.http;
 
-import org.hum.wiretiger.core.handler.InactiveRelHandler;
+import org.hum.wiretiger.core.handler.pipe.BackPipeHandler;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -26,9 +26,10 @@ public class Forward {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
+				proxy2ServerChannel.pipeline().addFirst(new BackPipeHandler(proxy2ServerChannel));
 				proxy2ServerChannel.pipeline().addFirst(new HttpRequestEncoder());
-				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(1024 * 1024));
-				proxy2ServerChannel.pipeline().addLast(new ForwardHandler(client2ProxyCtx.channel()), new InactiveRelHandler(client2ProxyCtx.channel()));
+				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
+				proxy2ServerChannel.pipeline().addLast(new ForwardHandler(client2ProxyCtx.channel()));
 			}
 		});
 	}

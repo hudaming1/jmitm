@@ -38,9 +38,11 @@ public class Pipe {
 	// 状态时间轴
 	private Map<Long, PipeStatus> statusTimeline = new ConcurrentHashMap<>();
 	
-	public Pipe() {
+	public Pipe(ChannelHandlerContext ctx) {
+		this.sourceCtx = ctx;
 		this.birthday = System.currentTimeMillis();
 		this.id = counter.getAndIncrement();
+		recordStatus(PipeStatus.Init);
 	}
 	
 	public void addResponse(FullHttpResponse resp) {
@@ -51,9 +53,13 @@ public class Pipe {
 		this.status = status;
 		statusTimeline.put(System.currentTimeMillis(), status);
 	}
+	
+	public void inactive(ChannelHandlerContext ctx) {
+		recordStatus(PipeStatus.Closed);
+	}
 
-	public void setSourceCtx(ChannelHandlerContext ctx) {
-		this.sourceCtx = ctx;
+	public void error(ChannelHandlerContext ctx) {
+		recordStatus(PipeStatus.Error);
 	}
 
 	public void setProtocol(int protocol) {

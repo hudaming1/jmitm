@@ -16,7 +16,7 @@
 package org.hum.wiretiger.core.server.impl;
 
 import org.hum.wiretiger.core.handler.HttpProxyHandshakeHandler;
-import org.hum.wiretiger.core.handler.MonitorHandler;
+import org.hum.wiretiger.core.handler.pipe.FrontPipeHandler;
 
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.socket.SocketChannel;
@@ -28,7 +28,7 @@ public class HttpsProxyServerInitializer extends ChannelInitializer<SocketChanne
 
 	@Override
 	public void initChannel(SocketChannel ch) {
-		ch.pipeline().addLast(new MonitorHandler());
+		ch.pipeline().addLast(new FrontPipeHandler());
 		ch.pipeline().addLast(new HttpProxyHandshakeHandler());
 	}
 }
