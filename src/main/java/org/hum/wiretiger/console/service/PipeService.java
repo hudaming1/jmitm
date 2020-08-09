@@ -33,19 +33,18 @@ public class PipeService {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
 	public List<WireTigerConnectionListVO> list() {
-//		Collection<PipeHolder> all = pipeMonitor.getAll();
-//		List<WireTigerConnectionListVO> requestList = new ArrayList<>();
-//		all.forEach(item -> {
-//			WireTigerConnectionListVO vo = new WireTigerConnectionListVO();
-//			vo.setRequestId(item.getId());
-//			vo.setUri(item.getRequest() == null ? "waitting.." : getPath(item.getRequest().uri()));
+		Collection<PipeHolder> all = pipeMonitor.getAll();
+		List<WireTigerConnectionListVO> requestList = new ArrayList<>();
+		all.forEach(item -> {
+			WireTigerConnectionListVO vo = new WireTigerConnectionListVO();
+			vo.setRequestId(item.getId());
+			vo.setUri(item.getUri() == null ? "waitting.." : getPath(item.getUri()));
 //			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
-//			vo.setProtocol(Protocol.getEnum(item.getProtocol()).getDesc());
-//			vo.setStatus(item.getStatus().toString());
-//			requestList.add(vo);
-//		});
-//		return requestList;
-		return null;
+			vo.setProtocol(item.getProtocol().getDesc());
+			vo.setStatus(item.getCurrentStatus().getDesc());
+			requestList.add(vo);
+		});
+		return requestList;
 	}
 	
 	private String getPath(String uri) {

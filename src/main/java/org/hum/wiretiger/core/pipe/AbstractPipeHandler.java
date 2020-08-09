@@ -4,6 +4,7 @@ import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,11 +57,27 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		}
 	}
 	
+	@Override
+	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		if (pipeHolder.getClientChannel() == ctx.channel()) {
+			channelWrite4Client(ctx, msg, promise);
+		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
+			channelWrite4Server(ctx, msg, promise);
+		} else {
+			log.warn("unknown channel type");
+			ctx.write(msg, promise);
+		}
+	}
+	
 	public abstract void channelActive4Server(ChannelHandlerContext ctx) throws Exception;
 	
 	public abstract void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception;
 	
 	public abstract void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception;
+	
+	public abstract void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception;
+	
+	public abstract void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception;
 	
 	public abstract void channelInactive4Client(ChannelHandlerContext ctx) throws Exception;
 	

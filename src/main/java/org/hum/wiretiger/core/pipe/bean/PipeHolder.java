@@ -1,24 +1,22 @@
 package org.hum.wiretiger.core.pipe.bean;
 
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
+import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.HttpObject;
-import io.netty.util.ReferenceCountUtil;
 
 public class PipeHolder {
 
-	private static final AtomicInteger counter = new AtomicInteger(1);
-
 	private Pipe pipe = new Pipe();
-
-	public static PipeHolder create() {
-		PipeHolder holder = new PipeHolder();
-		holder.pipe.setId(counter.getAndIncrement());
-		holder.pipe.addStatus(PipeStatus.Init);
-		return holder;
+	
+	public PipeHolder(int id) {
+		pipe.setId(id);
+		pipe.addStatus(PipeStatus.Init);
 	}
 	
 	public void registClient(Channel channel) {
@@ -28,42 +26,9 @@ public class PipeHolder {
 	public void registServer(Channel channel) {
 		this.pipe.setTargetCtx(channel);
 	}
-
-	public void onConnect4BackChannel(Channel channel) {
-		pipe.setTargetCtx(channel);
-	}
-
-	public void onReadRequest(HttpObject req) {
-		pipe.getTargetCtx().writeAndFlush(req);
-	}
-
-	public void onReadResponse(HttpObject res) {
-		ReferenceCountUtil.retain(res);
-		pipe.getSourceCtx().writeAndFlush(res);
-	}
-
-	public void onDisconnect4FrontChannel() {
-		if (pipe.getTargetCtx().isActive()) {
-			pipe.getTargetCtx().close();
-		}
-	}
-
-	public void onDisconnect4BackChannel() {
-		if (pipe.getSourceCtx().isActive()) {
-			pipe.getSourceCtx().close();
-		}
-	}
-
-	public void onError4FrontChannel() {
-		if (pipe.getTargetCtx().isActive()) {
-			pipe.getTargetCtx().close();
-		}
-	}
-
-	public void onError4BackChannel() {
-		if (pipe.getSourceCtx().isActive()) {
-			pipe.getSourceCtx().close();
-		}
+	 
+	public void recordStatus(PipeStatus status) {
+		this.pipe.addStatus(status);
 	}
 	
 	public int getId() {
@@ -81,4 +46,29 @@ public class PipeHolder {
 	public String getUri() {
 		return pipe.getRequest().uri();
 	}
+	
+	public void setProtocol(Protocol protocol) {
+		pipe.setProtocol(protocol);
+	}
+
+	public Protocol getProtocol() {
+		return pipe.getProtocol();
+	}
+
+	public PipeStatus getCurrentStatus() {
+		List<PipeStatus> status = new ArrayList<>(pipe.getStatusMap().keySet());
+		Collections.sort(status, new Comparator<PipeStatus>() {
+			@Override
+			public int compare(PipeStatus o1, PipeStatus o2) {
+				if (o1 == null) {
+					return 1;
+				} else if (o2 == null) {
+					return -1;
+				}
+				return o1.getCode() < o2.getCode() ? 1 : -1;
+			}
+		});
+		return status.get(0);
+	}
+	
 }

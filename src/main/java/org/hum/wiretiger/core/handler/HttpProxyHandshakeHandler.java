@@ -4,7 +4,6 @@ import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.handler.bean.HttpRequest;
 import org.hum.wiretiger.core.handler.helper.HttpHelper;
-import org.hum.wiretiger.core.handler.https.HttpsForwardServerHandler;
 import org.hum.wiretiger.core.pipe.DefaultPipeHandler;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
@@ -30,10 +29,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.fireChannelActive();
-        PipeHolder pipeHolder = PipeHolder.create();
-        pipeHolder.registClient(ctx.channel());
-        ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
-        PipeManager.get().add(pipeHolder);
+        ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(PipeManager.get().create(ctx.channel()));
     }
 	
 	@Override
@@ -50,7 +46,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     	
     	HttpRequest request = HttpHelper.decode((ByteBuf) msg);
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
-    		client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).set(Protocol.HTTPS);
+    		pipeHolder.setProtocol(Protocol.HTTPS);
     		
     		// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(request.getHost()));
@@ -58,14 +54,13 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
 		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-					client2ProxyCtx.pipeline().addLast(new HttpsForwardServerHandler(request.getHost(), request.getPort()));
+					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(pipeHolder, request.getHost(), request.getPort()));
+					client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 				}
 			});
-			
 			client2ProxyCtx.pipeline().addLast(sslHandler);
-			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
-    		client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PROTOCOL_TYPE)).set(Protocol.HTTP);
+    		pipeHolder.setProtocol(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
     		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(pipeHolder, request.getHost(), request.getPort()));
     		client2ProxyCtx.pipeline().fireChannelRead(msg);

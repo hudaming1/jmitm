@@ -1,9 +1,11 @@
 package org.hum.wiretiger.core.pipe;
 
-import org.hum.wiretiger.core.handler.http.Forward;
+import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
+import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.channel.ChannelHandler.Sharable;
 
 @Sharable
@@ -21,16 +23,29 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 		pipeHolder.registServer(ctx.channel());
+		pipeHolder.recordStatus(PipeStatus.Connected);
 	}
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		pipeHolder.getServerChannel().writeAndFlush(msg);
+		pipeHolder.recordStatus(PipeStatus.Read);
 	}
 
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		pipeHolder.getClientChannel().writeAndFlush(msg);
+		pipeHolder.recordStatus(PipeStatus.Received);
+	}
+
+	@Override
+	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		pipeHolder.recordStatus(PipeStatus.Flushed);
+	}
+
+	@Override
+	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		pipeHolder.recordStatus(PipeStatus.Forward);
 	}
 
 	@Override
@@ -38,6 +53,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (pipeHolder.getServerChannel().isActive()) {
 			pipeHolder.getServerChannel().disconnect();
 		}
+		pipeHolder.recordStatus(PipeStatus.Closed);
 	}
 
 	@Override
@@ -45,6 +61,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (pipeHolder.getClientChannel().isActive()) {
 			pipeHolder.getClientChannel().disconnect();
 		}
+		pipeHolder.recordStatus(PipeStatus.Closed);
 	}
 
 	@Override
@@ -53,6 +70,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (pipeHolder.getClientChannel().isActive()) {
 			pipeHolder.getClientChannel().disconnect();
 		}
+		pipeHolder.recordStatus(PipeStatus.Error);
 	}
 
 	@Override
@@ -61,6 +79,6 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (pipeHolder.getServerChannel().isActive()) {
 			pipeHolder.getServerChannel().disconnect();
 		}
+		pipeHolder.recordStatus(PipeStatus.Error);
 	}
-
 }

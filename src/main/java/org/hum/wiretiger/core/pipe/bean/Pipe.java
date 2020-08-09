@@ -11,9 +11,9 @@ import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 public class Pipe {
 	
 	// client->proxy
@@ -30,13 +30,42 @@ public class Pipe {
 	private long birthday;
 	// pipeId
 	private int id;
-	/**
-	 * 1-http; 2-https
-	 * {@link Protocol}
-	 */
-	private int protocol;
+	// protocol
+	private Protocol protocol;
 	
 	public void addStatus(PipeStatus status) {
 		this.statusMap.put(status,System.currentTimeMillis());
+	}
+
+	void setSourceCtx(Channel sourceCtx) {
+		this.sourceCtx = sourceCtx;
+	}
+
+	void setTargetCtx(Channel targetCtx) {
+		this.targetCtx = targetCtx;
+	}
+
+	void setRequest(DefaultHttpRequest request) {
+		this.request = request;
+	}
+
+	void setResponseList(List<FullHttpResponse> responseList) {
+		this.responseList = responseList;
+	}
+
+	void setStatusMap(Map<PipeStatus, Long> statusMap) {
+		this.statusMap = statusMap;
+	}
+
+	void setBirthday(long birthday) {
+		this.birthday = birthday;
+	}
+
+	void setId(int id) {
+		this.id = id;
+	}
+
+	void setProtocol(Protocol protocol) {
+		this.protocol = protocol;
 	}
 }

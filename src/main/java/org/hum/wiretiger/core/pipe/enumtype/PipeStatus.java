@@ -9,20 +9,38 @@ package org.hum.wiretiger.core.pipe.enumtype;
 public enum PipeStatus {
 
 	// 建立连接
-	Init,
+	Init(1, "Init"),
 	// 已经解析HTTP请求 client -> proxy
-	Parsed, 
+	Parsed(2, "Parsed"), 
+	// 读取客户端请求
+	Read(3, "Read"),
 	// 已经与对端Server建立间接
-	Connected,
+	Connected(4, "Connected"),
 	// 请求已经转发 proxy -> server
-	Forward,
+	Forward(5, "Forward"),
 	// 收到了对端Server的响应，server -> proxy
-	Received,
+	Received(6, "Received"),
 	// 将最终结果输出给客户端 proxy -> client
-	Flushed,
+	Flushed(7, "Flushed"),
 	// 断开连接(正常终态)
-	Closed,
+	Closed(8, "Closed"),
 	// ERROR(异常终态)
-	Error
+	Error(9, "Error"),
 	;
+	
+	private int code;
+	private String desc;
+	
+	PipeStatus(int code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
 }
