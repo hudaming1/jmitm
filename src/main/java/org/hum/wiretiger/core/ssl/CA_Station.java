@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
-import org.hum.wiretiger.exception.WireTigerException;
+import org.hum.wiretiger.common.exception.WireTigerException;
 
 import lombok.extern.slf4j.Slf4j;
 
