@@ -17,6 +17,7 @@
 					$("#requestPannel").html(jsonObj.requestString);
 					$("#responsePannel").html(jsonObj.responseString);
 					$("#timelineDg").datagrid("loadData", jsonObj.statusTimeline);
+					$("#eventsDg").datagrid("loadData", jsonObj.pipeEvent);
 					// expand east_panel
 					if($("#eastPannel").panel("options")["collapsed"] == true) {
 						$("body").layout("expand", "east");
@@ -63,12 +64,23 @@
 					</div>
 				</div>
 		        <div title="Timeline" data-options="" id="processPanel" style="">
-				    <table class="easyui-datagrid" id="timelineDg" data-options="border:false,url:'',method:'get'">
+				    <table class="easyui-datagrid" id="timelineDg" data-options="border:false">
 				        <thead>
 				            <tr>
 				                <th data-options="field:'status',width:100">Status</th>
 				                <th data-options="field:'time',width:200, align:'center'">Time</th>
 				                <th data-options="field:'cost',width:120, align:'center'">Cost</th>
+				            </tr>
+				        </thead>
+				    </table>
+		        </div>
+		        <div title="Events" data-options="" id="eventsPannel" style="">
+				    <table class="easyui-datagrid" id="eventsDg" data-options="border:false">
+				        <thead>
+				            <tr>
+				                <th data-options="field:'type',width:100">EventType</th>
+				                <th data-options="field:'time',width:120, align:'center'">Time</th>
+				                <th data-options="field:'desc',width:200">Desc</th>
 				            </tr>
 				        </thead>
 				    </table>

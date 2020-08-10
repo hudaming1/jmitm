@@ -21,7 +21,6 @@ public class PipeManager {
 
 	private static final AtomicInteger counter = new AtomicInteger(1);
 	private ConcurrentHashMap<Channel, PipeHolder> pipes4ClientChannel = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<Channel, PipeHolder> pipes4ServerChannel = new ConcurrentHashMap<>();
 	private ConcurrentHashMap<Integer, PipeHolder> pipes4Id = new ConcurrentHashMap<>();
 	
 	private PipeManager() {
@@ -43,23 +42,6 @@ public class PipeManager {
 		pipes4ClientChannel.put(clientChannel, holder);
 		return holder;
 	}
-	
-//	public boolean isExists(Channel channel) {
-//		return pipes4Channel.containsKey(channel);
-//	}
-	
-//	public void remove(Channel channel) {
-//		pipes4Channel.remove(channel);
-//	}
-	
-	/**
-	 * PipeMonotir一切以clientChannel为标识
-	 * @param channel
-	 * @return
-	 */
-//	public Pipe get(Channel channel) {
-//		return pipes4Channel.get(channel);
-//	}
 	
 	public PipeHolder getById(Integer id) {
 		return pipes4Id.get(id);

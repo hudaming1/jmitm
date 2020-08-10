@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.channel.Channel;
@@ -24,6 +25,7 @@ public class PipeHolder {
 	
 	public void registClient(Channel channel) {
 		this.pipe.setSourceCtx(channel);
+		this.addEvent(PipeEventType.ClientConnect, "客户端上线");
 	}
 	
 	public void registServer(Channel channel) {
@@ -79,6 +81,14 @@ public class PipeHolder {
 	
 	public Map<Long, PipeStatus> getStatusTimeline() {
 		return Collections.unmodifiableMap(pipe.getStatusMap());
+	}
+	
+	public void addEvent(PipeEventType type, String desc) {
+		this.pipe.addEvent(new PipeEvent(type, desc, System.currentTimeMillis()));
+	}
+	
+	public List<PipeEvent> getEventList() {
+		return Collections.unmodifiableList(this.pipe.getEvents());
 	}
 
 	public PipeStatus getCurrentStatus() {

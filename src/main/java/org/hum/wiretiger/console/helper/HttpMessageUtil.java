@@ -24,9 +24,6 @@ public class HttpMessageUtil {
     }
     
     public static StringBuilder appendResponse(StringBuilder buf, List<? extends FullHttpResponse> resList) {
-    	if (resList.size() > 1) {
-    		System.out.println(resList.size());
-    	}
     	for (HttpResponse res : resList) {
 	    	appendInitialLine(buf, res);
 	    	appendHeaders(buf, res.headers());

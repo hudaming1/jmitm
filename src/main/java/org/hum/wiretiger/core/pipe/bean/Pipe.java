@@ -26,12 +26,18 @@ public class Pipe {
 	private List<FullHttpResponse> responseList = new ArrayList<>();
 	// pipe status
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
+	// event
+	private List<PipeEvent> events = new ArrayList<>();
 	// create time
 	private long birthday;
 	// pipeId
 	private int id;
 	// protocol
 	private Protocol protocol;
+	
+	public void addEvent(PipeEvent event) {
+		this.events.add(event);
+	}
 	
 	public void addStatus(PipeStatus status) {
 		this.statusMap.put(System.currentTimeMillis(), status);

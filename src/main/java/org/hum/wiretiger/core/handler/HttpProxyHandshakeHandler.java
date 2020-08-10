@@ -40,6 +40,8 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     	}
     	// 是否再需要增加parsing状态过渡？
     	isParsed = true;
+    	
+    	// 握完手这个handler就没有用了，直接删除
 		client2ProxyCtx.pipeline().remove(this);
 		
 		PipeHolder pipeHolder = (PipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
@@ -47,7 +49,6 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     	HttpRequest request = HttpHelper.decode((ByteBuf) msg);
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
     		pipeHolder.setProtocol(Protocol.HTTPS);
-    		
     		// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(request.getHost()));
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {

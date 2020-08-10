@@ -68,6 +68,15 @@ public class PipeService {
 			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponses()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		}
 		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
+		List<Map<String, String>> pipeEventMapList = new ArrayList<>();
+		pipe.getEventList().forEach(item -> {
+			Map<String, String> map = new HashMap<>();
+			map.put("type", item.getType().toString());
+			map.put("time", DATE_TIME_FORMATTER.format(new Date(item.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
+			map.put("desc", item.getDesc());
+			pipeEventMapList.add(map);
+		});
+		detailVo.setPipeEvent(pipeEventMapList );
 		return detailVo;
 	}
 	
