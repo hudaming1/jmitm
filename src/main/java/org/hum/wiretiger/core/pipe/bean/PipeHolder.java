@@ -10,6 +10,8 @@ import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.DefaultHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 
 public class PipeHolder {
 
@@ -26,6 +28,14 @@ public class PipeHolder {
 	
 	public void registServer(Channel channel) {
 		this.pipe.setTargetCtx(channel);
+	}
+	
+	public void appendRequest(DefaultHttpRequest request) {
+		this.pipe.addRequest(request);
+	}
+	
+	public void appendResponse(FullHttpResponse response) {
+		this.pipe.addResponse(response);
 	}
 	 
 	public void recordStatus(PipeStatus status) {
@@ -45,10 +55,10 @@ public class PipeHolder {
 	}
 	
 	public String getUri() {
-		if (pipe.getRequest() == null) {
+		if (pipe.getRequestList() == null || pipe.getRequestList().isEmpty()) {
 			return null;
 		}
-		return pipe.getRequest().uri();
+		return pipe.getRequestList().get(0).uri();
 	}
 	
 	public void setProtocol(Protocol protocol) {
@@ -57,6 +67,14 @@ public class PipeHolder {
 
 	public Protocol getProtocol() {
 		return pipe.getProtocol();
+	}
+	
+	public List<DefaultHttpRequest> getRequests() {
+		return Collections.unmodifiableList(pipe.getRequestList());
+	}
+	
+	public List<FullHttpResponse> getResponses() {
+		return Collections.unmodifiableList(pipe.getResponseList());
 	}
 	
 	public Map<Long, PipeStatus> getStatusTimeline() {

@@ -3,6 +3,7 @@ package org.hum.wiretiger.console.helper;
 import java.util.List;
 import java.util.Map;
 
+import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -13,14 +14,16 @@ import io.netty.util.internal.StringUtil;
 
 public class HttpMessageUtil {
 
-    public static StringBuilder appendRequest(StringBuilder buf, HttpRequest req) {
-        appendInitialLine(buf, req);
-        appendHeaders(buf, req.headers());
-        removeLastNewLine(buf);
+    public static StringBuilder appendRequest(StringBuilder buf, List<? extends DefaultHttpRequest> reqList) {
+		for (DefaultHttpRequest req : reqList) {
+			appendInitialLine(buf, req);
+			appendHeaders(buf, req.headers());
+			removeLastNewLine(buf);
+		}
         return buf;
     }
     
-    public static StringBuilder appendResponse(StringBuilder buf, List<? extends HttpResponse> resList) {
+    public static StringBuilder appendResponse(StringBuilder buf, List<? extends FullHttpResponse> resList) {
     	if (resList.size() > 1) {
     		System.out.println(resList.size());
     	}

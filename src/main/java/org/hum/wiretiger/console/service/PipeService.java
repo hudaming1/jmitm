@@ -14,12 +14,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WireTigerConnectionDetailVO;
 import org.hum.wiretiger.console.vo.WireTigerConnectionListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,8 +38,8 @@ public class PipeService {
 			WireTigerConnectionListVO vo = new WireTigerConnectionListVO();
 			vo.setRequestId(item.getId());
 			vo.setUri(item.getUri() == null ? "waitting.." : getPath(item.getUri()));
-//			vo.setResponseCode((item.getResponseList() == null || item.getResponseList().isEmpty()) ? "pending.." : item.getResponseList().get(0).status().code() + "");
-			vo.setProtocol(item.getProtocol().getDesc());
+			vo.setResponseCode((item.getResponses() == null || item.getResponses().isEmpty()) ? "pending.." : item.getResponses().get(0).status().code() + "");
+			vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
 			vo.setStatus(item.getCurrentStatus().getDesc());
 			requestList.add(vo);
 		});
@@ -58,12 +61,12 @@ public class PipeService {
 			return new WireTigerConnectionDetailVO();
 		}
 		WireTigerConnectionDetailVO detailVo = new WireTigerConnectionDetailVO();
-//		if (pipe.getRequest() != null) {
-//			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-//		}
-//		if (pipe.getResponseList() != null && !pipe.getResponseList().isEmpty()) {
-//			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponseList()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
-//		}
+		if (pipe.getRequests() != null && !pipe.getRequests().isEmpty()) {
+			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequests()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		}
+		if (pipe.getResponses() != null && !pipe.getResponses().isEmpty()) {
+			detailVo.setResponseString(HttpMessageUtil.appendResponse(new StringBuilder(), pipe.getResponses()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		}
 		detailVo.setStatusTimeline(parseTimeLine(pipe.getStatusTimeline()));
 		return detailVo;
 	}

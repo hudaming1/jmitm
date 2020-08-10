@@ -21,9 +21,9 @@ public class Pipe {
 	// proxy->server
 	private Channel targetCtx;
 	// request
-	private DefaultHttpRequest request;
+	private List<DefaultHttpRequest> requestList = new ArrayList<>();
 	// responseList
-	private List<FullHttpResponse> responseList = new ArrayList<FullHttpResponse>();
+	private List<FullHttpResponse> responseList = new ArrayList<>();
 	// pipe status
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// create time
@@ -45,12 +45,12 @@ public class Pipe {
 		this.targetCtx = targetCtx;
 	}
 
-	void setRequest(DefaultHttpRequest request) {
-		this.request = request;
+	void addRequest(DefaultHttpRequest request) {
+		this.requestList.add(request);
 	}
 
-	void setResponseList(List<FullHttpResponse> responseList) {
-		this.responseList = responseList;
+	void addResponse(FullHttpResponse response) {
+		this.responseList.add(response);
 	}
 
 	void setStatusMap(Map<Long, PipeStatus> statusMap) {

@@ -5,9 +5,11 @@ import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.handler.codec.http.DefaultHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
@@ -30,12 +32,18 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		pipeHolder.getServerChannel().writeAndFlush(msg);
+		if (msg instanceof DefaultHttpRequest) {
+			pipeHolder.appendRequest((DefaultHttpRequest) msg);
+		}
 		pipeHolder.recordStatus(PipeStatus.Read);
 	}
 
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		pipeHolder.getClientChannel().writeAndFlush(msg);
+		if (msg instanceof FullHttpResponse) {
+			pipeHolder.appendResponse((FullHttpResponse) msg);
+		}
 		pipeHolder.recordStatus(PipeStatus.Received);
 	}
 
