@@ -1,6 +1,8 @@
 package org.hum.wiretiger.core.pipe;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.common.exception.WireTigerException;
+import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
@@ -11,7 +13,11 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.util.internal.StringUtil;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
@@ -20,7 +26,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		try {
 			new Forward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			throw new WireTigerException("build connection failed", e);
 		}
 	}
 
@@ -33,22 +39,38 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
-		pipeHolder.getServerChannel().writeAndFlush(msg);
+//		pipeHolder.getServerChannel().writeAndFlush(msg);
+//		if (msg instanceof DefaultHttpRequest) {
+//			pipeHolder.appendRequest((DefaultHttpRequest) msg);
+//		}
+//		pipeHolder.recordStatus(PipeStatus.Read);
+		
 		if (msg instanceof DefaultHttpRequest) {
+			DefaultHttpRequest req = (DefaultHttpRequest) msg;
+//			HttpMessageUtil.appendRequest(new StringBuilder(), req).toString().replaceAll(StringUtil.NEWLINE, "<br />")
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
+		} else if (msg instanceof LastHttpContent) {
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		}
+		pipeHolder.getServerChannel().writeAndFlush(msg);
 		pipeHolder.recordStatus(PipeStatus.Read);
-		pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，字节数未知");
 	}
 
+	/**
+	 * 读取到对端服务器请求
+	 */
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
-		pipeHolder.getClientChannel().writeAndFlush(msg);
 		if (msg instanceof FullHttpResponse) {
-			pipeHolder.appendResponse((FullHttpResponse) msg);
+			FullHttpResponse resp = (FullHttpResponse) msg;
+			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+		} else {
+			log.warn("need support more types, find type=" + msg.getClass());
 		}
+		pipeHolder.getClientChannel().writeAndFlush(msg);
+		pipeHolder.appendResponse((FullHttpResponse) msg);
 		pipeHolder.recordStatus(PipeStatus.Received);
-		pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数未知");
 	}
 
 	@Override

@@ -19,6 +19,7 @@ public class HttpMessageUtil {
 			appendInitialLine(buf, req);
 			appendHeaders(buf, req.headers());
 			removeLastNewLine(buf);
+	    	buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
 		}
         return buf;
     }
@@ -28,16 +29,9 @@ public class HttpMessageUtil {
 	    	appendInitialLine(buf, res);
 	    	appendHeaders(buf, res.headers());
 	    	removeLastNewLine(buf);
-	    	buf.append(StringUtil.NEWLINE);
+	    	buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
     	}
     	return buf;
-    }
-
-    public static StringBuilder appendResponse(StringBuilder buf, HttpResponse res) {
-        appendInitialLine(buf, res);
-        appendHeaders(buf, res.headers());
-        removeLastNewLine(buf);
-        return buf;
     }
 
     static StringBuilder appendFullRequest(StringBuilder buf, FullHttpRequest req) {
