@@ -3,8 +3,7 @@ package org.hum.wiretiger.core.pipe;
 import java.util.Stack;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
-import org.hum.wiretiger.common.exception.WireTigerException;
-import org.hum.wiretiger.console.helper.HttpMessageUtil;
+import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
@@ -17,7 +16,6 @@ import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,7 +29,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		try {
 			new Forward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
 		} catch (InterruptedException e) {
-			throw new WireTigerException("build connection failed", e);
+			throw new WiretigerException("build connection failed", e);
 		}
 	}
 
@@ -44,15 +42,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
-//		pipeHolder.getServerChannel().writeAndFlush(msg);
-//		if (msg instanceof DefaultHttpRequest) {
-//			pipeHolder.appendRequest((DefaultHttpRequest) msg);
-//		}
-//		pipeHolder.recordStatus(PipeStatus.Read);
-		
 		if (msg instanceof DefaultHttpRequest) {
-			DefaultHttpRequest req = (DefaultHttpRequest) msg;
-//			HttpMessageUtil.appendRequest(new StringBuilder(), req).toString().replaceAll(StringUtil.NEWLINE, "<br />")
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
 			reqStack4WattingResponse.push((DefaultHttpRequest) msg);

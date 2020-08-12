@@ -15,7 +15,6 @@ import sun.security.x509.GeneralNameInterface;
  * </pre>
  * @author hudaming
  */
-@SuppressWarnings("restriction")
 public class UnsafeDNSName implements sun.security.x509.GeneralNameInterface {
 
     private String name;

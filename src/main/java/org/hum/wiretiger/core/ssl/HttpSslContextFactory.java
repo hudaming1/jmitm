@@ -6,7 +6,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
-import org.hum.wiretiger.exception.WiretigerException;
+import org.hum.wiretiger.common.exception.WiretigerException;
 
 import lombok.extern.slf4j.Slf4j;
 

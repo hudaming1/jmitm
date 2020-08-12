@@ -3,10 +3,11 @@ package org.hum.wiretiger.core.server.wiretiger;
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.core.server.WiretigerServer;
 import org.hum.wiretiger.core.server.console.ConsoleServer;
-import org.hum.wiretiger.exception.WiretigerException;
+
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;

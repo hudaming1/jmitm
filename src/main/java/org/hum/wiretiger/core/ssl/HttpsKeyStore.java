@@ -2,7 +2,7 @@ package org.hum.wiretiger.core.ssl;
 
 import java.io.InputStream;
 
-import org.hum.wiretiger.exception.WiretigerException;
+import org.hum.wiretiger.common.exception.WiretigerException;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,4 +1,4 @@
-package org.hum.wiretiger.exception;
+package org.hum.wiretiger.common.exception;
 
 public class WiretigerException extends RuntimeException {
 
