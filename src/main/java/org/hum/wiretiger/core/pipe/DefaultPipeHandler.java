@@ -4,6 +4,8 @@ import java.util.Stack;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.common.exception.WiretigerException;
+import org.hum.wiretiger.core.connection.ConnectionManager;
+import org.hum.wiretiger.core.connection.bean.WiretigerConnection;
 import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
@@ -14,7 +16,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -22,7 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
-	private Stack<HttpRequest> reqStack4WattingResponse = new Stack<>();
+	private final ConnectionManager cm = new ConnectionManager();
+	/**
+	 * 保存了当前HTTP连接，没有等待响应的请求
+	 */
+	private Stack<WiretigerConnection> reqStack4WattingResponse = new Stack<>();
 	
 	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
@@ -45,7 +50,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (msg instanceof DefaultHttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
-			reqStack4WattingResponse.push((DefaultHttpRequest) msg);
+			reqStack4WattingResponse.push(new WiretigerConnection((DefaultHttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		}
@@ -61,6 +66,12 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (msg instanceof FullHttpResponse) {
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
+				log.warn("reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
+			}
+			WiretigerConnection connection = reqStack4WattingResponse.pop();
+			connection.setResponse(resp, System.currentTimeMillis());
+			cm.add(connection);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}

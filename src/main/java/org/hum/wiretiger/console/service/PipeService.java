@@ -16,8 +16,8 @@ import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
-import org.hum.wiretiger.console.vo.WiretigerConnectionDetailVO;
-import org.hum.wiretiger.console.vo.WiretigerConnectionListVO;
+import org.hum.wiretiger.console.vo.WiretigerPipeDetailVO;
+import org.hum.wiretiger.console.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
@@ -31,11 +31,11 @@ public class PipeService {
 	private PipeManager pipeMonitor = PipeManager.get();
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-	public List<WiretigerConnectionListVO> list() {
+	public List<WiretigerPipeListVO> list() {
 		Collection<PipeHolder> all = pipeMonitor.getAll();
-		List<WiretigerConnectionListVO> requestList = new ArrayList<>();
+		List<WiretigerPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
-			WiretigerConnectionListVO vo = new WiretigerConnectionListVO();
+			WiretigerPipeListVO vo = new WiretigerPipeListVO();
 			vo.setRequestId(item.getId());
 			vo.setUri(item.getUri() == null ? "waitting.." : getPath(item.getUri()));
 			vo.setResponseCode((item.getResponses() == null || item.getResponses().isEmpty()) ? "pending.." : item.getResponses().get(0).status().code() + "");
@@ -55,12 +55,12 @@ public class PipeService {
 		}
 	}
 
-	public WiretigerConnectionDetailVO getById(int id) {
+	public WiretigerPipeDetailVO getById(int id) {
 		PipeHolder pipe = pipeMonitor.getById(id);
 		if (pipe == null) {
-			return new WiretigerConnectionDetailVO();
+			return new WiretigerPipeDetailVO();
 		}
-		WiretigerConnectionDetailVO detailVo = new WiretigerConnectionDetailVO();
+		WiretigerPipeDetailVO detailVo = new WiretigerPipeDetailVO();
 		if (pipe.getRequests() != null && !pipe.getRequests().isEmpty()) {
 			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequests()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		}
