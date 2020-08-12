@@ -14,22 +14,32 @@ import io.netty.util.internal.StringUtil;
 
 public class HttpMessageUtil {
 
+    public static StringBuilder appendRequest(StringBuilder buf, DefaultHttpRequest req) {
+		appendInitialLine(buf, req);
+		appendHeaders(buf, req.headers());
+		removeLastNewLine(buf);
+        return buf;
+    }
+
     public static StringBuilder appendRequest(StringBuilder buf, List<? extends DefaultHttpRequest> reqList) {
 		for (DefaultHttpRequest req : reqList) {
-			appendInitialLine(buf, req);
-			appendHeaders(buf, req.headers());
-			removeLastNewLine(buf);
-	    	buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
+			appendRequest(buf, req);
+			buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
 		}
         return buf;
     }
     
+	public static StringBuilder appendResponse(StringBuilder buf, FullHttpResponse res) {
+		appendInitialLine(buf, res);
+		appendHeaders(buf, res.headers());
+		removeLastNewLine(buf);
+		return buf;
+	}
+    
     public static StringBuilder appendResponse(StringBuilder buf, List<? extends FullHttpResponse> resList) {
-    	for (HttpResponse res : resList) {
-	    	appendInitialLine(buf, res);
-	    	appendHeaders(buf, res.headers());
-	    	removeLastNewLine(buf);
-	    	buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
+    	for (FullHttpResponse res : resList) {
+    		appendResponse(buf, res);
+    	    buf.append(StringUtil.NEWLINE).append("====================").append(StringUtil.NEWLINE);
     	}
     	return buf;
     }

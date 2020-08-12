@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
-	private final ConnectionManager cm = new ConnectionManager();
+	private final ConnectionManager cm = ConnectionManager.get();
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */

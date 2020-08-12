@@ -7,12 +7,14 @@ import lombok.Getter;
 @Getter
 public class WiretigerConnection {
 
+	private long id;
 	private DefaultHttpRequest request;
 	private long requestTime;
 	private FullHttpResponse response;
 	private long responseTime;
 	
 	public WiretigerConnection(DefaultHttpRequest request, long requestTime) {
+		this.id = System.nanoTime();
 		this.request = request;
 		this.requestTime = requestTime;
 	}

@@ -30,6 +30,15 @@
 		<servlet-name>ConnectionListServelet</servlet-name>
 		<url-pattern>/conn/list</url-pattern>
 	</servlet-mapping>
+	<!-- connection detail -->
+	<servlet>
+		<servlet-name>ConnectionDetailServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.servlet.ConnectionDetailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConnectionDetailServlet</servlet-name>
+		<url-pattern>/conn/get</url-pattern>
+	</servlet-mapping>
 	<!-- download_cert -->
 	<servlet>
 		<servlet-name>certDownloadServlet</servlet-name>
