@@ -3,7 +3,7 @@ package org.hum.wiretiger.config;
 import lombok.Data;
 
 @Data
-public class WireTigerConfig {
+public class WiretigerConfig {
 
 	// 监听端口
 	private Integer port;

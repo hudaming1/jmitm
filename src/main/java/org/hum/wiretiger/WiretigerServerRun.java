@@ -1,13 +1,13 @@
 package org.hum.wiretiger;
 
-import org.hum.wiretiger.config.WireTigerConfig;
+import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.core.server.ServerFactory;
 
-public class WireTigerServerRun {
+public class WiretigerServerRun {
 
 	public static void main(String[] args) {
 		// config
-		WireTigerConfig config = new WireTigerConfig();
+		WiretigerConfig config = new WiretigerConfig();
 		config.setPort(52007);
 		config.setConsolePort(8080);
 		config.setThreads(Runtime.getRuntime().availableProcessors());

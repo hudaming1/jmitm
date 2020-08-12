@@ -1,5 +1,7 @@
 package org.hum.wiretiger.core.pipe;
 
+import java.util.Stack;
+
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
@@ -11,9 +13,12 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
 
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
+	
+	private Stack<HttpRequest> reqStack4WattingResponse = new Stack<>();
 	
 	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
@@ -36,6 +41,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		pipeHolder.getServerChannel().writeAndFlush(msg);
 		if (msg instanceof DefaultHttpRequest) {
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
+			reqStack4WattingResponse.push((DefaultHttpRequest) msg);
 		}
 		pipeHolder.recordStatus(PipeStatus.Read);
 		pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，字节数未知");

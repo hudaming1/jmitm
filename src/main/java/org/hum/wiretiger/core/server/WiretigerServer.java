@@ -1,6 +1,6 @@
 package org.hum.wiretiger.core.server;
 
-public interface WireTigerServer {
+public interface WiretigerServer {
 
 	public void start();
 	

@@ -6,7 +6,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
-import org.hum.wiretiger.exception.WireTigerException;
+import org.hum.wiretiger.exception.WiretigerException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +28,7 @@ public class HttpSslContextFactory {
 			serverContext.init(kmf.getKeyManagers(), null, null);
 		} catch (Exception e) {
 			log.error("Failed to initialize the server SSLContext", e);
-			throw new WireTigerException("Failed to initialize the server SSLContext", e);
+			throw new WiretigerException("Failed to initialize the server SSLContext", e);
 		}
 		sslContext = serverContext;
         SSLEngine sslEngine = sslContext.createSSLEngine();

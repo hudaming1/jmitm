@@ -4,7 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
-import org.hum.wiretiger.exception.WireTigerException;
+import org.hum.wiretiger.exception.WiretigerException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +31,7 @@ public class CA_Station {
 		} catch (Exception e) {
 			CERT_CACHE.remove(domain);
 			log.error("create cert error, domain=" + domain, e);
-			throw new WireTigerException("create cert error, domain=" + domain, e);
+			throw new WiretigerException("create cert error, domain=" + domain, e);
 		}
 	}
 }

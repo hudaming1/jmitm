@@ -3,10 +3,10 @@ package org.hum.wiretiger.core.server.wiretiger;
 import java.security.Security;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.hum.wiretiger.config.WireTigerConfig;
-import org.hum.wiretiger.core.server.WireTigerServer;
+import org.hum.wiretiger.config.WiretigerConfig;
+import org.hum.wiretiger.core.server.WiretigerServer;
 import org.hum.wiretiger.core.server.console.ConsoleServer;
-import org.hum.wiretiger.exception.WireTigerException;
+import org.hum.wiretiger.exception.WiretigerException;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -19,7 +19,7 @@ import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DefaultWireTigerServer implements WireTigerServer {
+public class DefaultWireTigerServer implements WiretigerServer {
 
 	static {
 		try {
@@ -31,9 +31,9 @@ public class DefaultWireTigerServer implements WireTigerServer {
 		}
 	}
 	
-	private WireTigerConfig config;
+	private WiretigerConfig config;
 
-	public DefaultWireTigerServer(WireTigerConfig config) {
+	public DefaultWireTigerServer(WiretigerConfig config) {
 		this.config = config;
 	}
 
@@ -62,7 +62,7 @@ public class DefaultWireTigerServer implements WireTigerServer {
 			ch.closeFuture().sync();
 		} catch (Exception e) {
 			log.error("start occur error, config=" + config, e);
-			throw new WireTigerException("DefaultWireTigerServer start failed.", e);
+			throw new WiretigerException("DefaultWireTigerServer start failed.", e);
 		} finally {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();

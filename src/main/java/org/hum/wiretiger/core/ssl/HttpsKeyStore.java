@@ -2,7 +2,7 @@ package org.hum.wiretiger.core.ssl;
 
 import java.io.InputStream;
 
-import org.hum.wiretiger.exception.WireTigerException;
+import org.hum.wiretiger.exception.WiretigerException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,7 +15,7 @@ public class HttpsKeyStore {
 			return CA_Station.createWithCache(domain);
 		} catch (Exception e) {
 			log.error("init key_store failure, domain=" + domain, e);
-			throw new WireTigerException("init key store failed", e);
+			throw new WiretigerException("init key store failed", e);
 		}
 	}
 
