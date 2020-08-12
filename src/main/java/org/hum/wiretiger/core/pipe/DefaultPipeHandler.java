@@ -50,9 +50,11 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (msg instanceof DefaultHttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
-			reqStack4WattingResponse.push(new WiretigerConnection((DefaultHttpRequest) msg, System.currentTimeMillis()));
+			reqStack4WattingResponse.push(new WiretigerConnection(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
+		} else {
+			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		pipeHolder.getServerChannel().writeAndFlush(msg);
 		pipeHolder.recordStatus(PipeStatus.Read);
@@ -70,7 +72,12 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 				log.warn("reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 			}
 			WiretigerConnection connection = reqStack4WattingResponse.pop();
-			connection.setResponse(resp, System.currentTimeMillis());
+			byte[] bytes = null;
+			if (resp.content().readableBytes() > 0) {
+				bytes = new byte[resp.content().readableBytes()];
+				resp.content().copy().readBytes(bytes);
+			}
+			connection.setResponse(resp, bytes, System.currentTimeMillis());
 			cm.add(connection);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());

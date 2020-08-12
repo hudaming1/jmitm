@@ -11,4 +11,5 @@ public class WiretigerConnectionDetailVO implements Serializable {
 
 	private String request;
 	private String response;
+	private String responseBytes;
 }

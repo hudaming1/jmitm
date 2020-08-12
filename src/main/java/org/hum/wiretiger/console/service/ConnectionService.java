@@ -1,6 +1,7 @@
 package org.hum.wiretiger.console.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
@@ -30,6 +31,9 @@ public class ConnectionService {
 		WiretigerConnectionDetailVO detailVo = new WiretigerConnectionDetailVO();
 		detailVo.setRequest(HttpMessageUtil.appendRequest(new StringBuilder(), connection.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		detailVo.setResponse(HttpMessageUtil.appendResponse(new StringBuilder(), connection.getResponse()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
+		if (connection.getResponseBytes() != null && connection.getResponseBytes().length > 0) {
+			detailVo.setResponse(detailVo.getResponse() + "<br /><br />" + Arrays.toString(connection.getResponseBytes()));
+		}
 		return detailVo;
 	}
 
