@@ -3,9 +3,11 @@
 【OK】显示连接存活状态
 【OK】部分连接无法flush后无法Read(原因是握手失败？)，例如：https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/ms-language-packs/records/cfr-v1-zh-CN
 【OK】重制CA
-https server 连接断开后，需要通知client，目前整个pipe没有做关联
+【OK】https server 连接断开后，需要通知client，目前整个pipe没有做关联
 增加websocket，实时刷新
-增加过滤，仅显示存活连接
+【OK】增加过滤，仅显示存活连接
+控制台增加断开连接的按钮
+控制台最好能将连接和请求相互关联起来
 
 ## high level ##
 2.连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；

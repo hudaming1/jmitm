@@ -15,7 +15,5 @@ public class WiretigerPipeDetailVO implements Serializable {
 	
 	private String responseString;
 	
-	private List<Map<String, String>> statusTimeline;
-	
 	private List<Map<String, String>> pipeEvent;
 }

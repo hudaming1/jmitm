@@ -25,8 +25,18 @@
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="">
-		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:40%">
-			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, onClickRow:dgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/conn/list',method:'get'">
+		<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
+			<div id="tb" style="padding:5px;height:auto">
+				Keyword: <input class="easyui-textbox" style="width:200px">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+				<select class="easyui-combobox" panelHeight="auto" style="width:60px">
+					<option value="50">50</option>
+					<option value="100">100</option>
+					<option value="500">500</option>
+					<option value="1000">1000</option>
+				</select>
+			</div>
+			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#tb', onClickRow:dgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/conn/list',method:'get'">
 				<thead>
 					<tr>
 						<th data-options="field:'requestId', hidden:true">requestId</th>
