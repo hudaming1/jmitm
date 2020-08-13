@@ -75,7 +75,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			byte[] bytes = null;
 			if (resp.content().readableBytes() > 0) {
 				bytes = new byte[resp.content().readableBytes()];
-				resp.content().copy().readBytes(bytes);
+				resp.content().duplicate().readBytes(bytes);
 			}
 			connection.setResponse(resp, bytes, System.currentTimeMillis());
 			cm.add(connection);
