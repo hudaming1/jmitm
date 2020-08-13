@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WiretigerPipeDetailVO;
+import org.hum.wiretiger.console.vo.WiretigerPipeListQueryVO;
 import org.hum.wiretiger.console.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
@@ -27,10 +28,13 @@ public class PipeService {
 	private PipeManager pipeMonitor = PipeManager.get();
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-	public List<WiretigerPipeListVO> list() {
+	public List<WiretigerPipeListVO> list(WiretigerPipeListQueryVO queryVo) {
 		Collection<PipeHolder> all = pipeMonitor.getAll();
 		List<WiretigerPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
+			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
+				 return ;
+			}
 			WiretigerPipeListVO vo = new WiretigerPipeListVO();
 			vo.setRequestId(item.getId());
 			vo.setName(item.getName());

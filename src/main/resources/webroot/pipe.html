@@ -30,6 +30,20 @@
 				});
 			}
 			
+			$(function(){
+		        $('#filterBtn').switchbutton({
+		            checked: true,
+		            onChange: function(checked){
+		                $("#dgMain").datagrid("load", {
+				        	active: checked
+				        });
+		            }
+		        });
+		        $("#dgMain").datagrid("load", {
+		        	active: true
+		        });
+		    })
+		    
 			$(function() {
 				$("body").layout("collapse", "east");
 			})
@@ -38,7 +52,10 @@
 	</head>
 	<body class="easyui-layout" data-options="">
 		<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:40%">
-			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+			<div id="tb" style="padding:5px;height:auto">
+				<input id="filterBtn" class="easyui-switchbutton" checked style="width:60px;height:20px" />
+			</div>
+			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, toolbar:'#tb', onClickRow:dgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
 				<thead>
 					<tr>
 						<th data-options="field:'requestId', hidden:true">reqeustId</th>
@@ -54,15 +71,7 @@
 		        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="$('body').layout('collapse', 'east');">×</a>
 		    </div>
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
-				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
-					<div id="requestPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
-					</div>
-				</div>
-				<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
-					<div id="responsePannel" data-options="title:'SourceText',region:'center', border:false,split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
-					</div>
-				</div>
-		        <div title="Timeline" data-options="" id="processPanel" style="">
+		        <div title="Timeline" data-options="" id="processPanel" style="padding:5px 5px 50px 5px;">
 				    <table class="easyui-datagrid" id="timelineDg" data-options="border:false">
 				        <thead>
 				            <tr>
@@ -73,7 +82,7 @@
 				        </thead>
 				    </table>
 		        </div>
-		        <div title="Events" data-options="" id="eventsPannel" style="">
+		        <div title="Events" data-options="" id="eventsPannel" style="padding:5px 5px 50px 5px;">
 				    <table class="easyui-datagrid" id="eventsDg" data-options="border:false">
 				        <thead>
 				            <tr>
@@ -84,6 +93,14 @@
 				        </thead>
 				    </table>
 		        </div>
+				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
+					<div id="requestPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+					</div>
+				</div>
+				<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
+					<div id="responsePannel" data-options="title:'SourceText',region:'center', border:false,split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+					</div>
+				</div>
 			</div>
 		</div>
 	</body>
