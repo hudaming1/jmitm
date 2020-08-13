@@ -23,6 +23,14 @@ public class PipeHolder {
 		pipe.addStatus(PipeStatus.Init);
 	}
 	
+	public void setName(String name) {
+		this.pipe.setName(name);
+	}
+	
+	public String getName() {
+		return this.pipe.getName();
+	}
+	
 	public void registClient(Channel channel) {
 		this.pipe.setSourceCtx(channel);
 		this.addEvent(PipeEventType.ClientConnect, "客户端上线");
@@ -102,6 +110,8 @@ public class PipeHolder {
 					return 1;
 				} else if (o2 == null) {
 					return -1;
+				} else if (o1.getCode() == o2.getCode()) {
+					return 0;
 				}
 				return o1.getCode() < o2.getCode() ? 1 : -1;
 			}

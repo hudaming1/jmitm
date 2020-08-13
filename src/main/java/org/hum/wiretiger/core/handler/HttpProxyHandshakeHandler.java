@@ -45,8 +45,9 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 		client2ProxyCtx.pipeline().remove(this);
 		
 		PipeHolder pipeHolder = (PipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
+		pipeHolder.setName(client2ProxyCtx.channel().localAddress().toString() + "->" + request.getHost() + ":" + request.getPort());
     	
-    	HttpRequest request = HttpHelper.decode((ByteBuf) msg);
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书

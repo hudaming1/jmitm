@@ -14,9 +14,7 @@ public class WiretigerPipeListVO implements Serializable {
 	// 协议
 	private String protocol;
 	// uri
-	private String uri;
-	// 
-	private String responseCode;
+	private String name;
 	//
 	private String status;
 }

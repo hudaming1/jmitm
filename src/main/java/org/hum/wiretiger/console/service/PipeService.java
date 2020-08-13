@@ -1,7 +1,5 @@
 package org.hum.wiretiger.console.service;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -23,9 +21,7 @@ import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 
 import io.netty.util.internal.StringUtil;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class PipeService {
 	
 	private PipeManager pipeMonitor = PipeManager.get();
@@ -37,22 +33,12 @@ public class PipeService {
 		all.forEach(item -> {
 			WiretigerPipeListVO vo = new WiretigerPipeListVO();
 			vo.setRequestId(item.getId());
-			vo.setUri(item.getUri() == null ? "waitting.." : getPath(item.getUri()));
-			vo.setResponseCode((item.getResponses() == null || item.getResponses().isEmpty()) ? "pending.." : item.getResponses().get(0).status().code() + "");
+			vo.setName(item.getName());
 			vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
 			vo.setStatus(item.getCurrentStatus().getDesc());
 			requestList.add(vo);
 		});
 		return requestList;
-	}
-	
-	private String getPath(String uri) {
-		try {
-			return new URI(uri).getPath();
-		} catch (URISyntaxException e) {
-			log.warn("cann't parse uri=" + uri);
-			return "parse error:" + uri;
-		}
 	}
 
 	public WiretigerPipeDetailVO getById(int id) {

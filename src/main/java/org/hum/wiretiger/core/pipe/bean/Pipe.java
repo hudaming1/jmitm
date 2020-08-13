@@ -16,6 +16,10 @@ import lombok.Getter;
 @Getter
 public class Pipe {
 	
+	// pipeId
+	private int id;
+	// name
+	private String name;
 	// client->proxy
 	private Channel sourceCtx;
 	// proxy->server
@@ -28,10 +32,6 @@ public class Pipe {
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// event
 	private List<PipeEvent> events = new ArrayList<>();
-	// create time
-	private long birthday;
-	// pipeId
-	private int id;
 	// protocol
 	private Protocol protocol;
 	
@@ -63,15 +63,15 @@ public class Pipe {
 		this.statusMap = statusMap;
 	}
 
-	void setBirthday(long birthday) {
-		this.birthday = birthday;
-	}
-
 	void setId(int id) {
 		this.id = id;
 	}
 
 	void setProtocol(Protocol protocol) {
 		this.protocol = protocol;
+	}
+
+	void setName(String name) {
+		this.name = name;
 	}
 }
