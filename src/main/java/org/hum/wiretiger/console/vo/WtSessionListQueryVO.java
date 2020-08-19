@@ -3,7 +3,7 @@ package org.hum.wiretiger.console.vo;
 import lombok.Data;
 
 @Data
-public class WtRequestListQueryVO {
+public class WtSessionListQueryVO {
 
 	private String keyword;
 	private Integer pipeId;

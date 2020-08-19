@@ -21,23 +21,23 @@
 		<servlet-name>pipeDetailServlet</servlet-name>
 		<url-pattern>/pipe/get</url-pattern>
 	</servlet-mapping>
-	<!-- connection list -->
+	<!-- session list -->
 	<servlet>
-		<servlet-name>RequestListServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.RequestListServlet</servlet-class>
+		<servlet-name>SessionListServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.servlet.SessionListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>RequestListServlet</servlet-name>
-		<url-pattern>/request/list</url-pattern>
+		<servlet-name>SessionListServlet</servlet-name>
+		<url-pattern>/session/list</url-pattern>
 	</servlet-mapping>
-	<!-- connection detail -->
+	<!-- session detail -->
 	<servlet>
-		<servlet-name>RequestDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.RequestDetailServlet</servlet-class>
+		<servlet-name>SessionDetailServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.servlet.SessionDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>RequestDetailServlet</servlet-name>
-		<url-pattern>/request/get</url-pattern>
+		<servlet-name>SessionDetailServlet</servlet-name>
+		<url-pattern>/session/get</url-pattern>
 	</servlet-mapping>
 	<!-- download_cert -->
 	<servlet>

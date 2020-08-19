@@ -1,11 +1,11 @@
-package org.hum.wiretiger.core.request.bean;
+package org.hum.wiretiger.core.session.bean;
 
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Getter;
 
 @Getter
-public class WtRequest {
+public class WtSession {
 
 	private long id;
 	private Integer pipeId;
@@ -15,7 +15,7 @@ public class WtRequest {
 	private byte[] responseBytes;
 	private long responseTime;
 	
-	public WtRequest(Integer pipeId, DefaultHttpRequest request, long requestTime) {
+	public WtSession(Integer pipeId, DefaultHttpRequest request, long requestTime) {
 		this.id = System.nanoTime();
 		this.pipeId = pipeId;
 		this.request = request;

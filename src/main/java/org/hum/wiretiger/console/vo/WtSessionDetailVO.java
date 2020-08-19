@@ -5,11 +5,12 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class WtRequestDetailVO implements Serializable {
+public class WtSessionDetailVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private String request;
-	private String response;
-	private String responseBytes;
+	private String responseHeader;
+	private String responseBody4Source;
+	private String responseBody4Parsed;
 }

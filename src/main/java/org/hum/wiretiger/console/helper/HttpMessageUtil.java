@@ -1,7 +1,11 @@
 package org.hum.wiretiger.console.helper;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpMessage;
@@ -101,6 +105,29 @@ public class HttpMessageUtil {
 
     private static void removeLastNewLine(StringBuilder buf) {
         buf.setLength(buf.length() - StringUtil.NEWLINE.length());
+    }
+    
+	public static String unescape(String content) {
+		if (content == null) {
+			return "";
+		}
+		content = content.replaceAll("'", "&apos;");
+		content = content.replaceAll("\"", "&quot;");
+		content = content.replaceAll("\t", "&nbsp;&nbsp;");// 替换跳格
+		content = content.replaceAll("<", "&lt;");
+		content = content.replaceAll(">", "&gt;");
+		return content;
+	}
+    
+    public static byte[] ungzip(byte[] bytes) throws IOException {
+    	GZIPInputStream gzipIs = new GZIPInputStream(new ByteArrayInputStream(bytes));
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	byte[] buffer = new byte[1024];
+    	int len = 0;
+    	while ((len = gzipIs.read(buffer)) > 0) {
+    		baos.write(buffer, 0, len);
+    	}
+    	return baos.toByteArray();
     }
 
     private HttpMessageUtil() { }

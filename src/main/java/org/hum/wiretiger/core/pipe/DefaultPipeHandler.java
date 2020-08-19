@@ -8,8 +8,8 @@ import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
-import org.hum.wiretiger.core.request.RequestManager;
-import org.hum.wiretiger.core.request.bean.WtRequest;
+import org.hum.wiretiger.core.session.SessionManager;
+import org.hum.wiretiger.core.session.bean.WtSession;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,11 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
-	private final RequestManager cm = RequestManager.get();
+	private final SessionManager cm = SessionManager.get();
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
-	private Stack<WtRequest> reqStack4WattingResponse = new Stack<>();
+	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 	
 	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
@@ -50,7 +50,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (msg instanceof DefaultHttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
-			reqStack4WattingResponse.push(new WtRequest(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
+			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
@@ -71,7 +71,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn("reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 			}
-			WtRequest connection = reqStack4WattingResponse.pop();
+			WtSession connection = reqStack4WattingResponse.pop();
 			byte[] bytes = null;
 			if (resp.content().readableBytes() > 0) {
 				bytes = new byte[resp.content().readableBytes()];

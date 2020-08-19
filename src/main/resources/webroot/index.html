@@ -9,12 +9,14 @@
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
-			function reqDgClickRow(index, row) {
-				$.get("/request/get?id=" + row.requestId, function(resp) {
+			function sessionDgClickRow(index, row) {
+				$.get("/session/get?id=" + row.sessionId, function(resp) {
 					// load data
 					var jsonObj = eval("(" + resp + ")");
 					$("#REQ_STAGE").find("#requestPannel").html(jsonObj.request);
-					$("#REQ_STAGE").find("#responsePannel").html(jsonObj.response);
+					$("#REQ_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
+					$("#REQ_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
+					$("#REQ_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
 					// expand east_panel
 					if($("#REQ_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
 						$("#REQ_STAGE").find("body").layout("expand", "east");
@@ -72,12 +74,12 @@
 		</script>
 	</head>
 	<body class="easyui-tabs" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60">
-		<div title="REQ" data-options="fit:true, border:false" class="easyui-layout" id="REQ_STAGE">
+		<div title="SESN" data-options="fit:true, border:false" class="easyui-layout" id="REQ_STAGE">
 			<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
-				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#reqDgTb', onClickRow:reqDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/request/list',method:'get'">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#reqDgTb', onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
 					<thead>
 						<tr>
-							<th data-options="field:'requestId', hidden:true">requestId</th>
+							<th data-options="field:'sessionId', hidden:true">sessionId</th>
 							<th data-options="field:'uri', width: '90%'">Name</th>
 							<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
 						</tr>
@@ -97,7 +99,13 @@
 						</div>
 					</div>
 					<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
-						<div id="responsePannel" data-options="title:'SourceText',region:'center', border:false,split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+						<div id="responseHeaderPannel" data-options="title:'Header',region:'center', border:false,split:true,collapsible:false" style="height:40%;padding:5px 5px 5px 5px;">
+						</div>
+						<div id="responsePannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;padding:5px 5px 50px 5px;">
+							<div id="source" title="Source" data-options="fit:true, border:false">
+							</div>
+							<div id="parsed" title="Parsed" data-options="fit:true, border:false">
+							</div>
 						</div>
 					</div>
 				</div>
