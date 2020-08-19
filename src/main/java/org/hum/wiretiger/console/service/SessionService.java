@@ -11,7 +11,10 @@ import org.hum.wiretiger.console.vo.WtSessionListQueryVO;
 import org.hum.wiretiger.console.vo.WtSessionListVO;
 import org.hum.wiretiger.core.session.SessionManager;
 import org.hum.wiretiger.core.session.bean.WtSession;
+import org.hum.wiretiger.http.codec.impl.CodecFactory;
+import org.hum.wiretiger.http.common.HttpConstant;
 
+import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.internal.StringUtil;
 
 public class SessionService {
@@ -46,9 +49,18 @@ public class SessionService {
 		detailVo.setRequest(HttpMessageUtil.appendRequest(new StringBuilder(), session.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		detailVo.setResponseHeader(HttpMessageUtil.appendResponse(new StringBuilder(), session.getResponse()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		if (session.getResponseBytes() != null && session.getResponseBytes().length > 0) {
+			HttpHeaders headers = session.getResponse().headers();
 			detailVo.setResponseBody4Source(Arrays.toString(session.getResponseBytes()));
-			// TODO 判断response的content-type
-			detailVo.setResponseBody4Parsed(HttpMessageUtil.unescape(new String(HttpMessageUtil.ungzip(session.getResponseBytes()))));
+			byte[] respBytes = session.getResponseBytes();
+			// 是否需要解压
+			if (headers.contains(HttpConstant.ContentEncoding) && HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentEncoding))) {
+				respBytes = CodecFactory.create(headers.get(HttpConstant.ContentEncoding)).decompress(respBytes);
+				detailVo.setResponseBody4Source(Arrays.toString(respBytes));
+			} 
+			// 是否支持转成字符串
+			if (HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentType))) {
+				detailVo.setResponseBody4Parsed(HttpMessageUtil.unescape(new String(respBytes)));
+			} 
 		} else {
 			detailVo.setResponseBody4Source("No Response..");
 			detailVo.setResponseBody4Parsed("No Response..");

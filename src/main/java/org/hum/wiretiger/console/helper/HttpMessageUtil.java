@@ -1,11 +1,7 @@
 package org.hum.wiretiger.console.helper;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.GZIPInputStream;
 
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpMessage;
@@ -17,6 +13,10 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.internal.StringUtil;
 
 public class HttpMessageUtil {
+	
+	private static final String[] SUPPORT_PARSED_STRING = new String[] {
+		"application/javascript", "text/css", "text/html"
+	};
 
     public static StringBuilder appendRequest(StringBuilder buf, DefaultHttpRequest req) {
 		appendInitialLine(buf, req);
@@ -119,15 +119,16 @@ public class HttpMessageUtil {
 		return content;
 	}
     
-    public static byte[] ungzip(byte[] bytes) throws IOException {
-    	GZIPInputStream gzipIs = new GZIPInputStream(new ByteArrayInputStream(bytes));
-    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	byte[] buffer = new byte[1024];
-    	int len = 0;
-    	while ((len = gzipIs.read(buffer)) > 0) {
-    		baos.write(buffer, 0, len);
+    public static boolean isSupportParseString(String contentType) {
+    	if (contentType == null) {
+    		return false;
     	}
-    	return baos.toByteArray();
+    	for (String supportParsedString : SUPPORT_PARSED_STRING) {
+    		if (supportParsedString.contains(contentType.toLowerCase())) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     private HttpMessageUtil() { }

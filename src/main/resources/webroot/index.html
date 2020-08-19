@@ -13,27 +13,27 @@
 				$.get("/session/get?id=" + row.sessionId, function(resp) {
 					// load data
 					var jsonObj = eval("(" + resp + ")");
-					$("#REQ_STAGE").find("#requestPannel").html(jsonObj.request);
-					$("#REQ_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
-					$("#REQ_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
-					$("#REQ_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
+					$("#SESN_STAGE").find("#requestPannel").html(jsonObj.request);
+					$("#SESN_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
 					// expand east_panel
-					if($("#REQ_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
-						$("#REQ_STAGE").find("body").layout("expand", "east");
+					if($("#SESN_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
+						$("#SESN_STAGE").find("body").layout("expand", "east");
 					}
 				});
 			}
 			
 			function pipeDgDbClickRow(index, row) {
 				$("body").tabs("select", 0);
-				$("#REQ_STAGE").find("#reqDgTb").find("#searchPipe").tagbox({ prompt : "", value : "PIPE" + row.pipeId });
-		        $("#REQ_STAGE").find("#dgMain").datagrid("load", {
+				$("#SESN_STAGE").find("#sessionDgTb").find("#searchPipe").tagbox({ prompt : "", value : "PIPE" + row.pipeId });
+		        $("#SESN_STAGE").find("#dgMain").datagrid("load", {
 		        	pipe_id: row.pipeId
 		        });
 			}
 			
 			function reqDgReload() {
-				$("#REQ_STAGE").find("#dgMain").datagrid("load", {
+				$("#SESN_STAGE").find("#dgMain").datagrid("load", {
 		        });
 			}
 			
@@ -74,9 +74,9 @@
 		</script>
 	</head>
 	<body class="easyui-tabs" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60">
-		<div title="SESN" data-options="fit:true, border:false" class="easyui-layout" id="REQ_STAGE">
+		<div title="SESN" data-options="fit:true, border:false" class="easyui-layout" id="SESN_STAGE">
 			<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
-				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#reqDgTb', onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#sessionDgTb', onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
 					<thead>
 						<tr>
 							<th data-options="field:'sessionId', hidden:true">sessionId</th>
@@ -85,7 +85,7 @@
 						</tr>
 					</thead>
 				</table>
-				<div id="reqDgTb" style="padding:5px;height:auto">
+				<div id="sessionDgTb" style="padding:5px;height:auto">
 					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
 					<input class="easyui-tagbox" id="searchPipe" data-options="prompt:'Pipe Filter', onRemoveTag: reqDgReload" style="width:125px;" />
 					<input class="easyui-textbox" data-options="prompt:'Search Keyword'" style="width:200px" />
