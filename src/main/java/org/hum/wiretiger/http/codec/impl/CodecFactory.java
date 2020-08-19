@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hum.wiretiger.http.codec.IContentCodec;
-import org.hum.wiretiger.http.common.exception.WtHttpException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +20,6 @@ public class CodecFactory {
 			return CodecImplMap.get(contentEncodingType);
 		}
 		log.error("found unsupport content-encode type=" + contentEncodingType);
-		throw new WtHttpException("found unsupport content-encode type=" + contentEncodingType);
+		return null;
 	}
 }

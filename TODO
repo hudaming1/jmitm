@@ -1,21 +1,22 @@
-
 【OK】控制台使用Tab现实Pipe生命周期
 【OK】显示连接存活状态
 【OK】部分连接无法flush后无法Read(原因是握手失败？)，例如：https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/ms-language-packs/records/cfr-v1-zh-CN
 【OK】重制CA
 【OK】https server 连接断开后，需要通知client，目前整个pipe没有做关联
-增加websocket，实时刷新
 【OK】增加过滤，仅显示存活连接
+【OK】控制台最好能将连接和请求相互关联起来
+【OK】连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；
+【OK】增加控制台
+【OK】控制台Response内容没有展示
+
+
+增加WebSocket，实时刷新
 控制台增加断开连接的按钮
-控制台最好能将连接和请求相互关联起来
+增加下载CA证书连接
+Request支持分页
+配置闲置连接最长5分钟
+PIPE删除Request和Response，只显示汇总信息
 
-## high level ##
-2.连接维护：Server端发现如果是HTTP1.2没有keepAlive，处理完响应后直接关闭；
-3.增加控制台
-  控制台Response内容没有展示
-
-## low level ##
-1.下载CA证书连接
 
 
 TLS协议格式参考：RFC5246(https://www.ietf.org/rfc/rfc5246.html)

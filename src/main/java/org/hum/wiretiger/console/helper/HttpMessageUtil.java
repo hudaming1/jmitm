@@ -124,7 +124,7 @@ public class HttpMessageUtil {
     		return false;
     	}
     	for (String supportParsedString : SUPPORT_PARSED_STRING) {
-    		if (supportParsedString.contains(contentType.toLowerCase())) {
+    		if (contentType.toLowerCase().contains(supportParsedString)) {
     			return true;
     		}
     	}

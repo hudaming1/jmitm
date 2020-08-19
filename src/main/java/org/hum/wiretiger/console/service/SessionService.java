@@ -11,6 +11,7 @@ import org.hum.wiretiger.console.vo.WtSessionListQueryVO;
 import org.hum.wiretiger.console.vo.WtSessionListVO;
 import org.hum.wiretiger.core.session.SessionManager;
 import org.hum.wiretiger.core.session.bean.WtSession;
+import org.hum.wiretiger.http.codec.IContentCodec;
 import org.hum.wiretiger.http.codec.impl.CodecFactory;
 import org.hum.wiretiger.http.common.HttpConstant;
 
@@ -53,9 +54,12 @@ public class SessionService {
 			detailVo.setResponseBody4Source(Arrays.toString(session.getResponseBytes()));
 			byte[] respBytes = session.getResponseBytes();
 			// 是否需要解压
-			if (headers.contains(HttpConstant.ContentEncoding) && HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentEncoding))) {
-				respBytes = CodecFactory.create(headers.get(HttpConstant.ContentEncoding)).decompress(respBytes);
-				detailVo.setResponseBody4Source(Arrays.toString(respBytes));
+			if (headers.contains(HttpConstant.ContentEncoding)) {
+				IContentCodec contentCodec = CodecFactory.create(headers.get(HttpConstant.ContentEncoding));
+				if (contentCodec != null) {
+					respBytes = contentCodec.decompress(respBytes);
+					detailVo.setResponseBody4Source(Arrays.toString(respBytes));
+				}
 			} 
 			// 是否支持转成字符串
 			if (HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentType))) {
