@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hum.wiretiger.console.service.ConnectionService;
+import org.hum.wiretiger.console.service.RequestService;
 import org.hum.wiretiger.console.vo.WtRequestListQueryVO;
 
 import com.alibaba.fastjson.JSON;
@@ -18,7 +18,7 @@ import com.alibaba.fastjson.JSON;
 public class RequestListServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private ConnectionService connectionService = new ConnectionService();
+	private RequestService requestService = new RequestService();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,7 +28,7 @@ public class RequestListServlet extends HttpServlet {
 		query.setPipeId(pipeId == null ? null : Integer.parseInt(pipeId));
 		
 		resp.setHeader("Content-Type", "application/json");
-		resp.getWriter().print(JSON.toJSONString(connectionService.list(query)));
+		resp.getWriter().print(JSON.toJSONString(requestService.list(query)));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

@@ -13,11 +13,14 @@ import org.hum.wiretiger.core.request.bean.WtRequest;
 
 import io.netty.util.internal.StringUtil;
 
-public class ConnectionService {
+public class RequestService {
 
 	public List<WtRequestListVO> list(WtRequestListQueryVO query) {
 		List<WtRequestListVO> connList = new ArrayList<>();
-		RequestManager.get().getLis().forEach(request -> {
+		RequestManager.get().getList().forEach(request -> {
+			if (!isMatch(query, request)) {
+				return ;
+			}
 			WtRequestListVO conVo = new WtRequestListVO();
 			conVo.setRequestId(request.getId());
 			conVo.setUri(request.getRequest().uri());
@@ -26,9 +29,18 @@ public class ConnectionService {
 		});
 		return connList;
 	}
-
+	
+	private boolean isMatch(WtRequestListQueryVO condition, WtRequest req) {
+		if (condition == null) {
+			return true;
+		} else if (condition.getPipeId() != null && condition.getPipeId().equals(req.getPipeId())) {
+			return true;
+		}
+		return false;
+	}
+	
 	public WtRequestDetailVO getById(Long id) {
-		WtRequest connection = RequestManager.get().getConnection(id);
+		WtRequest connection = RequestManager.get().getRequest(id);
 		WtRequestDetailVO detailVo = new WtRequestDetailVO();
 		detailVo.setRequest(HttpMessageUtil.appendRequest(new StringBuilder(), connection.getRequest()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		detailVo.setResponse(HttpMessageUtil.appendResponse(new StringBuilder(), connection.getResponse()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));

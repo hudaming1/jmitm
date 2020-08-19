@@ -10,8 +10,8 @@ import org.hum.wiretiger.core.request.bean.WtRequest;
 
 public class RequestManager {
 
-	private List<WtRequest> ConnectionList = new CopyOnWriteArrayList<>();
-	private Map<Long, WtRequest> ConnectionIndex4Id = new ConcurrentHashMap<>();
+	private List<WtRequest> RequestList = new CopyOnWriteArrayList<>();
+	private Map<Long, WtRequest> RequestIndex4Id = new ConcurrentHashMap<>();
 	
 	private static class ConnectionManagerHolder {
 		public static RequestManager connectionManager = new RequestManager();
@@ -25,15 +25,15 @@ public class RequestManager {
 	}
 	
 	public void add(WtRequest connection) {
-		ConnectionList.add(connection);
-		ConnectionIndex4Id.put(connection.getId(), connection);
+		RequestList.add(connection);
+		RequestIndex4Id.put(connection.getId(), connection);
 	}
 	
-	public List<WtRequest> getLis() {
-		return Collections.unmodifiableList(this.ConnectionList);
+	public List<WtRequest> getList() {
+		return Collections.unmodifiableList(this.RequestList);
 	}
 	
-	public WtRequest getConnection(long id) {
-		return ConnectionIndex4Id.get(id);
+	public WtRequest getRequest(long id) {
+		return RequestIndex4Id.get(id);
 	}
 }
