@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.console.helper.HttpMessageUtil;
-import org.hum.wiretiger.console.vo.WiretigerPipeDetailVO;
-import org.hum.wiretiger.console.vo.WiretigerPipeListQueryVO;
-import org.hum.wiretiger.console.vo.WiretigerPipeListVO;
+import org.hum.wiretiger.console.vo.WtPipeDetailVO;
+import org.hum.wiretiger.console.vo.WtPipeListQueryVO;
+import org.hum.wiretiger.console.vo.WtPipeListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
@@ -25,15 +25,15 @@ public class PipeService {
 	private PipeManager pipeMonitor = PipeManager.get();
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-	public List<WiretigerPipeListVO> list(WiretigerPipeListQueryVO queryVo) {
+	public List<WtPipeListVO> list(WtPipeListQueryVO queryVo) {
 		Collection<PipeHolder> all = pipeMonitor.getAll();
-		List<WiretigerPipeListVO> requestList = new ArrayList<>();
+		List<WtPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
 			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
 				 return ;
 			}
-			WiretigerPipeListVO vo = new WiretigerPipeListVO();
-			vo.setRequestId(item.getId());
+			WtPipeListVO vo = new WtPipeListVO();
+			vo.setPipeId(item.getId());
 			vo.setName(item.getName());
 			vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
 			vo.setStatus(item.getCurrentStatus().getDesc());
@@ -42,12 +42,12 @@ public class PipeService {
 		return requestList;
 	}
 
-	public WiretigerPipeDetailVO getById(int id) {
+	public WtPipeDetailVO getById(int id) {
 		PipeHolder pipe = pipeMonitor.getById(id);
 		if (pipe == null) {
-			return new WiretigerPipeDetailVO();
+			return new WtPipeDetailVO();
 		}
-		WiretigerPipeDetailVO detailVo = new WiretigerPipeDetailVO();
+		WtPipeDetailVO detailVo = new WtPipeDetailVO();
 		if (pipe.getRequests() != null && !pipe.getRequests().isEmpty()) {
 			detailVo.setRequestString(HttpMessageUtil.appendRequest(new StringBuilder(), pipe.getRequests()).toString().replaceAll(StringUtil.NEWLINE, "<br />"));
 		}

@@ -12,9 +12,9 @@ import org.hum.wiretiger.console.service.ConnectionService;
 import com.alibaba.fastjson.JSON;
 
 /**
- * http://localhost:8080/conn/get
+ * http://localhost:8080/request/get
  */
-public class ConnectionDetailServlet extends HttpServlet {
+public class RequestDetailServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 	private final ConnectionService connectionService = new ConnectionService();

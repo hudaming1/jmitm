@@ -5,12 +5,12 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class WiretigerPipeListVO implements Serializable {
+public class WtPipeListVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	// id
-	private Integer requestId;
+	private Integer pipeId;
 	// 协议
 	private String protocol;
 	// uri
