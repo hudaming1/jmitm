@@ -22,8 +22,21 @@
 				});
 			}
 			
+			function pipeDgDbClickRow(index, row) {
+				$("body").tabs("select", 0);
+				$("#REQ_STAGE").find("#reqDgTb").find("#searchPipe").tagbox({ prompt : "", value : "PIPE" + row.pipeId });
+		        $("#REQ_STAGE").find("#dgMain").datagrid("load", {
+		        	pipe_id: row.pipeId
+		        });
+			}
+			
+			function reqDgReload() {
+				$("#REQ_STAGE").find("#dgMain").datagrid("load", {
+		        });
+			}
+			
 			function pipeDgClickRow(index, row) {
-				$.get("/pipe/get?id=" + row.requestId, function(resp) {
+				$.get("/pipe/get?id=" + row.pipeId, function(resp) {
 				
 					// load data
 					var jsonObj = eval("(" + resp + ")");
@@ -72,7 +85,7 @@
 				</table>
 				<div id="reqDgTb" style="padding:5px;height:auto">
 					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
-					<input class="easyui-tagbox" data-options="prompt:'Pipe Filter'" style="width:125px;" />
+					<input class="easyui-tagbox" id="searchPipe" data-options="prompt:'Pipe Filter', onRemoveTag: reqDgReload" style="width:125px;" />
 					<input class="easyui-textbox" data-options="prompt:'Search Keyword'" style="width:200px" />
 					<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
 				</div>
@@ -95,7 +108,7 @@
 				<div id="pipeDgTb" style="padding:5px;height:auto">
 					<input id="filterBtn" class="easyui-switchbutton" checked style="width:60px;height:20px" />
 				</div>
-				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, toolbar:'#pipeDgTb', onClickRow:pipeDgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, toolbar:'#pipeDgTb', onDblClickRow:pipeDgDbClickRow, onClickRow:pipeDgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
 					<thead>
 						<tr>
 							<th data-options="field:'pipeId', hidden:true">PipeId</th>

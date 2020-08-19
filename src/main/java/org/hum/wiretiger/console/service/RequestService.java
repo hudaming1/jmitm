@@ -31,7 +31,7 @@ public class RequestService {
 	}
 	
 	private boolean isMatch(WtRequestListQueryVO condition, WtRequest req) {
-		if (condition == null) {
+		if (condition == null || condition.isEmpty()) {
 			return true;
 		} else if (condition.getPipeId() != null && condition.getPipeId().equals(req.getPipeId())) {
 			return true;

@@ -23,11 +23,11 @@
 	</servlet-mapping>
 	<!-- connection list -->
 	<servlet>
-		<servlet-name>RequestListServelet</servlet-name>
+		<servlet-name>RequestListServlet</servlet-name>
 		<servlet-class>org.hum.wiretiger.console.servlet.RequestListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>ConnectionListServelet</servlet-name>
+		<servlet-name>RequestListServlet</servlet-name>
 		<url-pattern>/request/list</url-pattern>
 	</servlet-mapping>
 	<!-- connection detail -->
