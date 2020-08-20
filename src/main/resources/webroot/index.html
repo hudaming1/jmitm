@@ -25,7 +25,7 @@
 			}
 			
 			function pipeDgDbClickRow(index, row) {
-				$("body").tabs("select", 0);
+				$("body").tabs("select", 1);
 				$("#SESN_STAGE").find("#sessionDgTb").find("#searchPipe").tagbox({ prompt : "", value : "PIPE" + row.pipeId });
 		        $("#SESN_STAGE").find("#dgMain").datagrid("load", {
 		        	pipe_id: row.pipeId

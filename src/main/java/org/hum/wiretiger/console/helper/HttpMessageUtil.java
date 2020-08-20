@@ -15,7 +15,7 @@ import io.netty.util.internal.StringUtil;
 public class HttpMessageUtil {
 	
 	private static final String[] SUPPORT_PARSED_STRING = new String[] {
-		"application/javascript", "text/css", "text/html"
+		"application/javascript", "text/css", "text/html", "application/x-javascript"
 	};
 
     public static StringBuilder appendRequest(StringBuilder buf, DefaultHttpRequest req) {

@@ -22,7 +22,7 @@ public class CertDownloadServlet extends HttpServlet {
 	
 	public CertDownloadServlet() {
 		try {
-			File certFile = new File(CertDownloadServlet.class.getResource("/cert/client.pem").getFile());
+			File certFile = new File(CertDownloadServlet.class.getResource("/cert/client.cer").getFile());
 			InputStream is = new FileInputStream(certFile);
 			CERT_ARRAY = new byte[(int) certFile.length()];
 			is.read(CERT_ARRAY);
@@ -34,7 +34,7 @@ public class CertDownloadServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setHeader("content-disposition", "attachment;filename=wiretiger.cert.pem");
+		resp.setHeader("content-disposition", "attachment;filename=Wiretiger.cer");
 		ServletOutputStream out = resp.getOutputStream();
 		out.write(CERT_ARRAY);
 		out.flush();
