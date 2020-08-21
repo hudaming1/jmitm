@@ -11,6 +11,8 @@ public class WiretigerConfig {
 	private Integer threads;
 	// 控制台端口
 	private Integer consolePort;
+	// websocket端口
+	private Integer wsPort;
 	//
 	private boolean isDebug;
 }

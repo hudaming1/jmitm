@@ -9,6 +9,7 @@ public class WiretigerServerRun {
 		// config
 		WiretigerConfig config = new WiretigerConfig();
 		config.setPort(52007);
+		config.setWsPort(52996);
 		config.setConsolePort(8080);
 		config.setThreads(Runtime.getRuntime().availableProcessors());
 		config.setDebug(false);

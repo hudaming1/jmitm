@@ -16,6 +16,8 @@
 Request支持分页
 配置闲置连接最长5分钟
 PIPE删除Request和Response，只显示汇总信息
+开启debug模式（log4j和nettyhandler）
+后面用netty替换掉netty吧，http和ws走一个端口
 
 
 
