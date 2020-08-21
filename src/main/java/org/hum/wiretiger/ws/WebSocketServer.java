@@ -60,6 +60,9 @@ public class WebSocketServer {
 		}
 		isStart = true;
 		try {
+			if (bootstrap == null) {
+				init();
+			}
 			bootstrap.bind(config.getWsPort()).sync();
 			logger.info("netty server listen on port : " + config.getWsPort());
 		} catch (Exception ce) {

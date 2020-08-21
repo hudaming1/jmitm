@@ -57,6 +57,8 @@
 				});
 			}
 			
+			var wssocket;
+			
 			$(function(){
 		        $('#filterBtn').switchbutton({
 		            checked: true,
@@ -69,6 +71,15 @@
 		        $("#PIPE_STAGE").find("#dgMain").datagrid("load", {
 		        	active: true
 		        });
+		        
+				if (!window.WebSocket) {
+					window.WebSocket = window.MozWebSocket;
+				}
+				
+		        wssocket = new WebSocket("ws://localhost:52996/");
+		        setInterval(function() {
+					// wssocket.send("huming");
+				}, 3000);
 		    })
 			
 		</script>

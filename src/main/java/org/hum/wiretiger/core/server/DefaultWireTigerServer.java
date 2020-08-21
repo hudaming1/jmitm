@@ -79,11 +79,10 @@ public class DefaultWireTigerServer implements WiretigerServer {
 	}
 	
 	private void startConsole(int port) throws Exception {
-		ConsoleServer.startJetty(port);
-		// TODO 这里线程join，阻塞住了
-		log.info("console server started on port:" + port);
 		new WebSocketServer(config).start();
-		log.info("console server started on port:" + config.getWsPort());
+		// TODO 这里线程join，阻塞住了
+		ConsoleServer.startJetty(port);
+		log.info("console server started on port:" + port);
 	}
 	
 	@Override

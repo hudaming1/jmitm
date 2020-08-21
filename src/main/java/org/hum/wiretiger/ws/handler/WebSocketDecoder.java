@@ -6,7 +6,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -20,12 +20,12 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WebSocketDecoder extends SimpleChannelInboundHandler<Object> {
+public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
 	public static WebSocketServerHandshaker webSocketHandshaker;
 
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		log.info("read msg=" + msg);
 		// 处理业务消息
 		if (msg instanceof FullHttpRequest) {
