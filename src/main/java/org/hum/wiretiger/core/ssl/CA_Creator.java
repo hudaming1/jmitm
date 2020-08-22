@@ -39,6 +39,7 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import sun.security.x509.GeneralNames;
 
+@SuppressWarnings("restriction")
 public class CA_Creator implements Callable<byte[]> {
 	
 	private static final String CERT_ALIAS = "wire_tiger";

@@ -50,6 +50,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		if (msg instanceof DefaultHttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
+			// TODO NEW SESSION 
 			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
