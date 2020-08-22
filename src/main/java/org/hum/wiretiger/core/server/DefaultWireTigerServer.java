@@ -9,6 +9,7 @@ import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.console.ConsoleServer;
 import org.hum.wiretiger.core.pipe.HttpProxyHandshakeHandler;
+import org.hum.wiretiger.core.pipe.event.EventHandler;
 import org.hum.wiretiger.ws.WebSocketServer;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -43,6 +44,10 @@ public class DefaultWireTigerServer implements WiretigerServer {
 
 	@Override
 	public void start() {
+		EventHandler eventHandler = new EventHandler();
+		// TODO regist event
+		// eventHandler.add(listener);
+		
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
@@ -56,7 +61,7 @@ public class DefaultWireTigerServer implements WiretigerServer {
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					ch.pipeline().addLast(new HttpProxyHandshakeHandler());
+					ch.pipeline().addLast(new HttpProxyHandshakeHandler(eventHandler));
 				}
 			});
 

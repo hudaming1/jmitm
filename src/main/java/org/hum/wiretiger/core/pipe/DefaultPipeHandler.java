@@ -7,6 +7,7 @@ import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
+import org.hum.wiretiger.core.pipe.event.EventHandler;
 import org.hum.wiretiger.core.session.SessionManager;
 import org.hum.wiretiger.core.session.bean.WtSession;
 
@@ -27,9 +28,11 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
+	private EventHandler eventHandler;
 	
-	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
+	public DefaultPipeHandler(EventHandler eventHandler, PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
+		this.eventHandler = eventHandler;
 		try {
 			new HttpOrHttpsForward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
 		} catch (InterruptedException e) {
@@ -58,6 +61,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		}
 		pipeHolder.getServerChannel().writeAndFlush(msg);
 		pipeHolder.recordStatus(PipeStatus.Read);
+		eventHandler.fireReadEvent(pipeHolder);
 	}
 
 	/**
@@ -85,18 +89,21 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		pipeHolder.getClientChannel().writeAndFlush(msg);
 		pipeHolder.appendResponse((FullHttpResponse) msg);
 		pipeHolder.recordStatus(PipeStatus.Received);
+		eventHandler.fireReceiveEvent(pipeHolder);
 	}
 
 	@Override
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		pipeHolder.recordStatus(PipeStatus.Flushed);
 		pipeHolder.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
+		eventHandler.fireFlushEvent(pipeHolder);
 	}
 
 	@Override
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		pipeHolder.recordStatus(PipeStatus.Forward);
 		pipeHolder.addEvent(PipeEventType.Forward, "已将服务端响应转发给客户端");
+		eventHandler.fireForwardEvent(pipeHolder);
 	}
 
 	@Override
@@ -115,6 +122,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		}
 		pipeHolder.recordStatus(PipeStatus.Closed);
 		pipeHolder.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
+		eventHandler.fireDisconnectEvent(pipeHolder);
 	}
 
 	@Override
@@ -133,5 +141,6 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			pipeHolder.getServerChannel().disconnect();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
+		eventHandler.fireErrorEvent(pipeHolder);
 	}
 }
