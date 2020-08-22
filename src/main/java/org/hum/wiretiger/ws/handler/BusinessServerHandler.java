@@ -1,13 +1,16 @@
 package org.hum.wiretiger.ws.handler;
 
+import org.hum.wiretiger.ws.bean.WsClientMessage;
+
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
 
-public class BusinessServerHandler extends ChannelInboundHandlerAdapter {
+@Slf4j
+public class BusinessServerHandler extends SimpleChannelInboundHandler<WsClientMessage> {
 
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    	System.out.println("read msg=" + msg);
-        ctx.fireChannelRead(msg);
-    }
+	@Override
+	protected void channelRead0(ChannelHandlerContext ctx, WsClientMessage msg) throws Exception {
+		log.info(msg.toString());
+	}
 }

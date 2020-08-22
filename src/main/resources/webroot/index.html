@@ -78,8 +78,8 @@
 				
 		        wssocket = new WebSocket("ws://localhost:52996/");
 		        setInterval(function() {
-					// wssocket.send("huming");
-				}, 3000);
+					wssocket.send("{'type': 9001}");
+				}, 5000);
 		    })
 			
 		</script>

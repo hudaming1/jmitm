@@ -5,6 +5,13 @@ import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import org.hum.wiretiger.ws.bean.WsClientMessage;
+import org.hum.wiretiger.ws.bean.WsServerMessage;
+import org.hum.wiretiger.ws.enumtype.MessageTypeEnum;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
@@ -26,7 +33,6 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		log.info("read msg=" + msg);
 		// 处理业务消息
 		if (msg instanceof FullHttpRequest) {
 			handlerHttpRequest(ctx, (FullHttpRequest) msg);
@@ -84,12 +90,15 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
 	private void handlerTextWebSocketFrame(ChannelHandlerContext ctx, TextWebSocketFrame message) {
 		try {
-			System.out.println(message.text());
-//			ctx.fireChannelRead(request);
+			WsClientMessage request = new WsClientMessage();
+			JSONObject parseObject = JSON.parseObject(message.text());
+			request.setType(MessageTypeEnum.getEnum(parseObject.getInteger("type")));
+			request.setData(parseObject.getJSONObject("data"));
+			ctx.fireChannelRead(request);
 			return;
 		} catch (Exception ce) {
 			log.error("handle websocket frame error, can't parse request, text=" + message.text(), ce);
-//			ctx.channel().write(new TextWebSocketFrame(JSON.toJSONString(new Response(MessageTypeEnum.SystemError, "消息编解码异常"))));
+			ctx.channel().writeAndFlush(new WsServerMessage(MessageTypeEnum.MESSAGE_PARSE_ERROR));
 			return;
 		}
 	}

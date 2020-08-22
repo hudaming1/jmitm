@@ -1,14 +1,17 @@
 package org.hum.wiretiger.ws.handler;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOutboundHandlerAdapter;
-import io.netty.channel.ChannelPromise;
-import lombok.extern.slf4j.Slf4j;
+import org.hum.wiretiger.ws.bean.WsServerMessage;
 
-@Slf4j
-public class WebSocketEncoder extends ChannelOutboundHandlerAdapter {
+import com.alibaba.fastjson.JSON;
+
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+
+public class WebSocketEncoder extends SimpleChannelInboundHandler<WsServerMessage> {
 	
 	@Override
-    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-    }
+	protected void channelRead0(ChannelHandlerContext ctx, WsServerMessage msg) throws Exception {
+		ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msg)));
+	}
 }
