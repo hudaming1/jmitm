@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.handler.bean;
+package org.hum.wiretiger.http.bean;
 
 import java.io.Serializable;
 import java.net.MalformedURLException;
@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.hum.wiretiger.core.handler.helper.HttpHelper;
+import org.hum.wiretiger.http.common.HttpHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

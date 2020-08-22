@@ -4,7 +4,6 @@ import java.util.Stack;
 
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.common.exception.WiretigerException;
-import org.hum.wiretiger.core.handler.Forward;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
@@ -32,7 +31,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	public DefaultPipeHandler(PipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
 		try {
-			new Forward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
+			new HttpOrHttpsForward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
 		} catch (InterruptedException e) {
 			throw new WiretigerException("build connection failed", e);
 		}

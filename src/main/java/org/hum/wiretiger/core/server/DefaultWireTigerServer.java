@@ -8,7 +8,7 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.console.ConsoleServer;
-import org.hum.wiretiger.core.handler.HttpProxyHandshakeHandler;
+import org.hum.wiretiger.core.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.ws.WebSocketServer;
 
 import io.netty.bootstrap.ServerBootstrap;

@@ -1,6 +1,6 @@
-package org.hum.wiretiger.core.handler.helper;
+package org.hum.wiretiger.http.common;
 
-import org.hum.wiretiger.core.handler.bean.HttpRequest;
+import org.hum.wiretiger.http.bean.HttpRequest;
 
 import io.netty.buffer.ByteBuf;
 

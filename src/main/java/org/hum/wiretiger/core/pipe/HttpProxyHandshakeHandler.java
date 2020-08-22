@@ -1,13 +1,11 @@
-package org.hum.wiretiger.core.handler;
+package org.hum.wiretiger.core.pipe;
 
 import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.common.enumtype.Protocol;
-import org.hum.wiretiger.core.handler.bean.HttpRequest;
-import org.hum.wiretiger.core.handler.helper.HttpHelper;
-import org.hum.wiretiger.core.pipe.DefaultPipeHandler;
-import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.ssl.HttpSslContextFactory;
+import org.hum.wiretiger.http.bean.HttpRequest;
+import org.hum.wiretiger.http.common.HttpHelper;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

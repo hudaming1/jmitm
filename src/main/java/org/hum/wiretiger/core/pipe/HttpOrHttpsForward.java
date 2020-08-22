@@ -1,4 +1,4 @@
-package org.hum.wiretiger.core.handler;
+package org.hum.wiretiger.core.pipe;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -19,7 +19,7 @@ import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Forward {
+public class HttpOrHttpsForward {
 	
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
 	private static SslContext SsslContext;
@@ -37,11 +37,11 @@ public class Forward {
 		}
 	}
 
-	public Forward(ChannelDuplexHandler duplexHandler, String host, int port) {
+	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port) {
 		this(duplexHandler, host, port, false);
 	}
 	
-	public Forward(ChannelDuplexHandler duplexHandler, String host, int port, boolean isHttps) {
+	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port, boolean isHttps) {
 		this.isHttps = isHttps;
 		this.host = host;
 		this.port = port;
