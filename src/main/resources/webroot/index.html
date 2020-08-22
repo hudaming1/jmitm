@@ -58,6 +58,7 @@
 			}
 			
 			var wssocket;
+			var consoleId = new Date().getTime();
 			
 			$(function(){
 		        $('#filterBtn').switchbutton({
@@ -76,10 +77,15 @@
 					window.WebSocket = window.MozWebSocket;
 				}
 				
-		        wssocket = new WebSocket("ws://localhost:52996/");
+		        wssocket = new WebSocket("ws://localhost:52996/ws_connect?console_id=" + consoleId);
 		        setInterval(function() {
 					wssocket.send("{'type': 9001}");
 				}, 5000);
+				
+				wssocket.onmessage = function(event) {
+					var msg = JSON.parse(event.data);
+					alert(msg.type + "-->" + msg.data);
+				};
 		    })
 			
 		</script>

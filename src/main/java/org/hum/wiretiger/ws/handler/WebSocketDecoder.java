@@ -5,6 +5,10 @@ import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+import java.util.List;
+import java.util.Map;
+
+import org.hum.wiretiger.ws.ConsoleManager;
 import org.hum.wiretiger.ws.bean.WsClientMessage;
 import org.hum.wiretiger.ws.bean.WsServerMessage;
 import org.hum.wiretiger.ws.enumtype.MessageTypeEnum;
@@ -17,6 +21,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.QueryStringDecoder;
 import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
@@ -24,12 +29,14 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshaker;
 import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
+import io.netty.util.internal.StringUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 
 	public static WebSocketServerHandshaker webSocketHandshaker;
+	private final String CONSOLE_PARAM_NAME = "console_id";
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -52,13 +59,35 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
             return;
         }
 		
-		WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("ws://localhost:52996/test", null, false);
+		// parse console_id
+		String consoleId = getConsoleId(req);
+		if (StringUtil.isNullOrEmpty(consoleId)) {
+			ctx.channel().writeAndFlush(new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
+            return;
+		}
+		
+		// regist console_connection
+		ConsoleManager.get().regist(consoleId, ctx.channel());
+		log.info("console({}) regist", consoleId);
+		
+		// web_socket handshake
+		WebSocketServerHandshakerFactory wsFactory = new WebSocketServerHandshakerFactory("", null, false);
 		webSocketHandshaker = wsFactory.newHandshaker(req);
 		if (webSocketHandshaker == null) {
 			WebSocketServerHandshakerFactory.sendUnsupportedVersionResponse(ctx.channel());
 			return ;
 		} else {
 			webSocketHandshaker.handshake(ctx.channel(), req); 
+		}
+	}
+
+	private String getConsoleId(FullHttpRequest req) {
+		try {
+			Map<String, List<String>> parameters = new QueryStringDecoder(req.uri()).parameters();
+			return parameters.get(CONSOLE_PARAM_NAME).get(0);
+		} catch (Exception ce) {
+			log.error("cann't parse console_id", ce);
+			return null;
 		}
 	}
 
