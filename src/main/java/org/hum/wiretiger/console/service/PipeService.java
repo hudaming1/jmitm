@@ -9,14 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiretiger.common.enumtype.Protocol;
-import org.hum.wiretiger.console.helper.HttpMessageUtil;
+import org.hum.wiretiger.console.helper.PipeHolderHelper;
 import org.hum.wiretiger.console.vo.WtPipeDetailVO;
 import org.hum.wiretiger.console.vo.WtPipeListQueryVO;
 import org.hum.wiretiger.console.vo.WtPipeListVO;
 import org.hum.wiretiger.core.pipe.PipeManager;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
+import org.hum.wiretiger.http.common.HttpMessageUtil;
 
 import io.netty.util.internal.StringUtil;
 
@@ -32,12 +32,7 @@ public class PipeService {
 			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
 				 return ;
 			}
-			WtPipeListVO vo = new WtPipeListVO();
-			vo.setPipeId(item.getId());
-			vo.setName(item.getName());
-			vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
-			vo.setStatus(item.getCurrentStatus().getDesc());
-			requestList.add(vo);
+			requestList.add(PipeHolderHelper.parse(item));
 		});
 		return requestList;
 	}

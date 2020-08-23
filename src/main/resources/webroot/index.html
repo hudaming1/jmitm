@@ -83,9 +83,8 @@
 				}, 5000);
 				
 				wssocket.onmessage = function(event) {
-				alert(1);
 					var msg = JSON.parse(event.data);
-					alert(msg.type + "-->" + msg.data);
+					console.log(msg.type + "-->" + msg.data.name);
 				};
 		    })
 			

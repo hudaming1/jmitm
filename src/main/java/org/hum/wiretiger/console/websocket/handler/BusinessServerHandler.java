@@ -1,6 +1,6 @@
-package org.hum.wiretiger.ws.handler;
+package org.hum.wiretiger.console.websocket.handler;
 
-import org.hum.wiretiger.ws.bean.WsClientMessage;
+import org.hum.wiretiger.console.websocket.bean.WsClientMessage;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;

@@ -1,8 +1,8 @@
-package org.hum.wiretiger.ws.listener;
+package org.hum.wiretiger.console.websocket.listener;
 
+import org.hum.wiretiger.console.websocket.service.WsPipeService;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.event.EventListener;
-import org.hum.wiretiger.ws.service.WsPipeService;
 
 import lombok.extern.slf4j.Slf4j;
 

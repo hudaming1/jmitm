@@ -1,4 +1,4 @@
-package org.hum.wiretiger.console.helper;
+package org.hum.wiretiger.http.common;
 
 import java.util.List;
 import java.util.Map;

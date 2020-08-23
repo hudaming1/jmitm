@@ -1,10 +1,10 @@
-package org.hum.wiretiger.ws;
+package org.hum.wiretiger.console.websocket;
 
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.hum.wiretiger.ws.wrapper.ConsoleChannelWrapper;
+import org.hum.wiretiger.console.websocket.wrapper.ConsoleChannelWrapper;
 
 import io.netty.channel.Channel;
 

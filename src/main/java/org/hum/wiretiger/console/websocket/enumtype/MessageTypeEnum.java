@@ -1,4 +1,4 @@
-package org.hum.wiretiger.ws.enumtype;
+package org.hum.wiretiger.console.websocket.enumtype;
 
 public enum MessageTypeEnum {
 

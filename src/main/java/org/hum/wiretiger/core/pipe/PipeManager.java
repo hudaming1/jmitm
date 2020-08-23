@@ -37,6 +37,7 @@ public class PipeManager {
 	public PipeHolder create(Channel clientChannel) {
 		PipeHolder holder = new PipeHolder(counter.getAndIncrement());
 		holder.registClient(clientChannel);
+		holder.setName(clientChannel.remoteAddress().toString());
 		pipes4Id.put(holder.getId(), holder);
 		pipes4ClientChannel.put(clientChannel, holder);
 		return holder;

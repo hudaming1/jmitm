@@ -1,4 +1,4 @@
-package org.hum.wiretiger.ws.handler;
+package org.hum.wiretiger.console.websocket.handler;
 
 import static io.netty.handler.codec.http.HttpMethod.GET;
 import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
@@ -8,10 +8,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiretiger.ws.ConsoleManager;
-import org.hum.wiretiger.ws.bean.WsClientMessage;
-import org.hum.wiretiger.ws.bean.WsServerMessage;
-import org.hum.wiretiger.ws.enumtype.MessageTypeEnum;
+import org.hum.wiretiger.console.websocket.ConsoleManager;
+import org.hum.wiretiger.console.websocket.bean.WsClientMessage;
+import org.hum.wiretiger.console.websocket.bean.WsServerMessage;
+import org.hum.wiretiger.console.websocket.enumtype.MessageTypeEnum;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -127,7 +127,7 @@ public class WebSocketDecoder extends ChannelInboundHandlerAdapter {
 			return;
 		} catch (Exception ce) {
 			log.error("handle websocket frame error, can't parse request, text=" + message.text(), ce);
-			ctx.channel().writeAndFlush(new WsServerMessage(MessageTypeEnum.MESSAGE_PARSE_ERROR));
+			ctx.channel().writeAndFlush(new WsServerMessage<Void>(MessageTypeEnum.MESSAGE_PARSE_ERROR));
 			return;
 		}
 	}

@@ -1,4 +1,4 @@
-package org.hum.wiretiger.ws.wrapper;
+package org.hum.wiretiger.console.websocket.wrapper;
 
 import org.hum.wiretiger.common.wrapper.ChannelWrapper;
 

@@ -1,6 +1,6 @@
-package org.hum.wiretiger.ws.bean;
+package org.hum.wiretiger.console.websocket.bean;
 
-import org.hum.wiretiger.ws.enumtype.MessageTypeEnum;
+import org.hum.wiretiger.console.websocket.enumtype.MessageTypeEnum;
 
 import com.alibaba.fastjson.JSONObject;
 

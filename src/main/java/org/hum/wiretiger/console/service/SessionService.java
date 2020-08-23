@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.hum.wiretiger.console.helper.HttpMessageUtil;
 import org.hum.wiretiger.console.vo.WtSessionDetailVO;
 import org.hum.wiretiger.console.vo.WtSessionListQueryVO;
 import org.hum.wiretiger.console.vo.WtSessionListVO;
@@ -14,6 +13,7 @@ import org.hum.wiretiger.core.session.bean.WtSession;
 import org.hum.wiretiger.http.codec.IContentCodec;
 import org.hum.wiretiger.http.codec.impl.CodecFactory;
 import org.hum.wiretiger.http.common.HttpConstant;
+import org.hum.wiretiger.http.common.HttpMessageUtil;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.util.internal.StringUtil;

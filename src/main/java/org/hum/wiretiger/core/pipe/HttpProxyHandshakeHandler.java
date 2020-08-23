@@ -53,7 +53,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 		
 		PipeHolder pipeHolder = (PipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
-		pipeHolder.setName(client2ProxyCtx.channel().localAddress().toString() + "->" + request.getHost() + ":" + request.getPort());
+		pipeHolder.setName(client2ProxyCtx.channel().remoteAddress().toString() + "->" + request.getHost() + ":" + request.getPort());
     	
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.getMethod())) {
     		pipeHolder.setProtocol(Protocol.HTTPS);

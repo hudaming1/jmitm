@@ -1,12 +1,12 @@
-package org.hum.wiretiger.ws;
+package org.hum.wiretiger.console.websocket;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
-import org.hum.wiretiger.ws.handler.BusinessServerHandler;
-import org.hum.wiretiger.ws.handler.WebSocketDecoder;
-import org.hum.wiretiger.ws.handler.WebSocketEncoder;
+import org.hum.wiretiger.console.websocket.handler.BusinessServerHandler;
+import org.hum.wiretiger.console.websocket.handler.WebSocketDecoder;
+import org.hum.wiretiger.console.websocket.handler.WebSocketEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

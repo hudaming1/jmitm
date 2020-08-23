@@ -8,10 +8,10 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.console.ConsoleServer;
+import org.hum.wiretiger.console.websocket.WebSocketServer;
+import org.hum.wiretiger.console.websocket.listener.WsListener;
 import org.hum.wiretiger.core.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.core.pipe.event.EventHandler;
-import org.hum.wiretiger.ws.WebSocketServer;
-import org.hum.wiretiger.ws.listener.WsListener;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
