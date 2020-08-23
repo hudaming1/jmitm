@@ -60,6 +60,10 @@
 			var wssocket;
 			var consoleId = new Date().getTime();
 			
+			function clearPipeDgRows() {
+				$("#PIPE_STAGE").find("#dgMain").datagrid("loadData", []);
+			}
+			
 			$(function(){
 		        $('#filterBtn').switchbutton({
 		            checked: true,
@@ -85,9 +89,11 @@
 				wssocket.onmessage = function(event) {
 					var msg = JSON.parse(event.data);
 					if (msg.type == 1001) {
+						/*** NEW PIPE CONNECT ***/
 						$("#PIPE_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
 						// $("#PIPE_STAGE").find("#dgMain").datagrid("scrollTo", $("#PIPE_STAGE").find("#dgMain").datagrid("getRows"));
 					} else if (msg.type == 1003) {
+						/*** PIPE STATUS CHANGE ***/
 						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
 						var idx = -1;
 						for (var i = 0; i < rows.length; i ++) {
@@ -101,8 +107,11 @@
 								index: idx, 
 								row : msg.data
 							});
+						} else if (idx < 0) {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
 						}
 					} else if (msg.type == 1002) {
+						/*** PIPE DISCONNECT ***/
 						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
 						var idx = -1;
 						for (var i = 0; i < rows.length; i ++) {
@@ -130,6 +139,7 @@
 			<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:40%">
 				<div id="pipeDgTb" style="padding:5px;height:auto">
 					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/cert/download"> Cert Download </a>
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-clear'" onclick="clearPipeDgRows();">Clear</a>
 					<input id="filterBtn" class="easyui-switchbutton" checked style="width:60px;height:20px" />
 				</div>
 				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, toolbar:'#pipeDgTb', onDblClickRow:pipeDgDbClickRow, onClickRow:pipeDgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
@@ -188,12 +198,13 @@
 					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
 					<input class="easyui-tagbox" id="searchPipe" data-options="prompt:'Pipe Filter', onRemoveTag: reqDgReload" style="width:125px;" />
 					<input class="easyui-textbox" data-options="prompt:'Search Keyword'" style="width:200px" />
+					<!-- 
 					<select class="easyui-combobox" style="width:100px;">
 					    <option value="all">*</option>
 					    <option value="text/html">html</option>
 					    <option value="application/json">json</option>
 					    <option value="jpeg/gif/png">image</option>
-					</select>
+					</select>-->
 					<a href="#" class="easyui-linkbutton" iconCls="icon-search">Search</a>
 				</div>
 			</div>
