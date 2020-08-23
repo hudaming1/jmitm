@@ -14,7 +14,9 @@ public class EventHandler {
 	}
 
 	public void fireConnectEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onConnect(pipe);
+		}
 	}
 	
 	
@@ -39,10 +41,14 @@ public class EventHandler {
 	
 	
 	public void fireDisconnectEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onDisconnect(pipe);
+		}
 	}
 
 	public void fireErrorEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onError(pipe);
+		}
 	}
 }
