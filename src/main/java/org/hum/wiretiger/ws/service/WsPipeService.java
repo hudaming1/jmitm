@@ -13,6 +13,7 @@ public class WsPipeService {
 	
 	public void sendConnectMsg(PipeHolder pipeHolder) {
 		CM.getAll().forEach(channel -> {
+			System.out.println("aaaaaa");
 			WsServerMessage msg = new WsServerMessage();
 			msg.setType(MessageTypeEnum.PipeConnect);
 			JSONObject json = new JSONObject();

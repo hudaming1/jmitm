@@ -6,6 +6,7 @@ import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.ws.handler.BusinessServerHandler;
 import org.hum.wiretiger.ws.handler.WebSocketDecoder;
+import org.hum.wiretiger.ws.handler.WebSocketEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +49,7 @@ public class WebSocketServer {
 				ch.pipeline().addLast(new HttpServerCodec());
 				ch.pipeline().addLast(new HttpObjectAggregator(Integer.MAX_VALUE));
 				ch.pipeline().addLast(new IdleStateHandler(60, 5, 0));
+				ch.pipeline().addLast(new WebSocketEncoder());
 				ch.pipeline().addLast(new WebSocketDecoder());
 				ch.pipeline().addLast(new BusinessServerHandler());
 			}

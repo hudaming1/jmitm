@@ -12,6 +12,7 @@ public class WebSocketEncoder extends SimpleChannelInboundHandler<WsServerMessag
 	
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, WsServerMessage msg) throws Exception {
+		System.out.println("bbbbbb");
 		ctx.channel().writeAndFlush(new TextWebSocketFrame(JSON.toJSONString(msg)));
 	}
 }
