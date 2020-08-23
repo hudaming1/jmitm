@@ -11,6 +11,6 @@ public class BusinessServerHandler extends SimpleChannelInboundHandler<WsClientM
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, WsClientMessage msg) throws Exception {
-		log.info(msg.toString());
+		log.info("read " + msg.toString() + " from client");
 	}
 }

@@ -1,5 +1,6 @@
 package org.hum.wiretiger.ws;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,5 +33,9 @@ public class ConsoleManager {
 	
 	public ConsoleChannelWrapper get(String id) {
 		return ConsoleChannelMap.get(id);
+	}
+	
+	public Collection<ConsoleChannelWrapper> getAll() {
+		return ConsoleChannelMap.values();
 	}
 }
