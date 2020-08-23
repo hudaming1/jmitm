@@ -4,9 +4,6 @@ import org.hum.wiretiger.console.websocket.service.WsPipeService;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.event.EventListener;
 
-import lombok.extern.slf4j.Slf4j;
-
-@Slf4j
 public class WsListener implements EventListener {
 	
 	private WsPipeService wsPipeService = new WsPipeService();
@@ -18,11 +15,16 @@ public class WsListener implements EventListener {
 
 	@Override
 	public void onDisconnect(PipeHolder pipe) {
-		log.info(pipe + " disconnect");
+		wsPipeService.sendDisConnectMsg(pipe);
 	}
 
 	@Override
 	public void onError(PipeHolder pipe) {
-		log.info(pipe + " error");
+		wsPipeService.sendStatusChangeMsg(pipe);
+	}
+
+	@Override
+	public void onPipeStatusChange(PipeHolder pipe) {
+		wsPipeService.sendStatusChangeMsg(pipe);
 	}
 }

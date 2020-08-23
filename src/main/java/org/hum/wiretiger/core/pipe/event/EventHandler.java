@@ -21,22 +21,30 @@ public class EventHandler {
 	
 	
 	public void fireReadEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onPipeStatusChange(pipe);
+		}
 	}
 	
 	
 	public void fireReceiveEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onPipeStatusChange(pipe);
+		}
 	}
 	
 	
 	public void fireForwardEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onPipeStatusChange(pipe);
+		}
 	}
 	
 	
 	public void fireFlushEvent(PipeHolder pipe) {
-		
+		for (EventListener listener : listeners) {
+			listener.onPipeStatusChange(pipe);
+		}
 	}
 	
 	

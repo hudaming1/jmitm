@@ -84,7 +84,40 @@
 				
 				wssocket.onmessage = function(event) {
 					var msg = JSON.parse(event.data);
-					console.log(msg.type + "-->" + msg.data.name);
+					if (msg.type == 1001) {
+						$("#PIPE_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
+						// $("#PIPE_STAGE").find("#dgMain").datagrid("scrollTo", $("#PIPE_STAGE").find("#dgMain").datagrid("getRows"));
+					} else if (msg.type == 1002) {
+						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
+						var idx = -1;
+						for (var i = 0; i < rows.length; i ++) {
+							if (msg.data.pipeId == rows[i].pipeId) {
+								idx = i;
+								break;
+							}
+						}
+						if (idx >= 0) {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("updateRow", {
+								index: idx, 
+								row : msg.data
+							});
+						}
+					} else if (msg.type == 1003) {
+						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
+						var idx = -1;
+						for (var i = 0; i < rows.length; i ++) {
+							if (msg.data.pipeId == rows[i].pipeId) {
+								idx = i;
+								break;
+							}
+						}
+						if (idx >= 0) {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("updateRow", {
+								index: idx, 
+								row : msg.data
+							});
+						}
+					}
 				};
 		    })
 			

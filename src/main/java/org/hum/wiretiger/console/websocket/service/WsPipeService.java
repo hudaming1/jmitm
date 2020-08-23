@@ -18,4 +18,20 @@ public class WsPipeService {
 			channel.writeAndFlush(msg);
 		});
 	}
+
+	public void sendStatusChangeMsg(PipeHolder pipe) {
+		CM.getAll().forEach(channel -> {
+			WsServerMessage<WtPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeUpdate);
+			msg.setData(PipeHolderHelper.parse(pipe));
+			channel.writeAndFlush(msg);
+		});
+	}
+
+	public void sendDisConnectMsg(PipeHolder pipe) {
+		CM.getAll().forEach(channel -> {
+			WsServerMessage<WtPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeDisconnect);
+			msg.setData(PipeHolderHelper.parse(pipe));
+			channel.writeAndFlush(msg);
+		});
+	}
 }

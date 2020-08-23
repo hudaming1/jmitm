@@ -7,6 +7,8 @@ public interface EventListener {
 	public void onConnect(PipeHolder pipe);
 
 	public void onDisconnect(PipeHolder pipe);
+	
+	public void onPipeStatusChange(PipeHolder pipe);
 
 	public void onError(PipeHolder pipe);
 }
