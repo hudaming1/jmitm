@@ -1,9 +1,7 @@
 package org.hum.wiretiger.core.pipe.event;
 
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
-
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
+import org.hum.wiretiger.core.session.bean.WtSession;
 
 public interface EventListener {
 
@@ -15,7 +13,7 @@ public interface EventListener {
 
 	public void onError(PipeHolder pipe);
 	
-	public void onNewSession(PipeHolder pipe, DefaultHttpRequest sessionReq);
+	public void onNewSession(PipeHolder pipe, WtSession sessionReq);
 	
-	public void onSessionUpdate(PipeHolder pipe, FullHttpResponse sessionResp);
+	public void onSessionUpdate(PipeHolder pipe, WtSession sessionResp);
 }

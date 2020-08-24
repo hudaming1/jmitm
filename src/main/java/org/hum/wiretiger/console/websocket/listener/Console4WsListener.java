@@ -4,9 +4,7 @@ import org.hum.wiretiger.console.websocket.service.WsPipeService;
 import org.hum.wiretiger.console.websocket.service.WsSessionService;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.event.EventListener;
-
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
+import org.hum.wiretiger.core.session.bean.WtSession;
 
 public class Console4WsListener implements EventListener {
 	
@@ -34,12 +32,11 @@ public class Console4WsListener implements EventListener {
 	}
 
 	@Override
-	public void onNewSession(PipeHolder pipe, DefaultHttpRequest sessionReq) {
+	public void onNewSession(PipeHolder pipe, WtSession sessionReq) {
 		wsSessionService.sendNewSessionMsg(pipe, sessionReq);
 	}
 
 	@Override
-	public void onSessionUpdate(PipeHolder pipe, FullHttpResponse sessionResp) {
-		wsSessionService.sendSessionUpdateMsg(pipe, sessionResp);
+	public void onSessionUpdate(PipeHolder pipe, WtSession sessionResp) {
 	}
 }

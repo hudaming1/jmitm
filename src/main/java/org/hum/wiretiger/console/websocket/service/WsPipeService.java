@@ -1,6 +1,6 @@
 package org.hum.wiretiger.console.websocket.service;
 
-import org.hum.wiretiger.console.helper.PipeHolderHelper;
+import org.hum.wiretiger.console.helper.ConsoleHelper;
 import org.hum.wiretiger.console.vo.WtPipeListVO;
 import org.hum.wiretiger.console.websocket.ConsoleManager;
 import org.hum.wiretiger.console.websocket.bean.WsServerMessage;
@@ -14,7 +14,7 @@ public class WsPipeService {
 	public void sendConnectMsg(PipeHolder pipeHolder) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WtPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeConnect);
-			msg.setData(PipeHolderHelper.parse(pipeHolder));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipeHolder));
 			channel.writeAndFlush(msg);
 		});
 	}
@@ -22,7 +22,7 @@ public class WsPipeService {
 	public void sendStatusChangeMsg(PipeHolder pipe) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WtPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeUpdate);
-			msg.setData(PipeHolderHelper.parse(pipe));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
 			channel.writeAndFlush(msg);
 		});
 	}
@@ -30,7 +30,7 @@ public class WsPipeService {
 	public void sendDisConnectMsg(PipeHolder pipe) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WtPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeDisconnect);
-			msg.setData(PipeHolderHelper.parse(pipe));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
 			channel.writeAndFlush(msg);
 		});
 	}

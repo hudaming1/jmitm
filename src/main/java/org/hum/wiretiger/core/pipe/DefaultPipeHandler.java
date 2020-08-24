@@ -53,7 +53,6 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((DefaultHttpRequest) msg);
 			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
-			eventHandler.fireNewSessionEvent(pipeHolder, (DefaultHttpRequest) msg);
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
@@ -75,15 +74,15 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn("reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 			}
-			WtSession connection = reqStack4WattingResponse.pop();
+			WtSession session = reqStack4WattingResponse.pop();
 			byte[] bytes = null;
 			if (resp.content().readableBytes() > 0) {
 				bytes = new byte[resp.content().readableBytes()];
 				resp.content().duplicate().readBytes(bytes);
 			}
-			connection.setResponse(resp, bytes, System.currentTimeMillis());
-			cm.add(connection);
-			eventHandler.fireSessionChangeEvent(pipeHolder, resp);
+			session.setResponse(resp, bytes, System.currentTimeMillis());
+			cm.add(session);
+			eventHandler.fireNewSessionEvent(pipeHolder, session);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}

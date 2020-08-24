@@ -32,7 +32,6 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    	// TODO pipe connect
         ctx.fireChannelActive();
         PipeHolder pipeHolder = PipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);

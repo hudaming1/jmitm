@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
-
-import io.netty.handler.codec.http.DefaultHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
+import org.hum.wiretiger.core.session.bean.WtSession;
 
 public class EventHandler {
 	
@@ -63,15 +61,9 @@ public class EventHandler {
 		}
 	}
 	
-	public void fireNewSessionEvent(PipeHolder pipeHolder, DefaultHttpRequest sessionReq) {
+	public void fireNewSessionEvent(PipeHolder pipeHolder, WtSession session) {
 		for (EventListener listener : listeners) {
-			listener.onNewSession(pipeHolder, sessionReq);
-		}
-	}
-	
-	public void fireSessionChangeEvent(PipeHolder pipeHolder, FullHttpResponse sessionResp) {
-		for (EventListener listener : listeners) {
-			listener.onSessionUpdate(pipeHolder, sessionResp);
+			listener.onNewSession(pipeHolder, session);
 		}
 	}
 }

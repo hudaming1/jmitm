@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiretiger.console.helper.PipeHolderHelper;
+import org.hum.wiretiger.console.helper.ConsoleHelper;
 import org.hum.wiretiger.console.vo.WtPipeDetailVO;
 import org.hum.wiretiger.console.vo.WtPipeListQueryVO;
 import org.hum.wiretiger.console.vo.WtPipeListVO;
@@ -32,7 +32,7 @@ public class PipeService {
 			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
 				 return ;
 			}
-			requestList.add(PipeHolderHelper.parse(item));
+			requestList.add(ConsoleHelper.parse2WtPipeListVO(item));
 		});
 		return requestList;
 	}

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.hum.wiretiger.console.helper.ConsoleHelper;
 import org.hum.wiretiger.console.vo.WtSessionDetailVO;
 import org.hum.wiretiger.console.vo.WtSessionListQueryVO;
 import org.hum.wiretiger.console.vo.WtSessionListVO;
@@ -26,11 +27,7 @@ public class SessionService {
 			if (!isMatch(query, session)) {
 				return ;
 			}
-			WtSessionListVO conVo = new WtSessionListVO();
-			conVo.setSessionId(session.getId());
-			conVo.setUri(session.getRequest().uri());
-			conVo.setResponseCode(session.getResponse().status().code() + "");
-			connList.add(conVo);
+			connList.add(ConsoleHelper.parse2WtSessionListVO(session));
 		});
 		return connList;
 	}
