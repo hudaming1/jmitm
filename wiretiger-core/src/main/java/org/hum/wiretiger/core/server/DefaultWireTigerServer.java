@@ -46,7 +46,7 @@ public class DefaultWireTigerServer implements WiretigerServer {
 	@Override
 	public void start() {
 		EventHandler eventHandler = new EventHandler();
-		// TODO regist event
+		// regist event
 		eventHandler.add(new Console4WsListener());
 		
 		// Configure the server.

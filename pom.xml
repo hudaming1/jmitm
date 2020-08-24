@@ -1,10 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hum</groupId>
 	<artifactId>wiretiger</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -98,4 +101,12 @@
 			</plugin>
 		</plugins>
 	</build>
+	<modules>
+		<module>wiretiger-core</module>
+		<module>wiretiger-console-http</module>
+		<module>wiretiger-console-websocket</module>
+		<module>wiretiger-common</module>
+		<module>wiretiger-console</module>
+		<module>wiretiger-start</module>
+	</modules>
 </project>
