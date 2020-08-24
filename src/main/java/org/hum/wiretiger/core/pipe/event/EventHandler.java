@@ -5,6 +5,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 
+import io.netty.handler.codec.http.DefaultHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
+
 public class EventHandler {
 	
 	private List<EventListener> listeners = new CopyOnWriteArrayList<EventListener>();
@@ -57,6 +60,18 @@ public class EventHandler {
 	public void fireErrorEvent(PipeHolder pipe) {
 		for (EventListener listener : listeners) {
 			listener.onError(pipe);
+		}
+	}
+	
+	public void fireNewSessionEvent(PipeHolder pipeHolder, DefaultHttpRequest sessionReq) {
+		for (EventListener listener : listeners) {
+			listener.onNewSession(pipeHolder, sessionReq);
+		}
+	}
+	
+	public void fireSessionChangeEvent(PipeHolder pipeHolder, FullHttpResponse sessionResp) {
+		for (EventListener listener : listeners) {
+			listener.onSessionUpdate(pipeHolder, sessionResp);
 		}
 	}
 }

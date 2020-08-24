@@ -188,7 +188,7 @@
 				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#sessionDgTb', onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
 					<thead>
 						<tr>
-							<th data-options="field:'sessionId', hidden:true">sessionId</th>
+							<th data-options="field:'sessionId', width: 55, align: 'center'">ID</th>
 							<th data-options="field:'uri', width: '90%'">Name</th>
 							<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
 						</tr>

@@ -19,7 +19,8 @@ PIPE删除Request和Response，只显示汇总信息
 后面用netty替换掉netty吧，http和ws走一个端口
 重构，改用MavenModule
 设定服务端只能保留500请求，并做成可配置
-
+HTTP协议的百度新闻首页打不开：http://news.baidu.com/
+处于Init状态30秒无状态变化的，直接Closed
 
 
 TLS协议格式参考：RFC5246(https://www.ietf.org/rfc/rfc5246.html)

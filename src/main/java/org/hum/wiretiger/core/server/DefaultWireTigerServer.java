@@ -9,7 +9,7 @@ import org.hum.wiretiger.common.util.NettyUtils;
 import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.console.ConsoleServer;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
-import org.hum.wiretiger.console.websocket.listener.WsListener;
+import org.hum.wiretiger.console.websocket.listener.Console4WsListener;
 import org.hum.wiretiger.core.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.core.pipe.event.EventHandler;
 
@@ -47,7 +47,7 @@ public class DefaultWireTigerServer implements WiretigerServer {
 	public void start() {
 		EventHandler eventHandler = new EventHandler();
 		// TODO regist event
-		eventHandler.add(new WsListener());
+		eventHandler.add(new Console4WsListener());
 		
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
