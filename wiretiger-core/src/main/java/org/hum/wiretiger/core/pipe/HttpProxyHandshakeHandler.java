@@ -4,9 +4,9 @@ import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.event.EventHandler;
-import org.hum.wiretiger.core.ssl.HttpSslContextFactory;
-import org.hum.wiretiger.http.bean.HttpRequest;
-import org.hum.wiretiger.http.common.HttpHelper;
+import org.hum.wiretiger.ssl.HttpSslContextFactory;
+import org.hum.wiretiger.util.HttpHelper;
+import org.hum.wiretiger.util.HttpRequest;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -51,6 +51,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 		client2ProxyCtx.pipeline().remove(this);
 		
 		PipeHolder pipeHolder = (PipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		// TODO 删除HttpRequest，使用Netty.HttpRequestDecoder代替
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
 		pipeHolder.setName(client2ProxyCtx.channel().remoteAddress().toString() + "->" + request.getHost() + ":" + request.getPort());
     	
