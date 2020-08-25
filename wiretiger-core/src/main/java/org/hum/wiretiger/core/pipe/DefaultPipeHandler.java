@@ -2,7 +2,7 @@ package org.hum.wiretiger.core.pipe;
 
 import java.util.Stack;
 
-import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.api.enumtype.Protocol;
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;

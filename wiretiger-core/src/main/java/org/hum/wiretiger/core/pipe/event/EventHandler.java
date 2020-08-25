@@ -3,6 +3,7 @@ package org.hum.wiretiger.core.pipe.event;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.hum.wiretiger.api.core.EventListener;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.session.bean.WtSession;
 

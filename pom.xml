@@ -16,6 +16,7 @@
 		<module>wiretiger-common</module>
 		<module>wiretiger-start</module>
 		<module>wiretiger-ssl</module>
+		<module>wiretiger-api</module>
 	</modules>
     
     <dependencyManagement>

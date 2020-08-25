@@ -3,8 +3,8 @@ package org.hum.wiretiger.core.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hum.wiretiger.api.core.EventListener;
 import org.hum.wiretiger.config.WtCoreConfig;
-import org.hum.wiretiger.core.pipe.event.EventListener;
 
 public class WiretigerServerBuilder {
 	

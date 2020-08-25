@@ -1,7 +1,7 @@
 package org.hum.wiretiger.core.pipe;
 
+import org.hum.wiretiger.api.enumtype.Protocol;
 import org.hum.wiretiger.common.Constant;
-import org.hum.wiretiger.common.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;
 import org.hum.wiretiger.core.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
@@ -23,6 +23,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
 
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
 	private static final String HTTPS_HANDSHAKE_METHOD = "CONNECT";
+	
 	private volatile boolean isParsed = false;
 	private EventHandler eventHandler;
 	
@@ -33,6 +34,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.fireChannelActive();
+        // init pipe
         PipeHolder pipeHolder = PipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);

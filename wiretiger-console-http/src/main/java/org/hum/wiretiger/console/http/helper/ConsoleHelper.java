@@ -1,6 +1,6 @@
 package org.hum.wiretiger.console.http.helper;
 
-import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.api.enumtype.Protocol;
 import org.hum.wiretiger.console.http.vo.WtPipeListVO;
 import org.hum.wiretiger.console.http.vo.WtSessionListVO;
 import org.hum.wiretiger.core.pipe.bean.PipeHolder;

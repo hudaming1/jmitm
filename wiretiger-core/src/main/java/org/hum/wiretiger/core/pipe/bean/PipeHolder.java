@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiretiger.common.enumtype.Protocol;
+import org.hum.wiretiger.api.enumtype.Protocol;
 import org.hum.wiretiger.core.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.core.pipe.enumtype.PipeStatus;
 

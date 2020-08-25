@@ -3,7 +3,6 @@ package org.hum.wiretiger.console.websocket;
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
-import org.hum.wiretiger.config.WiretigerConfig;
 import org.hum.wiretiger.console.websocket.handler.BusinessServerHandler;
 import org.hum.wiretiger.console.websocket.handler.WebSocketDecoder;
 import org.hum.wiretiger.console.websocket.handler.WebSocketEncoder;
@@ -31,10 +30,10 @@ public class WebSocketServer {
 	private EventLoopGroup bossGroup;
 	private EventLoopGroup workerGroup;
 	private ServerBootstrap bootstrap;
-	private WiretigerConfig config;
+	private int port;
 
-	public WebSocketServer(WiretigerConfig config) {
-		this.config = config;
+	public WebSocketServer(int port) {
+		this.port = port;
 	}
 
 	public void init() {
@@ -65,8 +64,8 @@ public class WebSocketServer {
 			if (bootstrap == null) {
 				init();
 			}
-			bootstrap.bind(config.getWsPort()).sync();
-			logger.info("netty server listen on port : " + config.getWsPort());
+			bootstrap.bind(this.port).sync();
+			logger.info("netty server listen on port : " + port);
 		} catch (Exception ce) {
 			throw new WiretigerException("server start occured exception!", ce);
 		}
