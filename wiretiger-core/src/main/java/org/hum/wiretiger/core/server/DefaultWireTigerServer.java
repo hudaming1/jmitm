@@ -1,17 +1,14 @@
 package org.hum.wiretiger.core.server;
 
-import java.security.Security;
+import java.util.List;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
-import org.hum.wiretiger.config.WiretigerConfig;
-import org.hum.wiretiger.console.ConsoleServer;
-import org.hum.wiretiger.console.websocket.WebSocketServer;
-import org.hum.wiretiger.console.websocket.listener.Console4WsListener;
+import org.hum.wiretiger.config.WtCoreConfig;
 import org.hum.wiretiger.core.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.core.pipe.event.EventHandler;
+import org.hum.wiretiger.core.pipe.event.EventListener;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -26,28 +23,23 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DefaultWireTigerServer implements WiretigerServer {
-
-	static {
-		try {
-			Security.addProvider(new BouncyCastleProvider());
-			log.info("finish init BC");
-		} catch (Exception e) {
-			log.error("DefaultWireTigerServer init BC error", e);
-			System.exit(-1);
-		}
-	}
 	
-	private WiretigerConfig config;
+	private WtCoreConfig config;
+	
+	private List<EventListener> listeners;
 
-	public DefaultWireTigerServer(WiretigerConfig config) {
+	public DefaultWireTigerServer(WtCoreConfig config) {
 		this.config = config;
 	}
 
 	@Override
 	public void start() {
 		EventHandler eventHandler = new EventHandler();
+		
 		// regist event
-		eventHandler.add(new Console4WsListener());
+		if (listeners != null && !listeners.isEmpty()) {
+			eventHandler.addAll(listeners);
+		}
 		
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
@@ -69,10 +61,11 @@ public class DefaultWireTigerServer implements WiretigerServer {
 			Channel ch = bootStrap.bind(config.getPort()).sync().channel();
 			log.info("wire_tiger server started on port:" + config.getPort());
 			
-			// 启动控制台
-			if (config.getConsolePort() != null) {
-				startConsole(config.getConsolePort());
-			}
+			// TODO
+//			// 启动控制台
+//			if (config.getConsolePort() != null) {
+//				startConsole(config.getConsolePort());
+//			}
 
 			ch.closeFuture().sync();
 		} catch (Exception e) {
@@ -83,16 +76,20 @@ public class DefaultWireTigerServer implements WiretigerServer {
 			masterThreadPool.shutdownGracefully();
 		}
 	}
-	
-	private void startConsole(int port) throws Exception {
-		new WebSocketServer(config).start();
-		// TODO 这里线程join，阻塞住了
-		ConsoleServer.startJetty(port);
-		log.info("console server started on port:" + port);
-	}
+//	
+//	private void startConsole(int port) throws Exception {
+//		new WebSocketServer(config).start();
+//		// TODO 这里线程join，阻塞住了
+//		ConsoleServer.startJetty(port);
+//		log.info("console server started on port:" + port);
+//	}
 	
 	@Override
 	public void onClose(Object hook) {
 		
+	}
+
+	public void setListeners(List<EventListener> listeners) {
+		this.listeners = listeners;
 	}
 }

@@ -16,6 +16,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.Security;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
@@ -33,18 +34,30 @@ import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import sun.security.x509.GeneralNames;
 
+@Slf4j
 public class CA_Creator implements Callable<byte[]> {
 	
 	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
 	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+	static {
+		try {
+			Security.addProvider(new BouncyCastleProvider());
+			log.info("finish init BC");
+		} catch (Exception e) {
+			log.error("DefaultWireTigerServer init BC error", e);
+			System.exit(-1);
+		}
+	}
 	private String domain;
 	
 	public CA_Creator(String domain) {
