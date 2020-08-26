@@ -1,24 +1,17 @@
 package org.hum.wiretiger.console.http.service;
 
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.hum.wiretiger.console.common.util.HttpMessageUtil;
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WtPipeDetailVO;
 import org.hum.wiretiger.console.http.vo.WtPipeListQueryVO;
 import org.hum.wiretiger.console.http.vo.WtPipeListVO;
+import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;
 import org.hum.wiretiger.proxy.facade.lite.WiretigerFullPipe;
 import org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
-
-import io.netty.util.internal.StringUtil;
 
 public class PipeService {
 	
@@ -29,7 +22,7 @@ public class PipeService {
 		Collection<WiretigerFullPipe> all = pipeMgrLite.getAll();
 		List<WtPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
-			if (queryVo.isActive() && item.getStatus() == PipeStatus.Closed) {
+			if (queryVo.isActive() && item.getStatus() == WiretigerPipeStatus.Closed) {
 				 return ;
 			}
 			requestList.add(ConsoleHelper.parse2WtPipeListVO(item));
