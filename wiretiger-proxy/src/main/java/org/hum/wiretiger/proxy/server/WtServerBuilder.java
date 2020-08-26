@@ -22,8 +22,9 @@ public class WtServerBuilder {
 	private WtServerBuilder() {
 	}
 	
-	public void addEventListener(EventListener listener) {
+	public WtServerBuilder addEventListener(EventListener listener) {
 		this.listeners.add(listener);
+		return this;
 	}
 
 	public WtServer build() {

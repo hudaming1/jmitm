@@ -1,7 +1,7 @@
 package org.hum.wiretiger;
 
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
-import org.hum.wiretiger.proxy.server.ServerFactory;
+import org.hum.wiretiger.proxy.server.WtServerBuilder;
 
 public class WiretigerServerRun {
 
@@ -9,11 +9,9 @@ public class WiretigerServerRun {
 		// config
 		WtCoreConfig config = new WtCoreConfig();
 		config.setPort(52007);
-		config.setWsPort(52996);
-		config.setConsolePort(8080);
 		config.setThreads(Runtime.getRuntime().availableProcessors());
 		config.setDebug(false);
-		// start
-		ServerFactory.create(config).start();
+		
+		WtServerBuilder.init(config).build().start();
 	}
 }
