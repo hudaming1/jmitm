@@ -2,7 +2,7 @@ package org.hum.wiretiger.proxy.pipe;
 
 import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.facade.enumtype.Protocol;
-import org.hum.wiretiger.proxy.pipe.bean.PipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 import org.hum.wiretiger.util.HttpHelper;
@@ -35,7 +35,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.fireChannelActive();
         // init pipe
-        PipeHolder pipeHolder = PipeManager.get().create(ctx.channel());
+        WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
     }
@@ -52,7 +52,7 @@ public class HttpProxyHandshakeHandler extends ChannelInboundHandlerAdapter {
     	// 握完手这个handler就没有用了，直接删除
 		client2ProxyCtx.pipeline().remove(this);
 		
-		PipeHolder pipeHolder = (PipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		// TODO 删除HttpRequest，使用Netty.HttpRequestDecoder代替
 		HttpRequest request = HttpHelper.decode((ByteBuf) msg);
 		pipeHolder.setName(client2ProxyCtx.channel().remoteAddress().toString() + "->" + request.getHost() + ":" + request.getPort());

@@ -14,11 +14,11 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 
-public class PipeHolder {
+public class WtPipeHolder {
 
-	private Pipe pipe = new Pipe();
+	private WtPipe pipe = new WtPipe();
 	
-	public PipeHolder(int id) {
+	public WtPipeHolder(int id) {
 		pipe.setId(id);
 		pipe.addStatus(PipeStatus.Init);
 	}
@@ -92,10 +92,10 @@ public class PipeHolder {
 	}
 	
 	public void addEvent(PipeEventType type, String desc) {
-		this.pipe.addEvent(new PipeEvent(type, desc, System.currentTimeMillis()));
+		this.pipe.addEvent(new WtPipeEvent(type, desc, System.currentTimeMillis()));
 	}
 	
-	public List<PipeEvent> getEventList() {
+	public List<WtPipeEvent> getEventList() {
 		return Collections.unmodifiableList(this.pipe.getEvents());
 	}
 

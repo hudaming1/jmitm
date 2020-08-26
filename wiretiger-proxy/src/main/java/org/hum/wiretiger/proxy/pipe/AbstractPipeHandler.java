@@ -1,6 +1,6 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import org.hum.wiretiger.proxy.pipe.bean.PipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -10,9 +10,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
-	protected PipeHolder pipeHolder;
+	protected WtPipeHolder pipeHolder;
 	
-	public AbstractPipeHandler(PipeHolder pipeHolder) {
+	public AbstractPipeHandler(WtPipeHolder pipeHolder) {
 		this.pipeHolder = pipeHolder;
 	}
 	

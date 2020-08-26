@@ -6,28 +6,28 @@ import java.util.List;
 import org.hum.wiretiger.config.WtCoreConfig;
 import org.hum.wiretiger.facade.proxy.EventListener;
 
-public class WiretigerServerBuilder {
+public class WtServerBuilder {
 	
 	private WtCoreConfig config;
 	
 	private List<EventListener> listeners;
 
-	public static WiretigerServerBuilder init(WtCoreConfig config) {
-		WiretigerServerBuilder serverBuilder = new WiretigerServerBuilder();
+	public static WtServerBuilder init(WtCoreConfig config) {
+		WtServerBuilder serverBuilder = new WtServerBuilder();
 		serverBuilder.config = config;
 		serverBuilder.listeners = new ArrayList<>();
 		return serverBuilder;
 	}
 	
-	private WiretigerServerBuilder() {
+	private WtServerBuilder() {
 	}
 	
 	public void addEventListener(EventListener listener) {
 		this.listeners.add(listener);
 	}
 
-	public WiretigerServer build() {
-		DefaultWireTigerServer server = new DefaultWireTigerServer(config);
+	public WtServer build() {
+		WtDefaultServer server = new WtDefaultServer(config);
 		server.setListeners(listeners);
 		return server;
 	}

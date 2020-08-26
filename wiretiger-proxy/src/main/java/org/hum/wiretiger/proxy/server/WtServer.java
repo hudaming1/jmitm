@@ -1,6 +1,6 @@
 package org.hum.wiretiger.proxy.server;
 
-public interface WiretigerServer {
+public interface WtServer {
 
 	public void start();
 	

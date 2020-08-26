@@ -14,7 +14,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Getter;
 
 @Getter
-public class Pipe {
+public class WtPipe {
 	
 	// pipeId
 	private int id;
@@ -31,11 +31,11 @@ public class Pipe {
 	// pipe status
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// event
-	private List<PipeEvent> events = new ArrayList<>();
+	private List<WtPipeEvent> events = new ArrayList<>();
 	// protocol
 	private Protocol protocol;
 	
-	public void addEvent(PipeEvent event) {
+	public void addEvent(WtPipeEvent event) {
 		this.events.add(event);
 	}
 	

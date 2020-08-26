@@ -8,19 +8,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
-public class SessionManager {
+public class WtSessionManager {
 
 	private List<WtSession> RequestList = new CopyOnWriteArrayList<>();
 	private Map<Long, WtSession> RequestIndex4Id = new ConcurrentHashMap<>();
 	
 	private static class ConnectionManagerHolder {
-		public static SessionManager connectionManager = new SessionManager();
+		public static WtSessionManager connectionManager = new WtSessionManager();
 	}
 	
-	private SessionManager() {
+	private WtSessionManager() {
 	}
 	
-	public static SessionManager get() {
+	public static WtSessionManager get() {
 		return ConnectionManagerHolder.connectionManager;
 	}
 	

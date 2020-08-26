@@ -4,11 +4,11 @@ import java.util.Stack;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.facade.enumtype.Protocol;
-import org.hum.wiretiger.proxy.pipe.bean.PipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.session.SessionManager;
+import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
 import io.netty.channel.ChannelHandler.Sharable;
@@ -23,14 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
-	private final SessionManager SessionMgr = SessionManager.get();
+	private final WtSessionManager SessionMgr = WtSessionManager.get();
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 	private EventHandler eventHandler;
 	
-	public DefaultPipeHandler(EventHandler eventHandler, PipeHolder pipeHolder, String host, int port) {
+	public DefaultPipeHandler(EventHandler eventHandler, WtPipeHolder pipeHolder, String host, int port) {
 		super(pipeHolder);
 		this.eventHandler = eventHandler;
 		try {

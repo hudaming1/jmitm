@@ -22,13 +22,13 @@ import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class DefaultWireTigerServer implements WiretigerServer {
+public class WtDefaultServer implements WtServer {
 	
 	private WtCoreConfig config;
 	
 	private List<EventListener> listeners;
 
-	public DefaultWireTigerServer(WtCoreConfig config) {
+	public WtDefaultServer(WtCoreConfig config) {
 		this.config = config;
 	}
 
@@ -70,7 +70,7 @@ public class DefaultWireTigerServer implements WiretigerServer {
 			ch.closeFuture().sync();
 		} catch (Exception e) {
 			log.error("start occur error, config=" + config, e);
-			throw new WiretigerException("DefaultWireTigerServer start failed.", e);
+			throw new WiretigerException("WtDefaultServer start failed.", e);
 		} finally {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();
