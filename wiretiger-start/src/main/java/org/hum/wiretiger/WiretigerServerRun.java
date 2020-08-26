@@ -1,6 +1,6 @@
 package org.hum.wiretiger;
 
-import org.hum.wiretiger.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.server.ServerFactory;
 
 public class WiretigerServerRun {

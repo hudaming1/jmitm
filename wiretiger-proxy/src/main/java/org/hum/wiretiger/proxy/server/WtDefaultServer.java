@@ -5,8 +5,8 @@ import java.util.List;
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.common.util.NettyUtils;
-import org.hum.wiretiger.config.WtCoreConfig;
-import org.hum.wiretiger.facade.proxy.EventListener;
+import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.facade.EventListener;
 import org.hum.wiretiger.proxy.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 

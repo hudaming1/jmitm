@@ -3,8 +3,8 @@ package org.hum.wiretiger.proxy.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hum.wiretiger.config.WtCoreConfig;
-import org.hum.wiretiger.facade.proxy.EventListener;
+import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.facade.EventListener;
 
 public class WtServerBuilder {
 	

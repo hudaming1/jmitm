@@ -1,12 +1,12 @@
 package org.hum.wiretiger.proxy.pipe;
 
 import org.hum.wiretiger.common.Constant;
-import org.hum.wiretiger.facade.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
+import org.hum.wiretiger.proxy.util.HttpHelper;
+import org.hum.wiretiger.proxy.util.HttpRequest;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
-import org.hum.wiretiger.util.HttpHelper;
-import org.hum.wiretiger.util.HttpRequest;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

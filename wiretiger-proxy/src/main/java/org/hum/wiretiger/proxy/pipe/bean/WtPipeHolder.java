@@ -6,9 +6,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiretiger.facade.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
+import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.DefaultHttpRequest;

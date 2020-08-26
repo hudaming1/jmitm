@@ -3,10 +3,10 @@ package org.hum.wiretiger.proxy.pipe;
 import java.util.Stack;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
-import org.hum.wiretiger.facade.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
+import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
