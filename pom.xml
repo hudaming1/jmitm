@@ -9,14 +9,12 @@
     <packaging>pom</packaging>
     
 	<modules>
-		<module>wiretiger-core</module>
-		<module>wiretiger-console-common</module>
-		<module>wiretiger-console-http</module>
-		<module>wiretiger-console-websocket</module>
+		<module>wiretiger-proxy</module>
+		<module>wiretiger-console</module>
 		<module>wiretiger-common</module>
 		<module>wiretiger-start</module>
 		<module>wiretiger-ssl</module>
-		<module>wiretiger-api</module>
+		<module>wiretiger-facade</module>
 	</modules>
     
     <dependencyManagement>

@@ -7,19 +7,13 @@
 		<artifactId>wiretiger</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>wiretiger-console</artifactId>
-	<name>${project.artifactId}</name>
+	<artifactId>wiretiger-facade</artifactId>
+	<name>wiretiger-api</name>
 	
 	<dependencies>
 		<dependency>
-			<groupId>org.hum</groupId>
-			<artifactId>wiretiger-common</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hum</groupId>
-			<artifactId>wiretiger-facade</artifactId>
-			<version>${project.parent.version}</version>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
 		</dependency>
 	</dependencies>
 </project>
