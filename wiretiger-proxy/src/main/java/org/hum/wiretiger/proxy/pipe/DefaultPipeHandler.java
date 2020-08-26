@@ -2,8 +2,8 @@ package org.hum.wiretiger.proxy.pipe;
 
 import java.util.Stack;
 
-import org.hum.wiretiger.api.enumtype.Protocol;
 import org.hum.wiretiger.common.exception.WiretigerException;
+import org.hum.wiretiger.facade.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.bean.PipeHolder;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
@@ -23,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
 	
-	private final SessionManager cm = SessionManager.get();
+	private final SessionManager SessionMgr = SessionManager.get();
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
@@ -81,7 +81,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 				resp.content().duplicate().readBytes(bytes);
 			}
 			session.setResponse(resp, bytes, System.currentTimeMillis());
-			cm.add(session);
+			SessionMgr.add(session);
 			eventHandler.fireNewSessionEvent(pipeHolder, session);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());

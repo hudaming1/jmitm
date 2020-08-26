@@ -1,7 +1,7 @@
-package org.hum.wiretiger.api.proxy;
+package org.hum.wiretiger.facade.proxy;
 
-import org.hum.wiretiger.api.enumtype.Protocol;
-import org.hum.wiretiger.api.proxy.enumtype.WiretigerPipeStatus;
+import org.hum.wiretiger.facade.enumtype.Protocol;
+import org.hum.wiretiger.facade.proxy.enumtype.WiretigerPipeStatus;
 
 import lombok.Data;
 

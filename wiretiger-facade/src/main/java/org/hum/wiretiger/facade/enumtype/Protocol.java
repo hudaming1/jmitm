@@ -1,4 +1,4 @@
-package org.hum.wiretiger.api.enumtype;
+package org.hum.wiretiger.facade.enumtype;
 
 public enum Protocol {
 

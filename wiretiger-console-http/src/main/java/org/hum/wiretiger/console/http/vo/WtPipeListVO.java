@@ -10,7 +10,7 @@ public class WtPipeListVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	// id
-	private Integer pipeId;
+	private String pipeId;
 	// 协议
 	private String protocol;
 	// uri

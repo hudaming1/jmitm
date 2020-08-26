@@ -10,7 +10,7 @@ public class WtSessionListVO implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	// id
-	private Long sessionId;
+	private String sessionId;
 	// 协议
 	private String protocol;
 	// uri
