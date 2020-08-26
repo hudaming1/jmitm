@@ -6,7 +6,7 @@ import org.hum.wiretiger.facade.proxy.enumtype.WiretigerPipeStatus;
 import lombok.Data;
 
 @Data
-public class WireTigerPipe {
+public class WiretigerPipe {
 
 	private String pipeId;
 	private String sourceHost;

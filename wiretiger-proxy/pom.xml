@@ -19,7 +19,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.hum</groupId>
-			<artifactId>wiretiger-facade</artifactId>
+			<artifactId>wiretiger-proxy-facade</artifactId>
             <version>${project.parent.version}</version>
 		</dependency>
 		<dependency>

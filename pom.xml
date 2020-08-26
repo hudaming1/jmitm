@@ -9,12 +9,12 @@
     <packaging>pom</packaging>
     
 	<modules>
-		<module>wiretiger-proxy</module>
-		<module>wiretiger-console</module>
 		<module>wiretiger-common</module>
-		<module>wiretiger-start</module>
 		<module>wiretiger-ssl</module>
-		<module>wiretiger-facade</module>
+		<module>wiretiger-proxy</module>
+		<module>wiretiger-proxy-facade</module>
+		<module>wiretiger-console</module>
+		<module>wiretiger-start</module>
 	</modules>
     
     <dependencyManagement>
