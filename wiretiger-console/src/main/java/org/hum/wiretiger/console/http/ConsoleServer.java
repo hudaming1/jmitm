@@ -6,8 +6,6 @@ import org.hum.wiretiger.console.http.config.WtConsoleHttpConfig;
 
 public class ConsoleServer {
 
-//	private static final String DEFAULT_WEBAPP = ConsoleServer.class.getResource("/webroot").getFile();
-//	private static final String DEFAULT_WEB = ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile();
 	private static Server server;
 
 	public static void startJetty(WtConsoleHttpConfig config) throws Exception {

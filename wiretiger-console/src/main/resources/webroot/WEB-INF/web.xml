@@ -6,7 +6,7 @@
 	<!-- pipe list -->
 	<servlet>
 		<servlet-name>pipeListServelet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.PipeListServlet</servlet-class>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.PipeListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeListServelet</servlet-name>
@@ -15,7 +15,7 @@
 	<!-- pipe detail -->
 	<servlet>
 		<servlet-name>pipeDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.PipeDetailServlet</servlet-class>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.PipeDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeDetailServlet</servlet-name>
@@ -24,7 +24,7 @@
 	<!-- session list -->
 	<servlet>
 		<servlet-name>SessionListServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.SessionListServlet</servlet-class>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionListServlet</servlet-name>
@@ -33,7 +33,7 @@
 	<!-- session detail -->
 	<servlet>
 		<servlet-name>SessionDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.SessionDetailServlet</servlet-class>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionDetailServlet</servlet-name>
@@ -42,7 +42,7 @@
 	<!-- download_cert -->
 	<servlet>
 		<servlet-name>certDownloadServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.servlet.CertDownloadServlet</servlet-class>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.CertDownloadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>certDownloadServlet</servlet-name>

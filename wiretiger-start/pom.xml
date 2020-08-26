@@ -13,7 +13,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.hum</groupId>
-			<artifactId>wiretiger-proxy</artifactId>
+			<artifactId>wiretiger-console</artifactId>
             <version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
