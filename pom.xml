@@ -96,7 +96,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.hum.nettyproxy.ServerRun</mainClass>
+							<mainClass>org.hum.wiretiger.WiretigerServerRun</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
