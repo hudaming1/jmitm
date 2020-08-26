@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.facade;
+package org.hum.wiretiger.proxy.facade.event;
 
 import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;

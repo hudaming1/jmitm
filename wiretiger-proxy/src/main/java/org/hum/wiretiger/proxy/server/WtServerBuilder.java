@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
-import org.hum.wiretiger.proxy.facade.EventListener;
+import org.hum.wiretiger.proxy.facade.event.EventListener;
 
 public class WtServerBuilder {
 	

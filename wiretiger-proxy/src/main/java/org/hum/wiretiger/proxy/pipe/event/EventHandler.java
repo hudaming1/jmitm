@@ -4,9 +4,9 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.hum.wiretiger.proxy.facade.EventListener;
-import org.hum.wiretiger.proxy.facade.WiretigerPipe;
-import org.hum.wiretiger.proxy.facade.WiretigerSession;
+import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
+import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 

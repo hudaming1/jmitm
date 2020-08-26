@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.facade;
+package org.hum.wiretiger.proxy.facade.event;
 
 public interface EventListener {
 

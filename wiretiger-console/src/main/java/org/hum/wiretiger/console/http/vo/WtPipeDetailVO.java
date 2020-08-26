@@ -11,9 +11,5 @@ public class WtPipeDetailVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
-	private String requestString;
-	
-	private String responseString;
-	
 	private List<Map<String, String>> pipeEvent;
 }

@@ -13,7 +13,7 @@ public class WtSessionManager {
 	private List<WtSession> RequestList = new CopyOnWriteArrayList<>();
 	private Map<Long, WtSession> RequestIndex4Id = new ConcurrentHashMap<>();
 	
-	private static class ConnectionManagerHolder {
+	private static class WtSessionManagerHolder {
 		public static WtSessionManager connectionManager = new WtSessionManager();
 	}
 	
@@ -21,7 +21,7 @@ public class WtSessionManager {
 	}
 	
 	public static WtSessionManager get() {
-		return ConnectionManagerHolder.connectionManager;
+		return WtSessionManagerHolder.connectionManager;
 	}
 	
 	public void add(WtSession connection) {

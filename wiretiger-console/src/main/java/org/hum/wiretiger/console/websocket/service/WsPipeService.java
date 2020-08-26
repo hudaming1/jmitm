@@ -5,7 +5,7 @@ import org.hum.wiretiger.console.http.vo.WtPipeListVO;
 import org.hum.wiretiger.console.websocket.ConsoleManager;
 import org.hum.wiretiger.console.websocket.bean.WsServerMessage;
 import org.hum.wiretiger.console.websocket.enumtype.MessageTypeEnum;
-import org.hum.wiretiger.proxy.facade.WiretigerPipe;
+import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
 
 public class WsPipeService {
 

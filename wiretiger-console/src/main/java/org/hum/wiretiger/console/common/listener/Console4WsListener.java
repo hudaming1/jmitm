@@ -2,9 +2,9 @@ package org.hum.wiretiger.console.common.listener;
 
 import org.hum.wiretiger.console.websocket.service.WsPipeService;
 import org.hum.wiretiger.console.websocket.service.WsSessionService;
-import org.hum.wiretiger.proxy.facade.EventListener;
-import org.hum.wiretiger.proxy.facade.WiretigerPipe;
-import org.hum.wiretiger.proxy.facade.WiretigerSession;
+import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
+import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
 
 public class Console4WsListener implements EventListener {
 	

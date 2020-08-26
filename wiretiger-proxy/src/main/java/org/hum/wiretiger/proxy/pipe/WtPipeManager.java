@@ -26,12 +26,12 @@ public class WtPipeManager {
 		log.info("ConnectMonitor started..");
 	}
 
-	private static class ConnectMonitorHodler {
+	private static class WtPipeManagerHodler {
 		private static WtPipeManager instance = new WtPipeManager();
 	}
 
 	public static WtPipeManager get() {
-		return ConnectMonitorHodler.instance;
+		return WtPipeManagerHodler.instance;
 	}
 
 	public WtPipeHolder create(Channel clientChannel) {
