@@ -42,8 +42,6 @@
 				
 					// load data
 					var jsonObj = eval("(" + resp + ")");
-					$("#PIPE_STAGE").find("#requestPannel").html(jsonObj.requestString);
-					$("#PIPE_STAGE").find("#responsePannel").html(jsonObj.responseString);
 					$("#PIPE_STAGE").find("#eventsDg").datagrid("loadData", jsonObj.pipeEvent);
 					// expand east_panel
 					if($("#PIPE_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
@@ -172,14 +170,6 @@
 					        </thead>
 					    </table>
 			        </div>
-					<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
-						<div id="requestPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
-						</div>
-					</div>
-					<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
-						<div id="responsePannel" data-options="title:'SourceText',region:'center', border:false,split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>

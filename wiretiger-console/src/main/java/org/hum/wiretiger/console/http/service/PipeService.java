@@ -1,9 +1,13 @@
 package org.hum.wiretiger.console.http.service;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WtPipeDetailVO;
@@ -30,21 +34,21 @@ public class PipeService {
 		return requestList;
 	}
 
-	public WtPipeDetailVO getById(String id) {
-//		WiretigerFullPipe pipe = pipeMgrLite.getById(id);
-//		if (pipe == null) {
-//			return new WtPipeDetailVO();
-//		}
+	public WtPipeDetailVO getById(Integer id) {
+		WiretigerFullPipe pipe = pipeMgrLite.getById(id);
+		if (pipe == null) {
+			return new WtPipeDetailVO();
+		}
 		WtPipeDetailVO detailVo = new WtPipeDetailVO();
-//		List<Map<String, String>> pipeEventMapList = new ArrayList<>();
-//		pipe.getEventList().forEach(item -> {
-//			Map<String, String> map = new HashMap<>();
-//			map.put("type", item.getType().toString());
-//			map.put("time", DATE_TIME_FORMATTER.format(new Date(item.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
-//			map.put("desc", item.getDesc());
-//			pipeEventMapList.add(map);
-//		});
-//		detailVo.setPipeEvent(pipeEventMapList );
+		List<Map<String, String>> pipeEventMapList = new ArrayList<>();
+		pipe.getEvents().forEach(item -> {
+			Map<String, String> map = new HashMap<>();
+			map.put("type", item.getType().toString());
+			map.put("time", DATE_TIME_FORMATTER.format(new Date(item.getTime()).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime()));
+			map.put("desc", item.getDesc());
+			pipeEventMapList.add(map);
+		});
+		detailVo.setPipeEvent(pipeEventMapList );
 		return detailVo;
 	}
 	

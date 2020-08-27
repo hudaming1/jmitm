@@ -2,3 +2,467 @@
 2020-08-27 09:20:53,072-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
 2020-08-27 09:20:53,308-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
 2020-08-27 09:20:58,357-[TS] INFO wt-worker-thread-2 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 09:41:57,653-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @180ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 09:41:57,793-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 09:41:57,885-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 09:41:57,893-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 09:41:57,894-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 09:41:57,896-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2020-08-27 09:41:57,918-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 09:41:57,930-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 09:41:57,930-[TS] INFO main org.eclipse.jetty.server.Server - Started @460ms
+2020-08-27 09:42:02,822-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 09:42:03,186-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 09:42:03,376-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-27 09:42:10,365-[TS] INFO wt-worker-thread-2 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 09:47:15,790-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @176ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 09:47:15,925-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 09:47:16,016-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 09:47:16,025-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 09:47:16,025-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 09:47:16,027-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2020-08-27 09:47:16,048-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 09:47:16,060-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 09:47:16,061-[TS] INFO main org.eclipse.jetty.server.Server - Started @450ms
+2020-08-27 09:47:20,957-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 09:47:29,291-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 09:47:29,471-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-27 09:48:12,972-[TS] INFO wt-worker-thread-2 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 09:59:23,256-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @177ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 09:59:23,395-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 09:59:23,485-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 09:59:23,493-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 09:59:23,493-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 09:59:23,496-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2020-08-27 09:59:23,517-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 09:59:23,529-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 09:59:23,530-[TS] INFO main org.eclipse.jetty.server.Server - Started @453ms
+2020-08-27 09:59:28,423-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 09:59:29,460-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 09:59:29,710-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 09:59:30,247-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-27 09:59:35,492-[TS] WARN wt-worker-thread-10 io.netty.channel.DefaultChannelPipeline - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.io.IOException: Connection reset by peer
+	at sun.nio.ch.FileDispatcherImpl.read0(Native Method)
+	at sun.nio.ch.SocketDispatcher.read(SocketDispatcher.java:39)
+	at sun.nio.ch.IOUtil.readIntoNativeBuffer(IOUtil.java:223)
+	at sun.nio.ch.IOUtil.read(IOUtil.java:192)
+	at sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:380)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1133)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 09:59:45,649-[TS] WARN qtp772777427-46 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:59)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 09:59:45,747-[TS] WARN qtp772777427-46 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:59)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:00:04,587-[TS] WARN qtp772777427-51 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:59)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:00:04,683-[TS] WARN qtp772777427-48 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:59)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:01:04,098-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @191ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 10:01:04,235-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 10:01:04,329-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 10:01:04,337-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 10:01:04,337-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 10:01:04,339-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 600000ms
+2020-08-27 10:01:04,362-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 10:01:04,374-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 10:01:04,375-[TS] INFO main org.eclipse.jetty.server.Server - Started @470ms
+2020-08-27 10:01:09,267-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 10:01:17,860-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 10:01:18,120-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 10:01:18,823-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-27 10:01:21,402-[TS] WARN qtp772777427-46 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.parse2WiretigerFullPipe(WiretigerPipeManagerLite.java:42)
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:32)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:01:21,523-[TS] WARN qtp772777427-46 org.eclipse.jetty.server.HttpChannel - /pipe/list
+java.lang.NullPointerException
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.parse2WiretigerFullPipe(WiretigerPipeManagerLite.java:42)
+	at org.hum.wiretiger.proxy.facade.lite.WiretigerPipeManagerLite.getAll(WiretigerPipeManagerLite.java:32)
+	at org.hum.wiretiger.console.http.service.PipeService.list(PipeService.java:26)
+	at org.hum.wiretiger.console.http.servlet.PipeListServlet.doGet(PipeListServlet.java:31)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:01:49,261-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @188ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 10:01:49,404-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 10:01:49,496-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 10:01:49,504-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 10:01:49,504-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 10:01:49,506-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 600000ms
+2020-08-27 10:01:49,531-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 10:01:49,544-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 10:01:49,544-[TS] INFO main org.eclipse.jetty.server.Server - Started @474ms
+2020-08-27 10:01:54,434-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 10:01:57,983-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 10:01:58,227-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 10:01:58,731-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-27 10:02:03,794-[TS] WARN qtp772777427-18 org.eclipse.jetty.server.HttpChannel - /pipe/get
+java.lang.NullPointerException
+	at org.hum.wiretiger.console.http.service.PipeService.getById(PipeService.java:44)
+	at org.hum.wiretiger.console.http.servlet.PipeDetailServlet.doGet(PipeDetailServlet.java:25)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:02:04,307-[TS] WARN qtp772777427-50 org.eclipse.jetty.server.HttpChannel - /pipe/get
+java.lang.NullPointerException
+	at org.hum.wiretiger.console.http.service.PipeService.getById(PipeService.java:44)
+	at org.hum.wiretiger.console.http.servlet.PipeDetailServlet.doGet(PipeDetailServlet.java:25)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:02:04,722-[TS] WARN qtp772777427-48 org.eclipse.jetty.server.HttpChannel - /pipe/get
+java.lang.NullPointerException
+	at org.hum.wiretiger.console.http.service.PipeService.getById(PipeService.java:44)
+	at org.hum.wiretiger.console.http.servlet.PipeDetailServlet.doGet(PipeDetailServlet.java:25)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:02:06,423-[TS] WARN qtp772777427-18 org.eclipse.jetty.server.HttpChannel - /pipe/get
+java.lang.NullPointerException
+	at org.hum.wiretiger.console.http.service.PipeService.getById(PipeService.java:44)
+	at org.hum.wiretiger.console.http.servlet.PipeDetailServlet.doGet(PipeDetailServlet.java:25)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:687)
+	at javax.servlet.http.HttpServlet.service(HttpServlet.java:790)
+	at org.eclipse.jetty.servlet.ServletHolder.handle(ServletHolder.java:857)
+	at org.eclipse.jetty.servlet.ServletHandler.doHandle(ServletHandler.java:535)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:146)
+	at org.eclipse.jetty.security.SecurityHandler.handle(SecurityHandler.java:548)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:257)
+	at org.eclipse.jetty.server.session.SessionHandler.doHandle(SessionHandler.java:1595)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextHandle(ScopedHandler.java:255)
+	at org.eclipse.jetty.server.handler.ContextHandler.doHandle(ContextHandler.java:1340)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:203)
+	at org.eclipse.jetty.servlet.ServletHandler.doScope(ServletHandler.java:473)
+	at org.eclipse.jetty.server.session.SessionHandler.doScope(SessionHandler.java:1564)
+	at org.eclipse.jetty.server.handler.ScopedHandler.nextScope(ScopedHandler.java:201)
+	at org.eclipse.jetty.server.handler.ContextHandler.doScope(ContextHandler.java:1242)
+	at org.eclipse.jetty.server.handler.ScopedHandler.handle(ScopedHandler.java:144)
+	at org.eclipse.jetty.server.handler.HandlerWrapper.handle(HandlerWrapper.java:132)
+	at org.eclipse.jetty.server.Server.handle(Server.java:503)
+	at org.eclipse.jetty.server.HttpChannel.handle(HttpChannel.java:364)
+	at org.eclipse.jetty.server.HttpConnection.onFillable(HttpConnection.java:260)
+	at org.eclipse.jetty.io.AbstractConnection$ReadCallback.succeeded(AbstractConnection.java:305)
+	at org.eclipse.jetty.io.FillInterest.fillable(FillInterest.java:103)
+	at org.eclipse.jetty.io.ChannelEndPoint$2.run(ChannelEndPoint.java:118)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.runTask(EatWhatYouKill.java:333)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.doProduce(EatWhatYouKill.java:310)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.tryProduce(EatWhatYouKill.java:168)
+	at org.eclipse.jetty.util.thread.strategy.EatWhatYouKill.run(EatWhatYouKill.java:126)
+	at org.eclipse.jetty.util.thread.ReservedThreadExecutor$ReservedThread.run(ReservedThreadExecutor.java:366)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool.runJob(QueuedThreadPool.java:765)
+	at org.eclipse.jetty.util.thread.QueuedThreadPool$2.run(QueuedThreadPool.java:683)
+	at java.lang.Thread.run(Thread.java:748)
+2020-08-27 10:23:08,787-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @221ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-27 10:23:08,956-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 1.8.0_181-b13
+2020-08-27 10:23:09,056-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-27 10:23:09,065-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-27 10:23:09,066-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-27 10:23:09,068-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2020-08-27 10:23:09,094-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@3ffc5af1{/,file:///Users/hudaming/Workspace/GitHub/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-27 10:23:09,108-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@53b32d7{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-27 10:23:09,108-[TS] INFO main org.eclipse.jetty.server.Server - Started @546ms
+2020-08-27 10:23:14,001-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-27 10:23:14,478-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-27 10:23:14,767-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-27 10:23:15,334-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...

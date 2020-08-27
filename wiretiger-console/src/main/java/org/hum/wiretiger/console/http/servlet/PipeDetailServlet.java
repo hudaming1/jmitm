@@ -12,7 +12,7 @@ import org.hum.wiretiger.console.http.service.PipeService;
 import com.alibaba.fastjson.JSON;
 
 /**
- * http://localhost:8080/pipe/list
+ * http://localhost:8080/pipe/get
  */
 public class PipeDetailServlet extends HttpServlet {
 
@@ -22,7 +22,7 @@ public class PipeDetailServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("content-type", "text/html; charset=UTF-8");
-		resp.getWriter().print(JSON.toJSONString(pipeService.getById(req.getParameter("id"))));
+		resp.getWriter().print(JSON.toJSONString(pipeService.getById(Integer.parseInt(req.getParameter("id")))));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

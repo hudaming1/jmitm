@@ -24,8 +24,7 @@ public class ConsoleHelper {
 		vo.setPipeId(item.getPipeId());
 		vo.setName(item.getSourceHost() + ":" + item.getSourcePort() + "->" + item.getTargetHost() + ":" + item.getTargetPort());
 		vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
-//		TODO
-//		vo.setStatus(item.getStatus().name().getDesc());
+		vo.setStatus(item.getStatus().getDesc());
 		return vo;
 	}
 
