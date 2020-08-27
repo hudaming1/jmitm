@@ -1,4 +1,4 @@
-package org.hum.wiretiger.common.util;
+package org.hum.wiretiger.proxy.util;
 
 import java.util.concurrent.ThreadFactory;
 

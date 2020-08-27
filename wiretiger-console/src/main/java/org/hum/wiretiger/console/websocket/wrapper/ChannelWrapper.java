@@ -1,4 +1,4 @@
-package org.hum.wiretiger.common.wrapper;
+package org.hum.wiretiger.console.websocket.wrapper;
 
 import java.net.SocketAddress;
 

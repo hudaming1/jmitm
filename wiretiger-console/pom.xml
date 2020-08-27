@@ -16,5 +16,10 @@
 			<artifactId>wiretiger-proxy</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-webapp -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-webapp</artifactId>
+		</dependency>
 	</dependencies>
 </project>

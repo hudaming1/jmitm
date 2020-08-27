@@ -23,10 +23,10 @@ public class WiretigerServerRun {
 		}).start();
 		
 		System.out.println(ConsoleServer.class.getResource("/webroot").getFile());
-//		WtConsoleHttpConfig consoleConfig = new WtConsoleHttpConfig();
-//		consoleConfig.setPort(8080);
-//		consoleConfig.setWebRoot(ConsoleServer.class.getResource("/webroot").getFile());
-//		consoleConfig.setWebXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
-//		ConsoleServer.startJetty(consoleConfig);
+		WtConsoleHttpConfig consoleConfig = new WtConsoleHttpConfig();
+		consoleConfig.setPort(8080);
+		consoleConfig.setWebRoot(ConsoleServer.class.getResource("/webroot").getFile());
+		consoleConfig.setWebXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
+		ConsoleServer.startJetty(consoleConfig);
 	}
 }
