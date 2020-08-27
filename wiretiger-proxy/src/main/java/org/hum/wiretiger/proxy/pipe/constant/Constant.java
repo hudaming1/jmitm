@@ -1,4 +1,4 @@
-package org.hum.wiretiger.common;
+package org.hum.wiretiger.proxy.pipe.constant;
 
 public class Constant {
 

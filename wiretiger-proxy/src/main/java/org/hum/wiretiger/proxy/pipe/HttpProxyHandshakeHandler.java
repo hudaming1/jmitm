@@ -1,7 +1,7 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import org.hum.wiretiger.common.Constant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.HttpHelper;
