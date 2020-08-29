@@ -55,7 +55,7 @@ public class WiretigerPipeManagerLite {
 		fullPipe.setProtocol(holder.getProtocol());
 		fullPipe.setSourceHost(source.getHostName());
 		fullPipe.setSourcePort(source.getPort());
-		if (holder.getServerChannel() != null) {
+		if (holder.getServerChannel() != null && holder.getServerChannel().remoteAddress() != null) {
 			InetSocketAddress target = (InetSocketAddress) holder.getServerChannel().remoteAddress();
 			fullPipe.setTargetHost(target.getHostName());
 			fullPipe.setTargetPort(target.getPort());
