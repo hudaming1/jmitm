@@ -3,10 +3,10 @@ package org.hum.wiretiger.console.http.vo;
 import lombok.Data;
 
 @Data
-public class WtSessionListQueryVO {
+public class WiretigerSessionListQueryVO {
 
 	private String keyword;
-	private Integer pipeId;
+	private Long pipeId;
 	
 	public boolean isEmpty() {
 		return keyword == null && pipeId == null;

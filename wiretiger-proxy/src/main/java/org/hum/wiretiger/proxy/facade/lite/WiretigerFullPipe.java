@@ -1,6 +1,5 @@
 package org.hum.wiretiger.proxy.facade.lite;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiretiger.console.http.service.PipeService;
-import org.hum.wiretiger.console.http.vo.WtPipeListQueryVO;
+import org.hum.wiretiger.console.http.vo.WiretigerPipeListQueryVO;
 
 import com.alibaba.fastjson.JSON;
 
@@ -23,7 +23,7 @@ public class PipeListServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "application/json");
-		WtPipeListQueryVO queryVo = new WtPipeListQueryVO();
+		WiretigerPipeListQueryVO queryVo = new WiretigerPipeListQueryVO();
 		String isActive = req.getParameter("active") ;
 		if (isActive != null) {
 			queryVo.setActive(Boolean.parseBoolean(isActive));

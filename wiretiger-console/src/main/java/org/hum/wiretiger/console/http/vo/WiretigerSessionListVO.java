@@ -5,16 +5,16 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class WtPipeListVO implements Serializable {
+public class WiretigerSessionListVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	// id
-	private String pipeId;
+	private String sessionId;
 	// 协议
 	private String protocol;
 	// uri
-	private String name;
-	//
-	private String status;
+	private String uri;
+	// 
+	private String responseCode;
 }

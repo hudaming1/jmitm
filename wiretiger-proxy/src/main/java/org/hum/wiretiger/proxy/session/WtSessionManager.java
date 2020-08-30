@@ -29,11 +29,11 @@ public class WtSessionManager {
 		RequestIndex4Id.put(connection.getId(), connection);
 	}
 	
-	public List<WtSession> getList() {
+	public List<WtSession> getAll() {
 		return Collections.unmodifiableList(this.RequestList);
 	}
 	
-	public WtSession getRequest(long id) {
+	public WtSession getById(long id) {
 		return RequestIndex4Id.get(id);
 	}
 }

@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiretiger.console.http.service.SessionService;
-import org.hum.wiretiger.console.http.vo.WtSessionListQueryVO;
+import org.hum.wiretiger.console.http.vo.WiretigerSessionListQueryVO;
 
 import com.alibaba.fastjson.JSON;
 
@@ -24,8 +24,8 @@ public class SessionListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String pipeId = req.getParameter("pipe_id");
 		
-		WtSessionListQueryVO query = new WtSessionListQueryVO();
-		query.setPipeId(pipeId == null ? null : Integer.parseInt(pipeId));
+		WiretigerSessionListQueryVO query = new WiretigerSessionListQueryVO();
+		query.setPipeId(pipeId == null ? null : Long.parseLong(pipeId));
 		
 		resp.setHeader("Content-Type", "application/json");
 		resp.getWriter().print(JSON.toJSONString(sessionService.list(query)));

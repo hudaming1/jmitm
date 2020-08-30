@@ -466,3 +466,79 @@ java.lang.NullPointerException
 2020-08-27 10:23:14,478-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
 2020-08-27 10:23:14,767-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
 2020-08-27 10:23:15,334-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-30 21:06:50,370-[TS] INFO main org.eclipse.jetty.util.log - Logging initialized @333ms to org.eclipse.jetty.util.log.Slf4jLog
+2020-08-30 21:06:50,478-[TS] INFO main org.eclipse.jetty.server.Server - jetty-9.4.12.v20180830; built: 2018-08-30T13:59:14.071Z; git: 27208684755d94a92186989f695db2d7b21ebc51; jvm 14.0.1+7
+2020-08-30 21:06:50,633-[TS] INFO main org.eclipse.jetty.webapp.StandardDescriptorProcessor - NO JSP Support for /, did not find org.eclipse.jetty.jsp.JettyJspServlet
+2020-08-30 21:06:50,643-[TS] INFO main org.eclipse.jetty.server.session - DefaultSessionIdManager workerName=node0
+2020-08-30 21:06:50,643-[TS] INFO main org.eclipse.jetty.server.session - No SessionScavenger set, using defaults
+2020-08-30 21:06:50,645-[TS] INFO main org.eclipse.jetty.server.session - node0 Scavenging every 660000ms
+2020-08-30 21:06:50,672-[TS] INFO main org.eclipse.jetty.server.handler.ContextHandler - Started o.e.j.w.WebAppContext@44a3ec6b{/,file:///Users/mac/eclipse-workspace/wiretiger/wiretiger-console/target/classes/webroot/,AVAILABLE}
+2020-08-30 21:06:50,689-[TS] INFO main org.eclipse.jetty.server.AbstractConnector - Started ServerConnector@130f889{HTTP/1.1,[http/1.1]}{0.0.0.0:8080}
+2020-08-30 21:06:50,689-[TS] INFO main org.eclipse.jetty.server.Server - Started @658ms
+2020-08-30 21:06:55,538-[TS] INFO Thread-0 org.hum.wiretiger.proxy.server.WtDefaultServer - wire_tiger server started on port:52007
+2020-08-30 21:08:06,764-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.proxy.pipe.WtPipeManager - ConnectMonitor started..
+2020-08-30 21:08:07,114-[TS] INFO wt-worker-thread-1 org.hum.wiretiger.ssl.CA_Creator - finish init BC
+2020-08-30 21:08:08,222-[TS] INFO wt-worker-thread-10 org.hum.wiretiger.proxy.pipe.HttpOrHttpsForward - init ssl_context success...
+2020-08-30 21:08:12,104-[TS] WARN wt-worker-thread-1 io.netty.channel.DefaultChannelPipeline - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:345)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:376)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1133)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+2020-08-30 21:11:09,816-[TS] WARN wt-worker-thread-8 org.hum.wiretiger.proxy.pipe.DefaultPipeHandler - need support more types, find type=class io.netty.handler.codec.http.DefaultHttpContent
+2020-08-30 21:11:10,041-[TS] WARN wt-worker-thread-7 org.hum.wiretiger.proxy.pipe.DefaultPipeHandler - need support more types, find type=class io.netty.handler.codec.http.DefaultHttpContent
+2020-08-30 21:11:20,861-[TS] ERROR wt-worker-thread-1 io.netty.util.ResourceLeakDetector - LEAK: ByteBuf.release() was not called before it's garbage-collected. See https://netty.io/wiki/reference-counted-objects.html for more information.
+Recent access records: 
+Created at:
+	io.netty.buffer.PooledByteBufAllocator.newDirectBuffer(PooledByteBufAllocator.java:363)
+	io.netty.buffer.AbstractByteBufAllocator.directBuffer(AbstractByteBufAllocator.java:187)
+	io.netty.buffer.AbstractByteBufAllocator.directBuffer(AbstractByteBufAllocator.java:178)
+	io.netty.buffer.AbstractByteBufAllocator.ioBuffer(AbstractByteBufAllocator.java:139)
+	io.netty.channel.DefaultMaxMessagesRecvByteBufAllocator$MaxMessageHandle.allocate(DefaultMaxMessagesRecvByteBufAllocator.java:114)
+	io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:147)
+	io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	java.base/java.lang.Thread.run(Thread.java:832)
+2020-08-30 21:11:39,046-[TS] WARN wt-worker-thread-7 io.netty.channel.DefaultChannelPipeline - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:345)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:376)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1133)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:832)
+2020-08-30 21:11:39,126-[TS] WARN wt-worker-thread-8 io.netty.channel.DefaultChannelPipeline - An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:345)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:376)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1133)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:148)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:714)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:650)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:576)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:493)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:989)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at java.base/java.lang.Thread.run(Thread.java:832)
