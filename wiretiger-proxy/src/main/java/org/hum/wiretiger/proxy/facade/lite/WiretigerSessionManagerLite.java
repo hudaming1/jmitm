@@ -21,26 +21,19 @@ public class WiretigerSessionManagerLite {
 	}
 	
 
-	public WiretigerFullSession getById(Long id) {
-		return parse2WiretigerFullSession(WtSessionManager.get().getById(id));
+	public WiretigerSimpleSession getById(Long id) {
+		return null;
 	}
 
-	public Collection<WiretigerFullSession> getAll() {
-		List<WiretigerFullSession> list = new ArrayList<>();
-		for (WtSession holder : WtSessionManager.get().getAll()) {
-			list.add(parse2WiretigerFullSession(holder));
+	public Collection<WiretigerSimpleSession> getAll() {
+		List<WiretigerSimpleSession> list = new ArrayList<>();
+		for (WtSession wtSession : WtSessionManager.get().getAll()) {
+			WiretigerSimpleSession simpleSession = new WiretigerSimpleSession();
+			simpleSession.setSessionId(wtSession.getId());
+			simpleSession.setUri(wtSession.getRequest().uri());
+			simpleSession.setResponseCode(wtSession.getResponse().status().toString());
+			list.add(simpleSession);
 		}
 		return list;
-	}
-
-	private WiretigerFullSession parse2WiretigerFullSession(WtSession wtSession) {
-		if (wtSession == null) {
-			return null;
-		}
-		WiretigerFullSession fullSession = new WiretigerFullSession();
-		fullSession.setSessionId(wtSession.getId());
-		fullSession.setUri(wtSession.getRequest().uri());
-		fullSession.setResponseCode(wtSession.getResponse().status().toString());
-		return fullSession;
 	}
 }

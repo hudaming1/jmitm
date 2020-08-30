@@ -8,7 +8,7 @@ import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionDetailVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListQueryVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
-import org.hum.wiretiger.proxy.facade.lite.WiretigerFullSession;
+import org.hum.wiretiger.proxy.facade.lite.WiretigerSimpleSession;
 import org.hum.wiretiger.proxy.facade.lite.WiretigerSessionManagerLite;
 
 public class SessionService {
@@ -26,10 +26,10 @@ public class SessionService {
 		return connList;
 	}
 	
-	private boolean isMatch(WiretigerSessionListQueryVO condition, WiretigerFullSession req) {
+	private boolean isMatch(WiretigerSessionListQueryVO condition, WiretigerSimpleSession session) {
 		if (condition == null || condition.isEmpty()) {
 			return true;
-		} else if (condition.getPipeId() != null && condition.getPipeId().equals(req.getPipeId())) {
+		} else if (condition.getPipeId() != null && condition.getPipeId().equals(session.getPipeId())) {
 			return true;
 		}
 		return false;

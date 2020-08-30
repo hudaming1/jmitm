@@ -15,7 +15,7 @@ public class WsSessionService {
 	public void sendNewSessionMsg(WiretigerPipe pipe, WiretigerSession session) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerSessionListVO> msg = new WsServerMessage<>(MessageTypeEnum.NewSession);
-			msg.setData(ConsoleHelper.parse2WtSessionListVO(session));
+//			msg.setData(ConsoleHelper.parse2WtSessionListVO(session));
 			channel.writeAndFlush(msg);
 		});
 	}

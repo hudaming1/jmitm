@@ -3,8 +3,8 @@ package org.hum.wiretiger.console.http.helper;
 import org.hum.wiretiger.console.http.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
-import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
 import org.hum.wiretiger.proxy.facade.lite.WiretigerFullPipe;
+import org.hum.wiretiger.proxy.facade.lite.WiretigerSimpleSession;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 public class ConsoleHelper {
@@ -36,11 +36,11 @@ public class ConsoleHelper {
 		return vo;
 	}
 
-	public static WiretigerSessionListVO parse2WtSessionListVO(WiretigerSession session) {
-		WiretigerSessionListVO conVo = new WiretigerSessionListVO();
-		conVo.setSessionId(session.getSessionId());
-		conVo.setUri(session.getUri());
-		conVo.setResponseCode(session.getRespStatus());
-		return conVo;
+	public static WiretigerSessionListVO parse2WtSessionListVO(WiretigerSimpleSession session) {
+		WiretigerSessionListVO listVO = new WiretigerSessionListVO();
+		listVO.setSessionId(session.getSessionId() + "");
+		listVO.setUri(session.getUri());
+		listVO.setResponseCode(session.getResponseCode());
+		return listVO;
 	}
 }
