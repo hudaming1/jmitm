@@ -34,7 +34,7 @@ public class PipeService {
 		return requestList;
 	}
 
-	public WiretigerPipeDetailVO getById(Integer id) {
+	public WiretigerPipeDetailVO getById(Long id) {
 		WiretigerFullPipe pipe = pipeMgrLite.getById(id);
 		if (pipe == null) {
 			return new WiretigerPipeDetailVO();

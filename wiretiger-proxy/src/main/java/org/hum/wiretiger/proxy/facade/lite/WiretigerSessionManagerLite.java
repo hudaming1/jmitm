@@ -29,6 +29,7 @@ public class WiretigerSessionManagerLite {
 		List<WiretigerSimpleSession> list = new ArrayList<>();
 		for (WtSession wtSession : WtSessionManager.get().getAll()) {
 			WiretigerSimpleSession simpleSession = new WiretigerSimpleSession();
+			simpleSession.setPipeId(wtSession.getPipeId());
 			simpleSession.setSessionId(wtSession.getId());
 			simpleSession.setUri(wtSession.getRequest().uri());
 			simpleSession.setResponseCode(wtSession.getResponse().status().toString());

@@ -52,7 +52,7 @@ public class WtPipeHolder {
 		this.pipe.addStatus(status);
 	}
 	
-	public int getId() {
+	public Long getId() {
 		return pipe.getId();
 	}
 	

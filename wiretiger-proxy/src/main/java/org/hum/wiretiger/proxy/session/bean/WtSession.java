@@ -12,14 +12,14 @@ public class WtSession {
 	private static final AtomicInteger IdCreator = new AtomicInteger(0);
 	
 	private long id;
-	private Integer pipeId;
+	private Long pipeId;
 	private DefaultHttpRequest request;
 	private long requestTime;
 	private FullHttpResponse response;
 	private byte[] responseBytes;
 	private long responseTime;
 	
-	public WtSession(Integer pipeId, DefaultHttpRequest request, long requestTime) {
+	public WtSession(Long pipeId, DefaultHttpRequest request, long requestTime) {
 		this.id = IdCreator.incrementAndGet();
 		this.pipeId = pipeId;
 		this.request = request;

@@ -23,7 +23,7 @@ public class WiretigerPipeManagerLite {
 	private WiretigerPipeManagerLite() {
 	}
 
-	public WiretigerFullPipe getById(Integer id) {
+	public WiretigerFullPipe getById(Long id) {
 		WtPipeHolder holder = WtPipeManager.get().getById(id);
 		WiretigerFullPipe fullPipe = parse2WiretigerFullPipe(holder);
 		fullPipe.setEvents(new ArrayList<>());

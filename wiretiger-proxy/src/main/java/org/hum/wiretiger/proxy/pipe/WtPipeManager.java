@@ -20,7 +20,7 @@ public class WtPipeManager {
 
 	private static final AtomicInteger counter = new AtomicInteger(1);
 	private ConcurrentHashMap<Channel, WtPipeHolder> pipes4ClientChannel = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<Integer, WtPipeHolder> pipes4Id = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Long, WtPipeHolder> pipes4Id = new ConcurrentHashMap<>();
 	
 	private WtPipeManager() {
 		log.info("ConnectMonitor started..");
@@ -43,7 +43,7 @@ public class WtPipeManager {
 		return holder;
 	}
 	
-	public WtPipeHolder getById(Integer id) {
+	public WtPipeHolder getById(Long id) {
 		return pipes4Id.get(id);
 	}
 	

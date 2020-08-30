@@ -17,7 +17,7 @@ import lombok.Getter;
 public class WtPipe {
 	
 	// pipeId
-	private int id;
+	private Long id;
 	// name
 	private String name;
 	// client->proxy
@@ -63,7 +63,7 @@ public class WtPipe {
 		this.statusMap = statusMap;
 	}
 
-	void setId(int id) {
+	void setId(long id) {
 		this.id = id;
 	}
 
