@@ -48,23 +48,21 @@ public class SessionService {
 		WiretigerFullSession simpleSession = sessionManagerLite.getById(id);
 		detailVo.setRequest(convert2RequestString(simpleSession));
 		detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
+		
 		if (simpleSession.getResponseBody() != null && simpleSession.getResponseBody().length > 0) {
-			detailVo.setResponseBody4Source(Arrays.toString(simpleSession.getResponseBody()));
-			
 			Map<String, String> headers = simpleSession.getResponseHeaders();
 			byte[] respBytes = simpleSession.getResponseBody();
 			// 是否需要解压
 			if (headers.containsKey(HttpConstant.ContentEncoding)) {
-				IContentCodec contentCodec = CodecFactory.create(headers.get(HttpConstant.ContentEncoding));
-				if (contentCodec != null) {
-					respBytes = contentCodec.decompress(respBytes);
-					detailVo.setResponseBody4Source(Arrays.toString(respBytes));
-				}
-			} 
-			// 是否支持转成字符串
+				respBytes = decompress(respBytes, headers.get(HttpConstant.ContentEncoding));
+			}
+			detailVo.setResponseBody4Source(Arrays.toString(respBytes));
+			// 是否可解析
 			if (HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentType))) {
 				detailVo.setResponseBody4Parsed(HttpMessageUtil.unescape(new String(respBytes)));
-			} 
+			} else {
+				detailVo.setResponseBody4Parsed("unsupport parsed type:" + headers.get(HttpConstant.ContentType));
+			}
 		} else {
 			detailVo.setResponseBody4Source("No Response..");
 			detailVo.setResponseBody4Parsed("No Response..");
@@ -92,5 +90,14 @@ public class SessionService {
 			headerString.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
 		return headerString.toString();
+	}
+	
+	private byte[] decompress(byte[] bytes, String type) throws IOException {
+		IContentCodec contentCodec = CodecFactory.create(type);
+		if (contentCodec != null) {
+			return contentCodec.decompress(bytes);
+		} else {
+			return bytes;
+		}
 	}
 }
