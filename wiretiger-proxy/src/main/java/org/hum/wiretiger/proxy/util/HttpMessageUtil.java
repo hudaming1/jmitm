@@ -1,4 +1,4 @@
-package org.hum.wiretiger.console.common.util;
+package org.hum.wiretiger.proxy.util;
 
 import java.util.List;
 import java.util.Map;
