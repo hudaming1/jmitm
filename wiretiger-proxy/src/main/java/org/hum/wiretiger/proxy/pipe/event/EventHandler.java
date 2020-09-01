@@ -74,15 +74,17 @@ public class EventHandler {
 	private WiretigerPipe convert(WtPipeHolder holder) {
 		WiretigerPipe pipeVo = new WiretigerPipe();
 		InetSocketAddress source = (InetSocketAddress) holder.getClientChannel().remoteAddress();
-		InetSocketAddress target = (InetSocketAddress) holder.getServerChannel().remoteAddress();
 		pipeVo.setSourceHost(source.getHostName());
 		pipeVo.setSourcePort(source.getPort());
-		pipeVo.setTargetHost(target.getHostName());
-		pipeVo.setTargetPort(target.getPort());
 		pipeVo.setProtocol(holder.getProtocol());
 		pipeVo.setPipeId(holder.getId() + "");
 		pipeVo.setStatus(WiretigerPipeStatus.getEnum(holder.getCurrentStatus().getCode()));
 		
+		if (holder.getServerChannel() != null) {
+			InetSocketAddress target = (InetSocketAddress) holder.getServerChannel().remoteAddress();
+			pipeVo.setTargetHost(target.getHostName());
+			pipeVo.setTargetPort(target.getPort());
+		}
 		return pipeVo;
 	}
 	

@@ -63,7 +63,7 @@ public class WiretigerSessionManagerLite {
 			simpleSession.setPipeId(wtSession.getPipeId());
 			simpleSession.setSessionId(wtSession.getId());
 			simpleSession.setUri(wtSession.getRequest().uri());
-			simpleSession.setResponseCode(wtSession.getResponse().status().toString());
+			simpleSession.setResponseCode(wtSession.getResponse().status().code() + "");
 			list.add(simpleSession);
 		}
 		return list;
