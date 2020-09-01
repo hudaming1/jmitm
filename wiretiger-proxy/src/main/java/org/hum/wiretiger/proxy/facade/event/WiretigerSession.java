@@ -7,6 +7,6 @@ public class WiretigerSession {
 
 	private String sessionId;
 	private String uri;
-	private String respStatus;
+	private String responseCode;
 	
 }

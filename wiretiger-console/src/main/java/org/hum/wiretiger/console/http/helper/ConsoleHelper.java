@@ -3,8 +3,8 @@ package org.hum.wiretiger.console.http.helper;
 import org.hum.wiretiger.console.http.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
+import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
 import org.hum.wiretiger.proxy.facade.lite.WiretigerFullPipe;
-import org.hum.wiretiger.proxy.facade.lite.WiretigerSimpleSession;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 public class ConsoleHelper {
@@ -14,8 +14,7 @@ public class ConsoleHelper {
 		vo.setPipeId(item.getPipeId());
 		vo.setName(item.getSourceHost() + ":" + item.getSourcePort() + "->" + item.getTargetHost() + ":" + item.getTargetPort());
 		vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
-//		TODO
-//		vo.setStatus(item.getStatus().name().getDesc());
+		vo.setStatus(item.getStatus().getDesc());
 		return vo;
 	}
 
@@ -36,7 +35,7 @@ public class ConsoleHelper {
 		return vo;
 	}
 
-	public static WiretigerSessionListVO parse2WtSessionListVO(WiretigerSimpleSession session) {
+	public static WiretigerSessionListVO parse2WtSessionListVO(WiretigerSession session) {
 		WiretigerSessionListVO listVO = new WiretigerSessionListVO();
 		listVO.setSessionId(session.getSessionId() + "");
 		listVO.setUri(session.getUri());

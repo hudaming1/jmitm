@@ -76,13 +76,6 @@ public class WtDefaultServer implements WtServer {
 			masterThreadPool.shutdownGracefully();
 		}
 	}
-//	
-//	private void startConsole(int port) throws Exception {
-//		new WebSocketServer(config).start();
-//		// TODO 这里线程join，阻塞住了
-//		ConsoleServer.startJetty(port);
-//		log.info("console server started on port:" + port);
-//	}
 	
 	@Override
 	public void onClose(Object hook) {

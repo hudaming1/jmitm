@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
 import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
@@ -80,13 +81,16 @@ public class EventHandler {
 		pipeVo.setTargetPort(target.getPort());
 		pipeVo.setProtocol(holder.getProtocol());
 		pipeVo.setPipeId(holder.getId() + "");
+		pipeVo.setStatus(WiretigerPipeStatus.getEnum(holder.getCurrentStatus().getCode()));
 		
 		return pipeVo;
 	}
 	
 	private WiretigerSession convert(WtSession wtSession) {
 		WiretigerSession session = new WiretigerSession();
-		// TODO
+		session.setSessionId(wtSession.getId() + "");
+		session.setResponseCode(wtSession.getResponse().status().code() + "");
+		session.setUri(wtSession.getRequest().uri());
 		return session;
 	}
 }

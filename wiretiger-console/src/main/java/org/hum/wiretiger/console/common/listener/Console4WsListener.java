@@ -13,6 +13,7 @@ public class Console4WsListener implements EventListener {
 
 	@Override
 	public void onConnect(WiretigerPipe pipe) {
+		System.out.println("connect");
 		wsPipeService.sendConnectMsg(pipe);
 	}
 
