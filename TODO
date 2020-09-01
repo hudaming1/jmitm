@@ -11,7 +11,7 @@
 【OK】增加下载CA证书连接
 【OK】增加WebSocket，实时刷新（Pipe和Session维度都已增加）
 【OK】重构，改用MavenModule
-
+【OK】在代理握手时，删除自己写的HttpRequest，使用Netty.HttpRequestDecoder代替，以此方式减少一次序列化
 
 ##功能开发
 【M9W1】Mock功能
@@ -26,7 +26,7 @@ PIPE删除Request和Response，只显示汇总信息
 开启debug模式（log4j和nettyhandler）
 设定服务端只能保留N条请求，并做成可配置
 clear按钮做成菜单
-在代理握手时，删除自己写的HttpRequest，使用Netty.HttpRequestDecoder代替，以此方式减少一次序列化
+
 
 ##BUG
 【M9W2】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
@@ -37,6 +37,8 @@ clear按钮做成菜单
 
 
 HTTP连接：http://www.cankaoxiaoxi.com/kuaixun/20200901/2419633.shtml
+http://www.cqcoal.com/index/main.js
+http://fex.bdstatic.com/hunter/alog/alog.min.js?v=-18507-18507
 
 
 

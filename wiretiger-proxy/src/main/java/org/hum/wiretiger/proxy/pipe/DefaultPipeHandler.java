@@ -1,5 +1,6 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import java.util.Arrays;
 import java.util.Stack;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
@@ -11,14 +12,17 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.http.DefaultHttpRequest;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @Sharable Share for client-channel and remote-channel
+ */
 @Slf4j
 @Sharable
 public class DefaultPipeHandler extends AbstractPipeHandler {
@@ -49,10 +53,10 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (msg instanceof DefaultHttpRequest) {
+		if (msg instanceof HttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
-			pipeHolder.appendRequest((DefaultHttpRequest) msg);
-			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (DefaultHttpRequest) msg, System.currentTimeMillis()));
+			pipeHolder.appendRequest((HttpRequest) msg);
+			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (HttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
@@ -72,7 +76,9 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
-				log.warn("reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
+				log.warn("resp=" + resp.status() + "," + resp.headers().toString());
+				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size() + ", arr=" + Arrays.toString(resp.content().array()));
+				return ;
 			}
 			WtSession session = reqStack4WattingResponse.pop();
 			byte[] bytes = null;
@@ -113,6 +119,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		}
 		pipeHolder.recordStatus(PipeStatus.Closed);
 		pipeHolder.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
+//		log.info("client disconnect");
 	}
 
 	@Override
@@ -123,6 +130,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		pipeHolder.recordStatus(PipeStatus.Closed);
 		pipeHolder.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
 		eventHandler.fireDisconnectEvent(pipeHolder);
+//		log.info("server disconnect");
 	}
 
 	@Override

@@ -9,8 +9,8 @@ import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
 import lombok.Getter;
 
 @Getter
@@ -25,7 +25,7 @@ public class WtPipe {
 	// proxy->server
 	private Channel targetCtx;
 	// request
-	private List<DefaultHttpRequest> requestList = new ArrayList<>();
+	private List<HttpRequest> requestList = new ArrayList<>();
 	// responseList
 	private List<FullHttpResponse> responseList = new ArrayList<>();
 	// pipe status
@@ -51,7 +51,7 @@ public class WtPipe {
 		this.targetCtx = targetCtx;
 	}
 
-	void addRequest(DefaultHttpRequest request) {
+	void addRequest(HttpRequest request) {
 		this.requestList.add(request);
 	}
 

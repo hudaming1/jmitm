@@ -11,8 +11,8 @@ import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 import io.netty.channel.Channel;
-import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpRequest;
 
 public class WtPipeHolder {
 
@@ -40,7 +40,7 @@ public class WtPipeHolder {
 		this.pipe.setTargetCtx(channel);
 	}
 	
-	public void appendRequest(DefaultHttpRequest request) {
+	public void appendRequest(HttpRequest request) {
 		this.pipe.addRequest(request);
 	}
 	
@@ -79,7 +79,7 @@ public class WtPipeHolder {
 		return pipe.getProtocol();
 	}
 	
-	public List<DefaultHttpRequest> getRequests() {
+	public List<HttpRequest> getRequests() {
 		return Collections.unmodifiableList(pipe.getRequestList());
 	}
 	

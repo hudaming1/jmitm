@@ -3,6 +3,7 @@ package org.hum.wiretiger.proxy.pipe;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -74,7 +75,7 @@ public class HttpOrHttpsForward {
 			bootStrap.connect(host, port).sync();
 			return sslHandler.handshakeFuture();
 		} else {
-			return bootStrap.connect(host, port);
+			return bootStrap.connect(host, port).sync();
 		}
 	}
 }

@@ -11,6 +11,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -22,6 +23,7 @@ import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Sharable
 public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
@@ -45,15 +47,14 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext client2ProxyCtx, HttpRequest request) throws Exception {
-    	if (isParsed) {
-    		client2ProxyCtx.fireChannelRead(request);
-    		return ;
-    	}
-    	// 是否再需要增加parsing状态过渡？
-    	isParsed = true;
-    	
-    	// 握完手这个handler就没有用了，直接删除
-		client2ProxyCtx.pipeline().remove(this);
+//    	if (isParsed) {
+//    		client2ProxyCtx.fireChannelRead(request);
+//    		return ;
+//    	}
+//    	// 是否再需要增加parsing状态过渡？
+//    	isParsed = true;
+//    	
+//    	// 握完手这个handler就没有用了，直接删除
 		
 		// read host and port from http-request
 		String[] hostAndPort = request.headers().get(HttpConstant.Host).split(":");
@@ -80,18 +81,18 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
 				}
 			});
-			
+
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
-    		log.info("HTTP " + host + ":" + port);
-    		// HTTP 拦截器Mock逻辑加在这里
+    		log.info(client2ProxyCtx + " " + host + ":" + port);
     		pipeHolder.setProtocol(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());
-    		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
-    		client2ProxyCtx.pipeline().fireChannelRead(request);
+    		DefaultPipeHandler defaultPipeHandler = new DefaultPipeHandler(eventHandler, pipeHolder, host, port);
+    		client2ProxyCtx.pipeline().addLast(defaultPipeHandler);
+    		client2ProxyCtx.fireChannelRead(request);
     	}
 	}
 	
