@@ -29,7 +29,6 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
 	private static final String HTTPS_HANDSHAKE_METHOD = "CONNECT";
 	
-	private volatile boolean isParsed = false;
 	private EventHandler eventHandler;
 	
 	public HttpProxyHandshakeHandler(EventHandler eventHandler) {
@@ -47,14 +46,6 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 
 	@Override
 	protected void channelRead0(ChannelHandlerContext client2ProxyCtx, HttpRequest request) throws Exception {
-//    	if (isParsed) {
-//    		client2ProxyCtx.fireChannelRead(request);
-//    		return ;
-//    	}
-//    	// 是否再需要增加parsing状态过渡？
-//    	isParsed = true;
-//    	
-//    	// 握完手这个handler就没有用了，直接删除
 		
 		// read host and port from http-request
 		String[] hostAndPort = request.headers().get(HttpConstant.Host).split(":");

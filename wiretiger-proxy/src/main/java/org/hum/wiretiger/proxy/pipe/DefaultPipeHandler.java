@@ -15,6 +15,7 @@ import org.hum.wiretiger.proxy.session.bean.WtSession;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -59,6 +60,9 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (HttpRequest) msg, System.currentTimeMillis()));
 		} else if (msg instanceof LastHttpContent) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
+		} else if (msg instanceof DefaultHttpContent){
+			log.info("[NOTICE] host=" + pipeHolder.getName() + "/" + pipeHolder.getUri());
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}

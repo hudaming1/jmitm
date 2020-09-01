@@ -31,6 +31,7 @@ clear按钮做成菜单
 ##BUG
 【M9W2】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
 还有一些链接一直处于Init状态，需要查看详细归属
+使用http链接时，如果同一个链接发送2个请求，会走到代码DefaultPipeHandler.java:83行
 
 ##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口
