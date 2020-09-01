@@ -36,10 +36,6 @@ public class HttpOrHttpsForward {
 			log.error("init ssl_context failed", ce);
 		}
 	}
-
-	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port) {
-		this(duplexHandler, host, port, false);
-	}
 	
 	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port, boolean isHttps) {
 		this.isHttps = isHttps;

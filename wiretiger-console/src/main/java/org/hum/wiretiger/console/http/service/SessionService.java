@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.hum.wiretiger.console.common.HttpConstant;
+import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.console.common.codec.IContentCodec;
 import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
