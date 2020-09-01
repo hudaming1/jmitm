@@ -65,6 +65,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		pipeHolder.setName(client2ProxyCtx.channel().remoteAddress().toString() + "->" + host + ":" + port);
 		
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
+    		log.info("HTTPS " + host + ":" + port);
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
@@ -85,6 +86,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
+    		log.info("HTTP " + host + ":" + port);
     		// HTTP 拦截器Mock逻辑加在这里
     		pipeHolder.setProtocol(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());

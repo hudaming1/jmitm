@@ -61,8 +61,8 @@ public class HttpOrHttpsForward {
 			bootStrap.handler(new ChannelInitializer<Channel>() {
 				@Override
 				protected void initChannel(Channel proxy2ServerChannel) throws Exception {
-					proxy2ServerChannel.pipeline().addFirst(new HttpRequestEncoder());
-					proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
+					proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
+					proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
 					proxy2ServerChannel.pipeline().addLast(duplexHandler);
 				}
 			});
