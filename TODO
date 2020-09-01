@@ -10,12 +10,13 @@
 【OK】控制台Response内容没有展示
 【OK】增加下载CA证书连接
 【OK】增加WebSocket，实时刷新（Pipe和Session维度都已增加）
+【OK】重构，改用MavenModule
 
 
-##功能
-Mock功能
+##功能开发
+【M9W1】Mock功能
 
-##优化
+##功能优化
 控制台增加断开连接的按钮
 Request支持分页
 修改Session创建时机，不要等到Response完成后才创建Session
@@ -28,11 +29,12 @@ clear按钮做成菜单
 在代理握手时，删除自己写的HttpRequest，使用Netty.HttpRequestDecoder代替，以此方式减少一次序列化
 
 ##BUG
-HTTP协议的百度新闻首页打不开：http://news.baidu.com/
+【M9W2】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
+还有一些链接一直处于Init状态，需要查看详细归属
 
-##重构
+##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口
-重构，改用MavenModule
+
 
 
 

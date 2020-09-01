@@ -49,7 +49,7 @@ public class WtDefaultServer implements WtServer {
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
 			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class);
 			if (config.isDebug()) {
-				bootStrap.handler(new LoggingHandler(LogLevel.INFO));
+				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
@@ -60,12 +60,6 @@ public class WtDefaultServer implements WtServer {
 
 			Channel ch = bootStrap.bind(config.getPort()).sync().channel();
 			log.info("wire_tiger server started on port:" + config.getPort());
-			
-			// TODO
-//			// 启动控制台
-//			if (config.getConsolePort() != null) {
-//				startConsole(config.getConsolePort());
-//			}
 
 			ch.closeFuture().sync();
 		} catch (Exception e) {
