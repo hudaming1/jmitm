@@ -1,7 +1,9 @@
 package org.hum.wiretiger.proxy.util;
 
+import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
 
+import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,5 +32,10 @@ public class NettyUtils {
 
 	public static EventLoopGroup initEventLoopGroup(int threadCount, ThreadFactory threadFactory) {
 		return isSupportNativeET() ? new EpollEventLoopGroup(threadCount, threadFactory) : new NioEventLoopGroup(threadCount, threadFactory);
+	}
+	
+	public static String toHostAndPort(Channel channel) {
+		InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
+		return address.getHostName() + ":" + address.getPort();
 	}
 }

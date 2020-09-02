@@ -5,13 +5,14 @@ import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
+import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -72,17 +73,19 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
 				}
 			});
-
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
+			// 握手后，对于HTTPS而言，这个handler就失去了意义
+			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
-    		log.info(client2ProxyCtx + " " + host + ":" + port);
+    		// new HttpForwad(client2ProxyCtx.channel(), eventHandler, host, port).start();
+    		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
     		pipeHolder.setProtocol(Protocol.HTTP);
     		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());
-    		DefaultPipeHandler defaultPipeHandler = new DefaultPipeHandler(eventHandler, pipeHolder, host, port);
-    		client2ProxyCtx.pipeline().addLast(defaultPipeHandler);
+    		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
+    		log.info(NettyUtils.toHostAndPort(client2ProxyCtx.channel()) + " add pipeline ");
     		client2ProxyCtx.fireChannelRead(request);
     	}
 	}

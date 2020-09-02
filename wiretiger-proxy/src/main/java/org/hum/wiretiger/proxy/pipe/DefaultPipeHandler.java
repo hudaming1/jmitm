@@ -2,6 +2,7 @@ package org.hum.wiretiger.proxy.pipe;
 
 import java.util.Arrays;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
@@ -12,9 +13,9 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
@@ -76,6 +77,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	 */
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
+		AtomicBoolean isClosed = new AtomicBoolean(false);
 		if (msg instanceof FullHttpResponse) {
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
@@ -93,10 +95,17 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			session.setResponse(resp, bytes, System.currentTimeMillis());
 			SessionMgr.add(session);
 			eventHandler.fireNewSessionEvent(pipeHolder, session);
+			// 介于代理特殊性质（即浏览器会将不同host的请求通过一个socket连接传输），HTTP全部采用短链接
+			isClosed.set(resp.decoderResult().isFinished() && pipeHolder.getProtocol() == Protocol.HTTP);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
-		pipeHolder.getClientChannel().writeAndFlush(msg);
+		
+		pipeHolder.getClientChannel().writeAndFlush(msg).addListener(f -> {
+			if (isClosed.get()) {
+				pipeHolder.getClientChannel().close();
+			}
+		});
 		pipeHolder.appendResponse((FullHttpResponse) msg);
 		pipeHolder.recordStatus(PipeStatus.Received);
 		eventHandler.fireReceiveEvent(pipeHolder);

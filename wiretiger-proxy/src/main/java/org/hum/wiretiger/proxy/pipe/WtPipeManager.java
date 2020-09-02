@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 
 import io.netty.channel.Channel;
@@ -35,6 +36,10 @@ public class WtPipeManager {
 	}
 
 	public WtPipeHolder create(Channel clientChannel) {
+		if (pipes4ClientChannel.containsKey(clientChannel)) {
+			log.error(clientChannel + "has exists, id=" + pipes4ClientChannel.get(clientChannel).getId());
+			throw new WiretigerException(clientChannel + " has exists");
+		}
 		WtPipeHolder holder = new WtPipeHolder(counter.getAndIncrement());
 		holder.registClient(clientChannel);
 		holder.setName(clientChannel.remoteAddress().toString());
