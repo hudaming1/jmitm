@@ -8,7 +8,6 @@ import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
@@ -86,10 +85,8 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
-    		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
-    		FrontPipe front = new FrontPipe(client2ProxyCtx.channel());
     		BackPipe back = new BackPipe(host, port);
-    		FullPipe full = new FullPipe(front, back, eventHandler, pipeHolder);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
     		full.connect().addListener(f-> {
     			back.getChannel().writeAndFlush(request);
     		});

@@ -1,7 +1,6 @@
 package org.hum.wiretiger.proxy.pipe.v2;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
-import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.channel.ChannelFuture;
@@ -21,20 +20,13 @@ public class FullPipe extends AbstractPipeHandlerNew {
 		super(front, back);
 		this.eventHandler = eventHandler;
 		this.pipeHolder = pipeHolder;
-		if (pipeHolder.getProtocol() == Protocol.HTTPS) {
-			this.front.getChannel().pipeline().addLast(this);
-		}
+		this.front.getChannel().pipeline().addLast(this);
 	}
 
 	public ChannelFuture connect() {
 		try {
 			ChannelFuture backConnectFuture = back.connect();
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					back.getChannel().pipeline().addLast(FullPipe.this);
-				}
-			}).start();
+			back.getChannel().pipeline().addLast(FullPipe.this);
 			return backConnectFuture;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -50,7 +42,7 @@ public class FullPipe extends AbstractPipeHandlerNew {
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		super.back.getChannel().writeAndFlush(msg);
-		log.info("channelRead4Client, flush to server, msg=" + msg.getClass());
+//		log.info("channelRead4Client, flush to server, msg=" + msg.getClass());
 	}
 
 	/**
@@ -59,7 +51,7 @@ public class FullPipe extends AbstractPipeHandlerNew {
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		super.front.getChannel().writeAndFlush(msg);
-		log.info("channelRead4Server, flush to client, msg=" + msg.getClass());
+//		log.info("channelRead4Server, flush to client, msg=" + msg.getClass());
 //		if (msg instanceof HttpResponse) {
 //			HttpResponse resp = (HttpResponse) msg;
 //			if (resp.decoderResult().isFinished()) {
