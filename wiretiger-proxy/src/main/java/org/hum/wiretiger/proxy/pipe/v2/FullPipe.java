@@ -1,13 +1,13 @@
 package org.hum.wiretiger.proxy.pipe.v2;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,7 +21,9 @@ public class FullPipe extends AbstractPipeHandlerNew {
 		super(front, back);
 		this.eventHandler = eventHandler;
 		this.pipeHolder = pipeHolder;
-//		this.front.getChannel().pipeline().addLast(this);
+		if (pipeHolder.getProtocol() == Protocol.HTTPS) {
+			this.front.getChannel().pipeline().addLast(this);
+		}
 	}
 
 	public ChannelFuture connect() {
@@ -49,7 +51,6 @@ public class FullPipe extends AbstractPipeHandlerNew {
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		super.back.getChannel().writeAndFlush(msg);
 		log.info("channelRead4Client, flush to server, msg=" + msg.getClass());
-		
 	}
 
 	/**

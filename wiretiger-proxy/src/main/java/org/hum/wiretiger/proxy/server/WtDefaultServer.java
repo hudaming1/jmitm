@@ -46,7 +46,7 @@ public class WtDefaultServer implements WtServer {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
-		HttpProxyHandshakeHandler httpProxyHandshakeHandler = new HttpProxyHandshakeHandler(eventHandler);
+		HttpProxyHandshakeHandlerNew httpProxyHandshakeHandler = new HttpProxyHandshakeHandlerNew(eventHandler);
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
