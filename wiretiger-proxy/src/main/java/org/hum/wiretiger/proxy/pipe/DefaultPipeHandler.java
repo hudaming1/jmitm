@@ -94,6 +94,7 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 			}
 			session.setResponse(resp, bytes, System.currentTimeMillis());
 			SessionMgr.add(session);
+			// 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
 			eventHandler.fireNewSessionEvent(pipeHolder, session);
 			// 介于代理特殊性质（即浏览器会将不同host的请求通过一个socket连接传输），HTTP全部采用短链接
 			isClosed.set(resp.decoderResult().isFinished() && pipeHolder.getProtocol() == Protocol.HTTP);

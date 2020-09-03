@@ -55,11 +55,11 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		
 		// wrap pipeholder
 		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
-		pipeHolder.setName(client2ProxyCtx.channel().remoteAddress().toString() + "->" + host + ":" + port);
 		
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
     		log.info("HTTPS " + host + ":" + port);
     		pipeHolder.setProtocol(Protocol.HTTPS);
+    		pipeHolder.setName(Protocol.HTTPS + "://" + host + ":" + port);
     		// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
@@ -83,6 +83,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		// new HttpForwad(client2ProxyCtx.channel(), eventHandler, host, port).start();
     		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
     		pipeHolder.setProtocol(Protocol.HTTP);
+    		pipeHolder.setName(Protocol.HTTP + "://" + host + ":" + port + request.uri());
     		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());
     		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
     		log.info(NettyUtils.toHostAndPort(client2ProxyCtx.channel()) + " add pipeline ");
