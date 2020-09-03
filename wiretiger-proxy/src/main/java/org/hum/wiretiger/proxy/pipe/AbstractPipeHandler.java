@@ -5,7 +5,6 @@ import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.ConnectTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -48,11 +47,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException) {
-			log.warn("timeout for " + pipeHolder.getName());
-		}
-		
-		
+		log.warn("exception for " + pipeHolder.getName());
 		if (pipeHolder.getClientChannel() == ctx.channel()) {
 			exceptionCaught4Client(ctx, cause);
 		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
