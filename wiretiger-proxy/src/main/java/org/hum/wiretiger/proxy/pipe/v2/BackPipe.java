@@ -10,16 +10,41 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 import io.netty.handler.codec.http.HttpResponseDecoder;
+import io.netty.handler.ssl.SslContext;
+import io.netty.handler.ssl.SslContextBuilder;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.concurrent.Future;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BackPipe {
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
+	private static SslContext SsslContext;
 	private String host;
 	private int port;
 	private Bootstrap bootStrap = null;
 	private Channel channel;
+	private SslHandler sslHandler;
+	static {
+		try {
+			SsslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+			log.info("init ssl_context success...");
+		} catch (Exception ce) {
+			log.error("init ssl_context failed", ce);
+		}
+	}
 
-	public BackPipe(String host, int port) {
+	public BackPipe(String host, int port, boolean isHttps) {
+		if (isHttps) {
+			initHttpsBackPipe(host, port);
+		} else {
+			initHttpBackPipe(host, port);
+		}
+	}
+	
+	private void initHttpsBackPipe(String host, int port) {
 		this.host = host;
 		this.port = port;
 		bootStrap = new Bootstrap();
@@ -28,17 +53,38 @@ public class BackPipe {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
-				System.out.println("init channelhandler");
+				sslHandler = SsslContext.newHandler(proxy2ServerChannel.alloc(), host, -1);
+				proxy2ServerChannel.pipeline().addLast(sslHandler);
+				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
+				proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
+			}
+		});
+	}
+	
+	private void initHttpBackPipe(String host, int port) {
+		this.host = host;
+		this.port = port;
+		bootStrap = new Bootstrap();
+		bootStrap.channel(NioSocketChannel.class);
+		bootStrap.group(eventLoopGroup);
+		bootStrap.handler(new ChannelInitializer<Channel>() {
+			@Override
+			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
 			}
 		});
 	}
 
-	public ChannelFuture connect() throws InterruptedException {
+
+	public ChannelFuture connect() {
 		ChannelFuture channelFuture = bootStrap.connect(host, port);
 		this.channel = channelFuture.channel();
-		return channelFuture.sync();
+		return channelFuture;
+	}
+	
+	public Future<Channel> handshake() {
+		return sslHandler.handshakeFuture();
 	}
 
 	public Channel getChannel() {

@@ -6,9 +6,8 @@ import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
-import org.hum.wiretiger.proxy.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.pipe.v2.HttpProxyHandshakeHandlerNew;
+import org.hum.wiretiger.proxy.pipe.v2.HttpProxyHandshakeHandlerNew2;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -19,6 +18,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +46,7 @@ public class WtDefaultServer implements WtServer {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
-		HttpProxyHandshakeHandlerNew httpProxyHandshakeHandler = new HttpProxyHandshakeHandlerNew(eventHandler);
+		HttpProxyHandshakeHandlerNew2 httpProxyHandshakeHandler = new HttpProxyHandshakeHandlerNew2(eventHandler);
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
@@ -57,7 +57,7 @@ public class WtDefaultServer implements WtServer {
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					ch.pipeline().addLast(new HttpRequestDecoder() , httpProxyHandshakeHandler);
+					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , httpProxyHandshakeHandler);
 				}
 			});
 

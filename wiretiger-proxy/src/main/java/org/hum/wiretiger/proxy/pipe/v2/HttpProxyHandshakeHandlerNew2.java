@@ -1,12 +1,9 @@
 package org.hum.wiretiger.proxy.pipe.v2;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
-import org.hum.wiretiger.proxy.pipe.DefaultPipeHandler;
 import org.hum.wiretiger.proxy.pipe.WtPipeManager;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
-import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
@@ -27,14 +24,14 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Sharable
-public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<HttpRequest> {
+public class HttpProxyHandshakeHandlerNew2 extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
 	private static final String HTTPS_HANDSHAKE_METHOD = "CONNECT";
 	
 	private EventHandler eventHandler;
 	
-	public HttpProxyHandshakeHandlerNew(EventHandler eventHandler) {
+	public HttpProxyHandshakeHandlerNew2(EventHandler eventHandler) {
 		this.eventHandler = eventHandler;
 	}
 	
@@ -45,8 +42,6 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
         WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
-        
-        ctx.pipeline().addLast(new HttpResponseEncoder());
     }
 
 	@Override
@@ -61,12 +56,12 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
 		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
-    		log.info("HTTPS " + host + ":" + port);
-    		pipeHolder.setProtocol(Protocol.HTTPS);
-    		pipeHolder.setName(Protocol.HTTPS + "://" + host + ":" + port);
-    		pipeHolder.addEvent(PipeEventType.Parsed, "解析目标服务器请求为" + host + ":" + port);
+    		log.info("HTTPS connect");
     		// 根据域名颁发证书
-			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
+			BackPipe back = new BackPipe(host, port, true);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		// SSL
+    		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
@@ -75,17 +70,23 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
 						return ;
 					}
 		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
+		    		client2ProxyCtx.pipeline().addLast(full);
 				}
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
+			
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
-			// 握手后，对于HTTPS而言，这个handler就失去了意义
+			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
 			client2ProxyCtx.pipeline().remove(this);
-			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			
+			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
+			full.connect().addListener(f -> {
+				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			});
     	} else {
-    		BackPipe back = new BackPipe(host, port);
+    		log.info("HTTP connect");
+    		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
     		full.connect().addListener(f-> {
     			back.getChannel().writeAndFlush(request);
