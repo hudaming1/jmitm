@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.v2;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -28,6 +28,7 @@ public class BackPipe {
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
+				System.out.println("init channelhandler");
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
 			}
@@ -35,10 +36,9 @@ public class BackPipe {
 	}
 
 	public ChannelFuture connect() throws InterruptedException {
-		System.out.println("connect " + host + ":" + port);
-		ChannelFuture channelFuture = bootStrap.connect(host, port).sync();
+		ChannelFuture channelFuture = bootStrap.connect(host, port);
 		this.channel = channelFuture.channel();
-		return channelFuture;
+		return channelFuture.sync();
 	}
 
 	public Channel getChannel() {

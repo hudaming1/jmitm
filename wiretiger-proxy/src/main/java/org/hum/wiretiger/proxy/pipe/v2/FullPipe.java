@@ -1,14 +1,17 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.v2;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.HttpResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@Sharable
 public class FullPipe extends AbstractPipeHandlerNew {
 	
 	private EventHandler eventHandler;
@@ -18,15 +21,18 @@ public class FullPipe extends AbstractPipeHandlerNew {
 		super(front, back);
 		this.eventHandler = eventHandler;
 		this.pipeHolder = pipeHolder;
-		this.front.getChannel().pipeline().addLast(this);
+//		this.front.getChannel().pipeline().addLast(this);
 	}
 
 	public ChannelFuture connect() {
 		try {
 			ChannelFuture backConnectFuture = back.connect();
-			// TODO 与预期行为不一致
-			backConnectFuture.channel().pipeline().addLast(this);
-			System.out.println("22222");
+			new Thread(new Runnable() {
+				@Override
+				public void run() {
+					back.getChannel().pipeline().addLast(FullPipe.this);
+				}
+			}).start();
 			return backConnectFuture;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -41,8 +47,9 @@ public class FullPipe extends AbstractPipeHandlerNew {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("client read");
 		super.back.getChannel().writeAndFlush(msg);
+		log.info("channelRead4Client, flush to server, msg=" + msg.getClass());
+		
 	}
 
 	/**
@@ -50,8 +57,15 @@ public class FullPipe extends AbstractPipeHandlerNew {
 	 */
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("server read");
 		super.front.getChannel().writeAndFlush(msg);
+		log.info("channelRead4Server, flush to client, msg=" + msg.getClass());
+//		if (msg instanceof HttpResponse) {
+//			HttpResponse resp = (HttpResponse) msg;
+//			if (resp.decoderResult().isFinished()) {
+//				super.front.getChannel().close();
+//				System.out.println("closed");
+//			}
+//		}
 	}
 
 	@Override

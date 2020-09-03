@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.v2;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,6 +1,8 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.v2;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.proxy.pipe.DefaultPipeHandler;
+import org.hum.wiretiger.proxy.pipe.WtPipeManager;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
@@ -16,6 +18,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestDecoder;
+import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
@@ -43,6 +46,8 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
         WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
+        
+        ctx.pipeline().addLast(new HttpResponseEncoder());
     }
 
 	@Override
@@ -81,15 +86,12 @@ public class HttpProxyHandshakeHandlerNew extends SimpleChannelInboundHandler<Ht
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
     	} else {
-    		// new HttpForwad(client2ProxyCtx.channel(), eventHandler, host, port).start();
-    		
     		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
     		FrontPipe front = new FrontPipe(client2ProxyCtx.channel());
     		BackPipe back = new BackPipe(host, port);
     		FullPipe full = new FullPipe(front, back, eventHandler, pipeHolder);
     		full.connect().addListener(f-> {
-    			System.out.println("connect remote server , reuslt=" + f.isSuccess());
-    			client2ProxyCtx.fireChannelRead(request);
+    			back.getChannel().writeAndFlush(request);
     		});
     	}
 	}
