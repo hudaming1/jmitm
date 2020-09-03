@@ -3,6 +3,7 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -60,6 +61,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		log.info("HTTPS " + host + ":" + port);
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		pipeHolder.setName(Protocol.HTTPS + "://" + host + ":" + port);
+    		pipeHolder.addEvent(PipeEventType.Parsed, "解析目标服务器请求为" + host + ":" + port);
     		// 根据域名颁发证书
 			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
@@ -82,8 +84,9 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     	} else {
     		// new HttpForwad(client2ProxyCtx.channel(), eventHandler, host, port).start();
     		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
+    		pipeHolder.addEvent(PipeEventType.Parsed, "解析目标服务器请求为" + request.uri());
     		pipeHolder.setProtocol(Protocol.HTTP);
-    		pipeHolder.setName(Protocol.HTTP + "://" + host + ":" + port + request.uri());
+    		pipeHolder.setName(request.uri());
     		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());
     		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
     		log.info(NettyUtils.toHostAndPort(client2ProxyCtx.channel()) + " add pipeline ");

@@ -1,8 +1,15 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
+import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
+import org.hum.wiretiger.proxy.pipe.event.EventHandler;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -16,6 +23,7 @@ import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,6 +36,8 @@ public class HttpOrHttpsForward {
 	private int port;
 	private boolean isHttps;
 	private SslHandler sslHandler;
+	private EventHandler eventHandler;
+	private WtPipeHolder pipeHolder;
 	static {
 		try {
 			SsslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
@@ -37,8 +47,10 @@ public class HttpOrHttpsForward {
 		}
 	}
 	
-	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port, boolean isHttps) {
-		this.isHttps = isHttps;
+	public HttpOrHttpsForward(ChannelDuplexHandler duplexHandler, String host, int port, WtPipeHolder pipeHolder, EventHandler eventHandler) {
+		this.pipeHolder = pipeHolder;
+		this.eventHandler = eventHandler;
+		this.isHttps = pipeHolder.getProtocol() == Protocol.HTTPS;
 		this.host = host;
 		this.port = port;
 		bootStrap = new Bootstrap();
@@ -69,12 +81,37 @@ public class HttpOrHttpsForward {
 		}
 	}
 	
-	public Future<?> start() throws InterruptedException {
+	public Future<?> start(Channel clientChannel) throws InterruptedException {
 		if (isHttps) {
-			bootStrap.connect(host, port).sync();
+			bootStrap.connect(host, port).addListener(new GenericFutureListener<ChannelFuture>() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if (!future.isSuccess()) {
+						future.channel().close();
+						clientChannel.close();
+						pipeHolder.recordStatus(PipeStatus.Error);
+						pipeHolder.addEvent(PipeEventType.Error, "建立连接错误：" + future.cause().getMessage());
+						eventHandler.fireErrorEvent(pipeHolder);
+						log.error(host + ":" + port + " connect failed, cause:" + future.cause().getMessage());
+					}
+				}
+			}).await();
+			log.info(host + ":" + port + "await");
 			return sslHandler.handshakeFuture();
 		} else {
-			return bootStrap.connect(host, port).sync();
+			return bootStrap.connect(host, port).addListener(new GenericFutureListener<ChannelFuture>() {
+				@Override
+				public void operationComplete(ChannelFuture future) throws Exception {
+					if (!future.isSuccess()) {
+						future.channel().close();
+						clientChannel.close();
+						pipeHolder.recordStatus(PipeStatus.Error);
+						pipeHolder.addEvent(PipeEventType.Error, "建立连接错误：" + future.cause().getMessage());
+						eventHandler.fireErrorEvent(pipeHolder);
+						log.error(host + ":" + port + " connect failed, cause:" + future.cause().getMessage());
+					}
+				}
+			});
 		}
 	}
 }

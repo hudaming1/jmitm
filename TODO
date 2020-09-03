@@ -12,29 +12,28 @@
 【OK】增加WebSocket，实时刷新（Pipe和Session维度都已增加）
 【OK】重构，改用MavenModule
 【OK】在代理握手时，删除自己写的HttpRequest，使用Netty.HttpRequestDecoder代替，以此方式减少一次序列化
+【OK】【M9W1】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
 
 ##功能开发
-【M9W1】Mock功能
+【M9W2】Mock功能
 
 ##功能优化
 控制台增加断开连接的按钮
 Request支持分页
 修改Session创建时机，不要等到Response完成后才创建Session
-处于Init状态30秒无状态变化的，直接Closed
+处于Init状态5秒无状态变化的，直接Closed
 配置闲置连接最长5分钟
 PIPE删除Request和Response，只显示汇总信息
 开启debug模式（log4j和nettyhandler）
 设定服务端只能保留N条请求，并做成可配置
 clear按钮做成菜单
 
-
 ##BUG
-【M9W2】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
 还有一些链接一直处于Init状态，需要查看详细归属
-使用http链接时，如果同一个链接发送2个请求，会走到代码DefaultPipeHandler.java:83行
 
 ##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口
+参考 DefaultPipeHandler.java:44 的TODO
 
 
 HTTP连接：http://www.cankaoxiaoxi.com/kuaixun/20200901/2419633.shtml

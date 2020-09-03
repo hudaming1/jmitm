@@ -40,7 +40,12 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		super(pipeHolder);
 		this.eventHandler = eventHandler;
 		try {
-			new HttpOrHttpsForward(this, host, port, pipeHolder.getProtocol() == Protocol.HTTPS).start().sync();
+			/**
+			 * TODO 
+			 * 	1.将HttpOrHttpsForward的动作提到外面去，构造方法只是构建对象，不要涉及动作
+			 * 	2.start触发的异常和close事件，无法与DefaultPipeHandler同步，需要手动触发
+			 */
+			new HttpOrHttpsForward(this, host, port, pipeHolder, eventHandler).start(pipeHolder.getClientChannel()).sync();
 		} catch (InterruptedException e) {
 			throw new WiretigerException("build connection failed", e);
 		}
@@ -150,8 +155,8 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		ctx.close();
-		if (pipeHolder.getClientChannel().isActive()) {
-			pipeHolder.getClientChannel().disconnect();
+		if (pipeHolder.getServerChannel().isActive()) {
+			pipeHolder.getServerChannel().disconnect();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 	}
@@ -159,8 +164,8 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		ctx.close();
-		if (pipeHolder.getServerChannel().isActive()) {
-			pipeHolder.getServerChannel().disconnect();
+		if (pipeHolder.getClientChannel().isActive()) {
+			pipeHolder.getClientChannel().disconnect();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 		eventHandler.fireErrorEvent(pipeHolder);
