@@ -27,9 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
-	private static final String ConnectedLine = "HTTP/1.1 200 Connection established\r\n\r\n";
-	private static final String HTTPS_HANDSHAKE_METHOD = "CONNECT";
-	
 	private EventHandler eventHandler;
 	
 	public HttpProxyHandshakeHandler(EventHandler eventHandler) {
@@ -56,7 +53,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		// wrap pipeholder
 		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
-    	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
+    	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
@@ -90,7 +87,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 					log.warn("pipeline is null, holder=" + pipeHolder.getId());
 					return; 
 				} 
-				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
 			});
     	} else {
     		pipeHolder.setProtocol(Protocol.HTTP);
@@ -105,7 +102,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 	private int guessPort(String method, String[] hostAndPort) {
 		if (hostAndPort.length == 2) {
 			return Integer.parseInt(hostAndPort[1]);
-		} else if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(method)) {
+		} else if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(method)) {
 			return HttpConstant.DEFAULT_HTTPS_PORT;
 		} else {
 			return HttpConstant.DEFAULT_HTTP_PORT;
