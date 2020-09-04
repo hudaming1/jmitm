@@ -86,6 +86,9 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
 			full.connect().addListener(f -> {
 				// FIXME 这里空指针
+				if (client2ProxyCtx.pipeline() == null || client2ProxyCtx.pipeline().firstContext() == null) {
+					log.warn("pipeline is null, holder=" + pipeHolder.getId());
+				} 
 				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 			});
     	} else {
