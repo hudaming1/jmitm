@@ -42,6 +42,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
         log.info("channel{} online", remoteAddress.getPort());
         // [HTTP] 1.建立front连接
         WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
+        log.info("[" + pipeHolder.getId() + "] 1");
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
     }
@@ -98,9 +99,11 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
     		// [HTTP] 2.建立back端连接
+    		log.info("[" + pipeHolder.getId() + "] 2");
     		full.connect().addListener(f-> {
     			// [HTTP] 4.将front收到的Request转发给back
     			back.getChannel().writeAndFlush(request);
+    			log.info("[" + pipeHolder.getId() + "] 4");
     		});
     	}
 	}

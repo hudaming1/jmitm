@@ -75,6 +75,7 @@ public class FullPipe extends AbstractPipeHandler {
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			pipeHolder.appendResponse(resp);
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+			log.info("[" + pipeHolder.getId() + "] 6");
 			
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
@@ -107,6 +108,7 @@ public class FullPipe extends AbstractPipeHandler {
 		pipeHolder.recordStatus(PipeStatus.Flushed);
 		pipeHolder.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
 		eventHandler.fireFlushEvent(pipeHolder);
+		log.info("[" + pipeHolder.getId() + "] 7");
 	}
 
 	@Override
@@ -114,6 +116,8 @@ public class FullPipe extends AbstractPipeHandler {
 		if (msg instanceof HttpRequest) {
 			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (HttpRequest) msg, System.currentTimeMillis()));
 		}
+		// [HTTP] 5.ChannelHandler拦截写事件
+		log.info("[" + pipeHolder.getId() + "] 5");
 		pipeHolder.recordStatus(PipeStatus.Forward);
 		pipeHolder.addEvent(PipeEventType.Forward, "已将服务端响应转发给客户端");
 		eventHandler.fireForwardEvent(pipeHolder);
@@ -166,6 +170,8 @@ public class FullPipe extends AbstractPipeHandler {
 	public ChannelFuture connect() {
 		return back.connect().addListener(f -> {
 			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
+			log.info("[" + pipeHolder.getId() + "] 3");
+			// FIXME pipe在connect后才添加上，导致事件丢失
 			back.getChannel().pipeline().addLast(FullPipe.this);
 			if (pipeHolder.isHttps()) {
 				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
