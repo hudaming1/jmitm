@@ -73,7 +73,9 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof FullHttpResponse) {
 			FullHttpResponse resp = (FullHttpResponse) msg;
+			pipeHolder.appendResponse(resp);
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+			
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 				super.front.getChannel().writeAndFlush(msg);
@@ -91,12 +93,12 @@ public class FullPipe extends AbstractPipeHandler {
 			// 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
 			eventHandler.fireNewSessionEvent(pipeHolder, session);
 		} else {
+			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求(" + msg.getClass() + ")");
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		
 		pipeHolder.recordStatus(PipeStatus.Received);
 		eventHandler.fireReceiveEvent(pipeHolder);
-		pipeHolder.appendResponse((FullHttpResponse) msg);
 		super.front.getChannel().writeAndFlush(msg);
 	}
 
@@ -163,6 +165,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	public ChannelFuture connect() {
 		return back.connect().addListener(f -> {
+			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
 			back.getChannel().pipeline().addLast(FullPipe.this);
 			if (pipeHolder.isHttps()) {
 				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {

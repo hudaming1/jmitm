@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import java.net.InetSocketAddress;
+
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
@@ -36,7 +38,9 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         ctx.fireChannelActive();
-        // init pipe
+        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
+        log.info("channel{} online", remoteAddress.getPort());
+        // [HTTP] 1.建立front连接
         WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
@@ -93,7 +97,9 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		pipeHolder.setProtocol(Protocol.HTTP);
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		// [HTTP] 2.建立back端连接
     		full.connect().addListener(f-> {
+    			// [HTTP] 4.将front收到的Request转发给back
     			back.getChannel().writeAndFlush(request);
     		});
     	}
