@@ -10,6 +10,10 @@ public enum PipeEventType {
 	Init(1, "Init"),
 	// 客户端建立连接
 	ClientConnect(2, "ClientConnect"),
+	// 与客户端握手完成
+	ClientTlsFinish(3, "ClientTlsFinish"),
+	// 与服务端握手完成
+	ServerTlsFinish(4, "ServerTlsFinish"),
 	// 已经解析HTTP请求 client -> proxy
 	Parsed(20, "Parsed"), 
 	// 已经与对端Server建立间接

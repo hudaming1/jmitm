@@ -9,6 +9,7 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -17,6 +18,8 @@ import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,12 +41,6 @@ public class FullPipe extends AbstractPipeHandler {
 		pipeHolder.addEvent(PipeEventType.Parsed, "解析连接协议");
 	}
 
-	public ChannelFuture connect() {
-		return back.connect().addListener(f -> {
-			back.getChannel().pipeline().addLast(FullPipe.this);
-		});
-	}
-
 	@Override
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 		pipeHolder.registServer(ctx.channel());
@@ -53,6 +50,17 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
+		if (msg instanceof HttpRequest) {
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
+			pipeHolder.appendRequest((HttpRequest) msg);
+		} else if (msg instanceof LastHttpContent) {
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
+		} else if (msg instanceof DefaultHttpContent){
+			log.info("[NOTICE] host=" + pipeHolder.getName() + "/" + pipeHolder.getUri());
+			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpContent");
+		} else {
+			log.warn("need support more types, find type=" + msg.getClass());
+		}
 		super.back.getChannel().writeAndFlush(msg);
 		pipeHolder.recordStatus(PipeStatus.Read);
 		eventHandler.fireReadEvent(pipeHolder);
@@ -102,16 +110,7 @@ public class FullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (msg instanceof HttpRequest) {
-			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
-			pipeHolder.appendRequest((HttpRequest) msg);
 			reqStack4WattingResponse.push(new WtSession(pipeHolder.getId(), (HttpRequest) msg, System.currentTimeMillis()));
-		} else if (msg instanceof LastHttpContent) {
-			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
-		} else if (msg instanceof DefaultHttpContent){
-			log.info("[NOTICE] host=" + pipeHolder.getName() + "/" + pipeHolder.getUri());
-			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpContent");
-		} else {
-			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		pipeHolder.recordStatus(PipeStatus.Forward);
 		pipeHolder.addEvent(PipeEventType.Forward, "已将服务端响应转发给客户端");
@@ -144,7 +143,7 @@ public class FullPipe extends AbstractPipeHandler {
 		log.error("front exception", cause);
 		ctx.close();
 		if (super.back.getChannel().isActive()) {
-			super.back.getChannel().disconnect();
+			super.back.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 	}
@@ -154,9 +153,34 @@ public class FullPipe extends AbstractPipeHandler {
 		log.error("back exception", cause);
 		ctx.close();
 		if (super.front.getChannel().isActive()) {
-			super.front.getChannel().disconnect();
+			super.front.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 		eventHandler.fireErrorEvent(pipeHolder);
+	}
+
+	public ChannelFuture connect() {
+		return back.connect().addListener(f -> {
+			back.getChannel().pipeline().addLast(FullPipe.this);
+			if (pipeHolder.isHttps()) {
+				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
+					@Override
+					public void operationComplete(Future<Channel> future) throws Exception {
+						if (future.isSuccess()) {
+							pipeHolder.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
+						}
+					}
+				});
+			}
+		});
+	}
+	
+	public void close() {
+		if (front.getChannel() != null && front.getChannel().isActive()) {
+			front.getChannel().close();
+		}
+		if (back.getChannel() != null && back.getChannel().isActive()) {
+			back.getChannel().close();
+		}
 	}
 }

@@ -3,6 +3,7 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
@@ -56,7 +57,6 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
-    		log.info("HTTPS connect");
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
@@ -67,9 +67,11 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
 					if (!future.isSuccess()) {
-						log.error("{}, handshake failed", hostAndPort, future.cause());
+						full.close();
+						log.error("{}, handshake failed, close pipe", hostAndPort, future.cause());
 						return ;
 					}
+					pipeHolder.addEvent(PipeEventType.ClientTlsFinish, "客户端TLS握手完成");
 		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
 		    		client2ProxyCtx.pipeline().addLast(full);
 				}
@@ -87,7 +89,6 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 			});
     	} else {
-    		log.info("HTTP connect");
     		pipeHolder.setProtocol(Protocol.HTTP);
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);

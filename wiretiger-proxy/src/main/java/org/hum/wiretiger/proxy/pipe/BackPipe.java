@@ -83,7 +83,7 @@ public class BackPipe {
 		return channelFuture;
 	}
 	
-	public Future<Channel> handshake() {
+	public Future<Channel> handshakeFuture() {
 		return sslHandler.handshakeFuture();
 	}
 

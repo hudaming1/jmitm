@@ -24,7 +24,7 @@ public enum PipeStatus {
 	Flushed(7, "Flushed"),
 	// 断开连接(正常终态)
 	Closed(8, "Closed"),
-	// ERROR(异常终态)
+	// ERROR
 	Error(9, "Error"),
 	;
 	

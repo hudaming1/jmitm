@@ -14,6 +14,10 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 
+/**
+ * 这个与其叫做Holder，更像是上下文
+ * @author hudaming
+ */
 public class WtPipeHolder {
 
 	private WtPipe pipe = new WtPipe();
@@ -119,4 +123,7 @@ public class WtPipeHolder {
 		return status.get(0);
 	}
 	
+	public boolean isHttps() {
+		return pipe.getProtocol() == Protocol.HTTPS;
+	}
 }
