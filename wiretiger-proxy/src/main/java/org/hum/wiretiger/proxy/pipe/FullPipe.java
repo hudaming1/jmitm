@@ -1,18 +1,15 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import java.util.Arrays;
 import java.util.Stack;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -22,33 +19,29 @@ import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * @Sharable Share for client-channel and remote-channel
- */
 @Slf4j
 @Sharable
-public class DefaultPipeHandler extends AbstractPipeHandler {
+public class FullPipe extends AbstractPipeHandler {
 	
-	private final WtSessionManager SessionMgr = WtSessionManager.get();
+	private EventHandler eventHandler;
+	private WtPipeHolder pipeHolder;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
-	private EventHandler eventHandler;
-	
-	public DefaultPipeHandler(EventHandler eventHandler, WtPipeHolder pipeHolder, String host, int port) {
-		super(pipeHolder);
+
+	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeHolder pipeHolder) {
+		super(front, back);
 		this.eventHandler = eventHandler;
-		try {
-			/**
-			 * TODO 
-			 * 	1.将HttpOrHttpsForward的动作提到外面去，构造方法只是构建对象，不要涉及动作
-			 * 	2.start触发的异常和close事件，无法与DefaultPipeHandler同步，需要手动触发
-			 */
-			new HttpOrHttpsForward(this, host, port, pipeHolder, eventHandler).start(pipeHolder.getClientChannel()).sync();
-		} catch (InterruptedException e) {
-			throw new WiretigerException("build connection failed", e);
-		}
+		this.pipeHolder = pipeHolder;
+		pipeHolder.recordStatus(PipeStatus.Parsed);
+		pipeHolder.addEvent(PipeEventType.Parsed, "解析连接协议");
+	}
+
+	public ChannelFuture connect() {
+		return back.connect().addListener(f -> {
+			back.getChannel().pipeline().addLast(FullPipe.this);
+		});
 	}
 
 	@Override
@@ -60,6 +53,55 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
+		super.back.getChannel().writeAndFlush(msg);
+		pipeHolder.recordStatus(PipeStatus.Read);
+		eventHandler.fireReadEvent(pipeHolder);
+	}
+
+	/**
+	 * 读取到对端服务器请求
+	 */
+	@Override
+	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
+		if (msg instanceof FullHttpResponse) {
+			FullHttpResponse resp = (FullHttpResponse) msg;
+			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
+				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
+				super.front.getChannel().writeAndFlush(msg);
+				return ;
+			}
+			WtSession session = reqStack4WattingResponse.pop();
+			byte[] bytes = null;
+			if (resp.content().readableBytes() > 0) {
+				bytes = new byte[resp.content().readableBytes()];
+				resp.content().duplicate().readBytes(bytes);
+				log.info("asfasdfasdfadsfadsfadsf");
+			}
+			session.setResponse(resp, bytes, System.currentTimeMillis());
+			WtSessionManager.get().add(session);
+			
+			// 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
+			eventHandler.fireNewSessionEvent(pipeHolder, session);
+		} else {
+			log.warn("need support more types, find type=" + msg.getClass());
+		}
+		
+		pipeHolder.recordStatus(PipeStatus.Received);
+		eventHandler.fireReceiveEvent(pipeHolder);
+		pipeHolder.appendResponse((FullHttpResponse) msg);
+		super.front.getChannel().writeAndFlush(msg);
+	}
+
+	@Override
+	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		pipeHolder.recordStatus(PipeStatus.Flushed);
+		pipeHolder.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
+		eventHandler.fireFlushEvent(pipeHolder);
+	}
+
+	@Override
+	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (msg instanceof HttpRequest) {
 			pipeHolder.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			pipeHolder.appendRequest((HttpRequest) msg);
@@ -72,60 +114,6 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
-		pipeHolder.getServerChannel().writeAndFlush(msg);
-		pipeHolder.recordStatus(PipeStatus.Read);
-		eventHandler.fireReadEvent(pipeHolder);
-	}
-
-	/**
-	 * 读取到对端服务器请求
-	 */
-	@Override
-	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
-		AtomicBoolean isClosed = new AtomicBoolean(false);
-		if (msg instanceof FullHttpResponse) {
-			FullHttpResponse resp = (FullHttpResponse) msg;
-			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
-			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
-				log.warn("resp=" + resp.status() + "," + resp.headers().toString());
-				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size() + ", arr=" + Arrays.toString(resp.content().array()));
-				return ;
-			}
-			WtSession session = reqStack4WattingResponse.pop();
-			byte[] bytes = null;
-			if (resp.content().readableBytes() > 0) {
-				bytes = new byte[resp.content().readableBytes()];
-				resp.content().duplicate().readBytes(bytes);
-			}
-			session.setResponse(resp, bytes, System.currentTimeMillis());
-			SessionMgr.add(session);
-			// 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
-			eventHandler.fireNewSessionEvent(pipeHolder, session);
-			// 介于代理特殊性质（即浏览器会将不同host的请求通过一个socket连接传输），HTTP全部采用短链接
-			isClosed.set(resp.decoderResult().isFinished() && pipeHolder.getProtocol() == Protocol.HTTP);
-		} else {
-			log.warn("need support more types, find type=" + msg.getClass());
-		}
-		
-		pipeHolder.getClientChannel().writeAndFlush(msg).addListener(f -> {
-			if (isClosed.get()) {
-				pipeHolder.getClientChannel().close();
-			}
-		});
-		pipeHolder.appendResponse((FullHttpResponse) msg);
-		pipeHolder.recordStatus(PipeStatus.Received);
-		eventHandler.fireReceiveEvent(pipeHolder);
-	}
-
-	@Override
-	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		pipeHolder.recordStatus(PipeStatus.Flushed);
-		pipeHolder.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
-		eventHandler.fireFlushEvent(pipeHolder);
-	}
-
-	@Override
-	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		pipeHolder.recordStatus(PipeStatus.Forward);
 		pipeHolder.addEvent(PipeEventType.Forward, "已将服务端响应转发给客户端");
 		eventHandler.fireForwardEvent(pipeHolder);
@@ -133,39 +121,41 @@ public class DefaultPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Client(ChannelHandlerContext ctx) throws Exception {
-		if (pipeHolder.getServerChannel().isActive()) {
-			pipeHolder.getServerChannel().disconnect();
+		if (super.back.getChannel().isActive()) {
+			super.back.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Closed);
 		pipeHolder.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
-//		log.info("client disconnect");
+		log.info("client disconnect");
 	}
 
 	@Override
 	public void channelInactive4Server(ChannelHandlerContext ctx) throws Exception {
-		if (pipeHolder.getClientChannel().isActive()) {
-			pipeHolder.getClientChannel().disconnect();
+		if (super.front.getChannel().isActive()) {
+			super.front.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Closed);
 		pipeHolder.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
 		eventHandler.fireDisconnectEvent(pipeHolder);
-//		log.info("server disconnect");
+		log.info("server disconnect");
 	}
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		log.error("front exception", cause);
 		ctx.close();
-		if (pipeHolder.getServerChannel().isActive()) {
-			pipeHolder.getServerChannel().disconnect();
+		if (super.back.getChannel().isActive()) {
+			super.back.getChannel().disconnect();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 	}
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		log.error("back exception", cause);
 		ctx.close();
-		if (pipeHolder.getClientChannel().isActive()) {
-			pipeHolder.getClientChannel().disconnect();
+		if (super.front.getChannel().isActive()) {
+			super.front.getChannel().disconnect();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
 		eventHandler.fireErrorEvent(pipeHolder);

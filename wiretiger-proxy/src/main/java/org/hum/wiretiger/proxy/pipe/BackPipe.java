@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe.v2;
+package org.hum.wiretiger.proxy.pipe;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;

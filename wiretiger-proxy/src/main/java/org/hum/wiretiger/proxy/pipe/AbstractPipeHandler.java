@@ -1,20 +1,19 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
-
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.channel.ConnectTimeoutException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
+
+	protected FrontPipe front;
+	protected BackPipe back;
 	
-	protected WtPipeHolder pipeHolder;
-	
-	public AbstractPipeHandler(WtPipeHolder pipeHolder) {
-		this.pipeHolder = pipeHolder;
+	public AbstractPipeHandler(FrontPipe front, BackPipe back) {
+		this.front = front;
+		this.back = back;
 	}
 	
     @Override
@@ -24,9 +23,9 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		if (pipeHolder.getClientChannel() == ctx.channel()) {
+		if (front.getChannel() == ctx.channel()) {
 			channelInactive4Client(ctx);
-		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
+		} else if (back.getChannel() == ctx.channel()) {
 			channelInactive4Server(ctx);
 		} else {
 			log.warn("unknown channel type");
@@ -36,9 +35,9 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (pipeHolder.getClientChannel() == ctx.channel()) {
+		if (front.getChannel() == ctx.channel()) {
 			channelRead4Client(ctx, msg);
-		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
+		} else if (back.getChannel() == ctx.channel()) {
 			channelRead4Server(ctx, msg);
 		} else {
 			log.warn("unknown channel type");
@@ -48,14 +47,9 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException) {
-			log.warn("timeout for " + pipeHolder.getName());
-		}
-		
-		
-		if (pipeHolder.getClientChannel() == ctx.channel()) {
+		if (front.getChannel() == ctx.channel()) {
 			exceptionCaught4Client(ctx, cause);
-		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
+		} else if (back.getChannel() == ctx.channel()) {
 			exceptionCaught4Server(ctx, cause);
 		} else {
 			log.warn("unknown channel type");
@@ -65,9 +59,9 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		if (pipeHolder.getClientChannel() == ctx.channel()) {
+		if (front.getChannel() == ctx.channel()) {
 			channelWrite4Client(ctx, msg, promise);
-		} else if (pipeHolder.getServerChannel() == ctx.channel()) {
+		} else if (back.getChannel() == ctx.channel()) {
 			channelWrite4Server(ctx, msg, promise);
 		} else {
 			log.warn("unknown channel type");

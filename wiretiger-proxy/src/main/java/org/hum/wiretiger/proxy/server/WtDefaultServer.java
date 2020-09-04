@@ -6,8 +6,8 @@ import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.pipe.HttpProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.pipe.v2.HttpProxyHandshakeHandlerNew2;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -46,7 +46,7 @@ public class WtDefaultServer implements WtServer {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
-		HttpProxyHandshakeHandlerNew2 httpProxyHandshakeHandler = new HttpProxyHandshakeHandlerNew2(eventHandler);
+		HttpProxyHandshakeHandler httpProxyHandshakeHandler = new HttpProxyHandshakeHandler(eventHandler);
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);

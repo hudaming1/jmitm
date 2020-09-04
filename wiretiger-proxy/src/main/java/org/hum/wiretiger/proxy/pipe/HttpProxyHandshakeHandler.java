@@ -3,10 +3,8 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
@@ -58,12 +56,13 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
     	if (HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
-    		log.info("HTTPS " + host + ":" + port);
+    		log.info("HTTPS connect");
     		pipeHolder.setProtocol(Protocol.HTTPS);
-    		pipeHolder.setName(Protocol.HTTPS + "://" + host + ":" + port);
-    		pipeHolder.addEvent(PipeEventType.Parsed, "解析目标服务器请求为" + host + ":" + port);
     		// 根据域名颁发证书
-			SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
+			BackPipe back = new BackPipe(host, port, true);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		// SSL
+    		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
 				@Override
 				public void operationComplete(Future<? super Channel> future) throws Exception {
@@ -72,25 +71,29 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 						return ;
 					}
 		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-					client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
+		    		client2ProxyCtx.pipeline().addLast(full);
 				}
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
+			
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
-			// 握手后，对于HTTPS而言，这个handler就失去了意义
+			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
 			client2ProxyCtx.pipeline().remove(this);
-			client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			
+			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
+			full.connect().addListener(f -> {
+				// FIXME 这里空指针
+				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
+			});
     	} else {
-    		// new HttpForwad(client2ProxyCtx.channel(), eventHandler, host, port).start();
-    		log.info(host + ":" + port + " - " + NettyUtils.toHostAndPort(client2ProxyCtx.channel()));
-    		pipeHolder.addEvent(PipeEventType.Parsed, "解析目标服务器请求为" + request.uri());
+    		log.info("HTTP connect");
     		pipeHolder.setProtocol(Protocol.HTTP);
-    		pipeHolder.setName(request.uri());
-    		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder());
-    		client2ProxyCtx.pipeline().addLast(new DefaultPipeHandler(eventHandler, pipeHolder, host, port));
-    		log.info(NettyUtils.toHostAndPort(client2ProxyCtx.channel()) + " add pipeline ");
-    		client2ProxyCtx.fireChannelRead(request);
+    		BackPipe back = new BackPipe(host, port, false);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		full.connect().addListener(f-> {
+    			back.getChannel().writeAndFlush(request);
+    		});
     	}
 	}
 	
