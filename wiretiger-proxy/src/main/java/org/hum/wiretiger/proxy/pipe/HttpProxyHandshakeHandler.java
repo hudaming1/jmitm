@@ -88,6 +88,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 				// FIXME 这里空指针
 				if (client2ProxyCtx.pipeline() == null || client2ProxyCtx.pipeline().firstContext() == null) {
 					log.warn("pipeline is null, holder=" + pipeHolder.getId());
+					return; 
 				} 
 				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(ConnectedLine.getBytes()));
 			});

@@ -45,7 +45,7 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 		pipeHolder.registServer(ctx.channel());
 		pipeHolder.recordStatus(PipeStatus.Connected);
-		pipeHolder.addEvent(PipeEventType.ServerConnected, "连接服务端");
+		pipeHolder.addEvent(PipeEventType.ServerConnected, "连接服务端(" + back.getHost() + ":" + back.getPort() + ")");
 	}
 
 	@Override
@@ -140,22 +140,24 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("front exception", cause);
+		log.error("front exception, pipeId=" + pipeHolder.getId(), cause);
 		ctx.close();
 		if (super.back.getChannel().isActive()) {
 			super.back.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
+		pipeHolder.addEvent(PipeEventType.Error, cause.getMessage());
 	}
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("back exception", cause);
+		log.error("back exception, pipeId=" + pipeHolder.getId(), cause);
 		ctx.close();
 		if (super.front.getChannel().isActive()) {
 			super.front.getChannel().close();
 		}
 		pipeHolder.recordStatus(PipeStatus.Error);
+		pipeHolder.addEvent(PipeEventType.Error, cause.getMessage());
 		eventHandler.fireErrorEvent(pipeHolder);
 	}
 

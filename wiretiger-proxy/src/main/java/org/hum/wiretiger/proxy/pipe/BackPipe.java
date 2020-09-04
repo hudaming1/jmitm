@@ -37,6 +37,8 @@ public class BackPipe {
 	}
 
 	public BackPipe(String host, int port, boolean isHttps) {
+		this.host = host;
+		this.port = port;
 		if (isHttps) {
 			initHttpsBackPipe(host, port);
 		} else {
@@ -45,8 +47,6 @@ public class BackPipe {
 	}
 	
 	private void initHttpsBackPipe(String host, int port) {
-		this.host = host;
-		this.port = port;
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
 		bootStrap.group(eventLoopGroup);
@@ -62,8 +62,6 @@ public class BackPipe {
 	}
 	
 	private void initHttpBackPipe(String host, int port) {
-		this.host = host;
-		this.port = port;
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
 		bootStrap.group(eventLoopGroup);
@@ -89,5 +87,13 @@ public class BackPipe {
 
 	public Channel getChannel() {
 		return this.channel;
+	}
+
+	public String getHost() {
+		return host;
+	}
+
+	public int getPort() {
+		return port;
 	}
 }
