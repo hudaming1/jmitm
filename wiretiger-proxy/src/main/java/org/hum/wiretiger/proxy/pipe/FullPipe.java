@@ -76,7 +76,6 @@ public class FullPipe extends AbstractPipeHandler {
 			if (resp.content().readableBytes() > 0) {
 				bytes = new byte[resp.content().readableBytes()];
 				resp.content().duplicate().readBytes(bytes);
-				log.info("asfasdfasdfadsfadsfadsf");
 			}
 			session.setResponse(resp, bytes, System.currentTimeMillis());
 			WtSessionManager.get().add(session);
