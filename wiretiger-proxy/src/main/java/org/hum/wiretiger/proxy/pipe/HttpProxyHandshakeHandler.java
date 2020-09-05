@@ -3,7 +3,7 @@ package org.hum.wiretiger.proxy.pipe;
 import java.net.InetSocketAddress;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
@@ -41,7 +41,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
         InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         log.info("channel{} online", remoteAddress.getPort());
         // [HTTP] 1.建立front连接
-        WtPipeHolder pipeHolder = WtPipeManager.get().create(ctx.channel());
+        WtPipeContext pipeHolder = WtPipeManager.get().create(ctx.channel());
         log.info("[" + pipeHolder.getId() + "] 1");
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
         eventHandler.fireConnectEvent(pipeHolder);
@@ -56,9 +56,10 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		int port = guessPort(request.method().name(), hostAndPort);
 		
 		// wrap pipeholder
-		WtPipeHolder pipeHolder = (WtPipeHolder) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		WtPipeContext pipeHolder = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
     	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
+    		log.info("[" + pipeHolder.getId() + "] HTTPS 2 CONNECT " + host + ":" + port);
     		pipeHolder.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
@@ -99,7 +100,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
     		// [HTTP] 2.建立back端连接
-    		log.info("[" + pipeHolder.getId() + "] 2");
+    		log.info("[" + pipeHolder.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
     		full.connect().addListener(f-> {
     			// [HTTP] 4.将front收到的Request转发给back
     			back.getChannel().writeAndFlush(request);

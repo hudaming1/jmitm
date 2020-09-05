@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 public class WtPipeManager {
 
 	private static final AtomicInteger counter = new AtomicInteger(1);
-	private ConcurrentHashMap<Channel, WtPipeHolder> pipes4ClientChannel = new ConcurrentHashMap<>();
-	private ConcurrentHashMap<Long, WtPipeHolder> pipes4Id = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Channel, WtPipeContext> pipes4ClientChannel = new ConcurrentHashMap<>();
+	private ConcurrentHashMap<Long, WtPipeContext> pipes4Id = new ConcurrentHashMap<>();
 	
 	private WtPipeManager() {
 		log.info("ConnectMonitor started..");
@@ -35,30 +35,29 @@ public class WtPipeManager {
 		return WtPipeManagerHodler.instance;
 	}
 
-	public WtPipeHolder create(Channel clientChannel) {
+	public WtPipeContext create(Channel clientChannel) {
 		if (pipes4ClientChannel.containsKey(clientChannel)) {
 			log.error(clientChannel + "has exists, id=" + pipes4ClientChannel.get(clientChannel).getId());
 			throw new WiretigerException(clientChannel + " has exists");
 		}
-		WtPipeHolder holder = new WtPipeHolder(counter.getAndIncrement());
-		holder.registClient(clientChannel);
-		holder.setName(clientChannel.remoteAddress().toString());
-		pipes4Id.put(holder.getId(), holder);
-		pipes4ClientChannel.put(clientChannel, holder);
-		return holder;
+		WtPipeContext context = new WtPipeContext(counter.getAndIncrement(), clientChannel);
+		context.setName(clientChannel.remoteAddress().toString());
+		pipes4Id.put(context.getId(), context);
+		pipes4ClientChannel.put(clientChannel, context);
+		return context;
 	}
 	
-	public WtPipeHolder getById(Long id) {
+	public WtPipeContext getById(Long id) {
 		return pipes4Id.get(id);
 	}
 	
-	public List<WtPipeHolder> getAll() {
-		List<WtPipeHolder> list = new ArrayList<>();
+	public List<WtPipeContext> getAll() {
+		List<WtPipeContext> list = new ArrayList<>();
 		list.addAll(pipes4Id.values());
 		// 按照Id顺序展示
-		Collections.sort(list, new Comparator<WtPipeHolder>() {
+		Collections.sort(list, new Comparator<WtPipeContext>() {
 			@Override
-			public int compare(WtPipeHolder o1, WtPipeHolder o2) {
+			public int compare(WtPipeContext o1, WtPipeContext o2) {
 				if (o1 == null) {
 					return -1;
 				} else if (o2 == null) {

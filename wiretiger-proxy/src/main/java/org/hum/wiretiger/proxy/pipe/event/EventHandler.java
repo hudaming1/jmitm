@@ -8,7 +8,7 @@ import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
 import org.hum.wiretiger.proxy.facade.event.WiretigerSession;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
 public class EventHandler {
@@ -23,55 +23,55 @@ public class EventHandler {
 		this.listeners.addAll(listeners);
 	}
 
-	public void fireConnectEvent(WtPipeHolder pipe) {
+	public void fireConnectEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onConnect(convert(pipe));
 		}
 	}
 
-	public void fireReadEvent(WtPipeHolder pipe) {
+	public void fireReadEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onPipeStatusChange(convert(pipe));
 		}
 	}
 
-	public void fireReceiveEvent(WtPipeHolder pipe) {
+	public void fireReceiveEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onPipeStatusChange(convert(pipe));
 		}
 	}
 
-	public void fireForwardEvent(WtPipeHolder pipe) {
+	public void fireForwardEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onPipeStatusChange(convert(pipe));
 		}
 	}
 
-	public void fireFlushEvent(WtPipeHolder pipe) {
+	public void fireFlushEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onPipeStatusChange(convert(pipe));
 		}
 	}
 
-	public void fireDisconnectEvent(WtPipeHolder pipe) {
+	public void fireDisconnectEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onDisconnect(convert(pipe));
 		}
 	}
 
-	public void fireErrorEvent(WtPipeHolder pipe) {
+	public void fireErrorEvent(WtPipeContext pipe) {
 		for (EventListener listener : listeners) {
 			listener.onError(convert(pipe));
 		}
 	}
 
-	public void fireNewSessionEvent(WtPipeHolder pipe, WtSession session) {
+	public void fireNewSessionEvent(WtPipeContext pipe, WtSession session) {
 		for (EventListener listener : listeners) {
 			listener.onNewSession(convert(pipe), convert(session));
 		}
 	}
 	
-	private WiretigerPipe convert(WtPipeHolder holder) {
+	private WiretigerPipe convert(WtPipeContext holder) {
 		WiretigerPipe pipeVo = new WiretigerPipe();
 		InetSocketAddress source = (InetSocketAddress) holder.getClientChannel().remoteAddress();
 		pipeVo.setSourceHost(source.getHostName());

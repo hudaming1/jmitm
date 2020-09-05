@@ -2,7 +2,7 @@ package org.hum.wiretiger.proxy.pipe;
 
 import java.util.Stack;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
@@ -27,13 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 public class FullPipe extends AbstractPipeHandler {
 	
 	private EventHandler eventHandler;
-	private WtPipeHolder pipeHolder;
+	private WtPipeContext pipeHolder;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 
-	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeHolder pipeHolder) {
+	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeContext pipeHolder) {
 		super(front, back);
 		this.eventHandler = eventHandler;
 		this.pipeHolder = pipeHolder;
@@ -71,11 +71,11 @@ public class FullPipe extends AbstractPipeHandler {
 	 */
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
+		log.info("[" + pipeHolder.getId() + "] 6");
 		if (msg instanceof FullHttpResponse) {
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			pipeHolder.appendResponse(resp);
 			pipeHolder.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
-			log.info("[" + pipeHolder.getId() + "] 6");
 			
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
@@ -105,10 +105,10 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+		log.info("[" + pipeHolder.getId() + "] 7");
 		pipeHolder.recordStatus(PipeStatus.Flushed);
 		pipeHolder.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
 		eventHandler.fireFlushEvent(pipeHolder);
-		log.info("[" + pipeHolder.getId() + "] 7");
 	}
 
 	@Override

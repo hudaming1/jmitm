@@ -8,7 +8,7 @@ import java.util.List;
 import org.hum.wiretiger.proxy.facade.enumtype.WiretigerPipeStatus;
 import org.hum.wiretiger.proxy.facade.event.WiretigerPipeEvent;
 import org.hum.wiretiger.proxy.pipe.WtPipeManager;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeHolder;
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 
 public class WiretigerPipeManagerLite {
 
@@ -24,7 +24,7 @@ public class WiretigerPipeManagerLite {
 	}
 
 	public WiretigerFullPipe getById(Long id) {
-		WtPipeHolder holder = WtPipeManager.get().getById(id);
+		WtPipeContext holder = WtPipeManager.get().getById(id);
 		WiretigerFullPipe fullPipe = parse2WiretigerFullPipe(holder);
 		fullPipe.setEvents(new ArrayList<>());
 		holder.getEventList().forEach(event -> {
@@ -39,13 +39,13 @@ public class WiretigerPipeManagerLite {
 
 	public Collection<WiretigerFullPipe> getAll() {
 		List<WiretigerFullPipe> list = new ArrayList<>();
-		for (WtPipeHolder holder : WtPipeManager.get().getAll()) {
+		for (WtPipeContext holder : WtPipeManager.get().getAll()) {
 			list.add(parse2WiretigerFullPipe(holder));
 		}
 		return list;
 	}
 
-	private WiretigerFullPipe parse2WiretigerFullPipe(WtPipeHolder holder) {
+	private WiretigerFullPipe parse2WiretigerFullPipe(WtPipeContext holder) {
 		if (holder == null) {
 			return null;
 		}

@@ -14,17 +14,15 @@ import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 
-/**
- * 这个与其叫做Holder，更像是上下文
- * @author hudaming
- */
-public class WtPipeHolder {
+public class WtPipeContext {
 
 	private WtPipe pipe = new WtPipe();
 	
-	public WtPipeHolder(int id) {
+	public WtPipeContext(int id, Channel clientChannel) {
 		pipe.setId(id);
 		pipe.addStatus(PipeStatus.Init);
+		pipe.setSourceCtx(clientChannel);
+		addEvent(PipeEventType.Init, "连接初始化");
 	}
 	
 	public void setName(String name) {
@@ -33,11 +31,6 @@ public class WtPipeHolder {
 	
 	public String getName() {
 		return this.pipe.getName();
-	}
-	
-	public void registClient(Channel channel) {
-		this.pipe.setSourceCtx(channel);
-		this.addEvent(PipeEventType.ClientConnect, "客户端上线");
 	}
 	
 	public void registServer(Channel channel) {

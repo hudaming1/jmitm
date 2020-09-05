@@ -33,7 +33,6 @@ clear按钮做成菜单
 
 ##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口
-参考 DefaultPipeHandler.java:44 的TODO
 
 
 HTTP连接：http://www.cankaoxiaoxi.com/kuaixun/20200901/2419633.shtml
