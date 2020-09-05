@@ -41,10 +41,10 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
         InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
         log.info("channel{} online", remoteAddress.getPort());
         // [HTTP] 1.建立front连接
-        WtPipeContext pipeHolder = WtPipeManager.get().create(ctx.channel());
-        log.info("[" + pipeHolder.getId() + "] 1");
-        ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(pipeHolder);
-        eventHandler.fireConnectEvent(pipeHolder);
+        WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
+        log.info("[" + wtContext.getId() + "] 1");
+        ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
+        eventHandler.fireConnectEvent(wtContext);
     }
 
 	@Override

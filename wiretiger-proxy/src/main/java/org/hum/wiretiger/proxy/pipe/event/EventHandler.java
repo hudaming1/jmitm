@@ -23,65 +23,65 @@ public class EventHandler {
 		this.listeners.addAll(listeners);
 	}
 
-	public void fireConnectEvent(WtPipeContext pipe) {
+	public void fireConnectEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onConnect(convert(pipe));
+			listener.onConnect(convert(context));
 		}
 	}
 
-	public void fireReadEvent(WtPipeContext pipe) {
+	public void fireReadEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(pipe));
+			listener.onPipeStatusChange(convert(context));
 		}
 	}
 
-	public void fireReceiveEvent(WtPipeContext pipe) {
+	public void fireReceiveEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(pipe));
+			listener.onPipeStatusChange(convert(context));
 		}
 	}
 
-	public void fireForwardEvent(WtPipeContext pipe) {
+	public void fireForwardEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(pipe));
+			listener.onPipeStatusChange(convert(context));
 		}
 	}
 
-	public void fireFlushEvent(WtPipeContext pipe) {
+	public void fireFlushEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(pipe));
+			listener.onPipeStatusChange(convert(context));
 		}
 	}
 
-	public void fireDisconnectEvent(WtPipeContext pipe) {
+	public void fireDisconnectEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onDisconnect(convert(pipe));
+			listener.onDisconnect(convert(context));
 		}
 	}
 
-	public void fireErrorEvent(WtPipeContext pipe) {
+	public void fireErrorEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {
-			listener.onError(convert(pipe));
+			listener.onError(convert(context));
 		}
 	}
 
-	public void fireNewSessionEvent(WtPipeContext pipe, WtSession session) {
+	public void fireNewSessionEvent(WtPipeContext context, WtSession session) {
 		for (EventListener listener : listeners) {
-			listener.onNewSession(convert(pipe), convert(session));
+			listener.onNewSession(convert(context), convert(session));
 		}
 	}
 	
-	private WiretigerPipe convert(WtPipeContext holder) {
+	private WiretigerPipe convert(WtPipeContext context) {
 		WiretigerPipe pipeVo = new WiretigerPipe();
-		InetSocketAddress source = (InetSocketAddress) holder.getClientChannel().remoteAddress();
+		InetSocketAddress source = (InetSocketAddress) context.getClientChannel().remoteAddress();
 		pipeVo.setSourceHost(source.getHostName());
 		pipeVo.setSourcePort(source.getPort());
-		pipeVo.setProtocol(holder.getProtocol());
-		pipeVo.setPipeId(holder.getId() + "");
-		pipeVo.setStatus(WiretigerPipeStatus.getEnum(holder.getCurrentStatus().getCode()));
+		pipeVo.setProtocol(context.getProtocol());
+		pipeVo.setPipeId(context.getId() + "");
+		pipeVo.setStatus(WiretigerPipeStatus.getEnum(context.getCurrentStatus().getCode()));
 		
-		if (holder.getServerChannel() != null) {
-			InetSocketAddress target = (InetSocketAddress) holder.getServerChannel().remoteAddress();
+		if (context.getServerChannel() != null) {
+			InetSocketAddress target = (InetSocketAddress) context.getServerChannel().remoteAddress();
 			pipeVo.setTargetHost(target.getHostName());
 			pipeVo.setTargetPort(target.getPort());
 		}
