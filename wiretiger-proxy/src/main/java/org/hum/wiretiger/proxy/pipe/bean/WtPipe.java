@@ -1,5 +1,6 @@
 package org.hum.wiretiger.proxy.pipe.bean;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +26,9 @@ public class WtPipe {
 	// proxy->server
 	private Channel targetCtx;
 	// request
-	private List<HttpRequest> requestList = new ArrayList<>();
+	private SoftReference<List<HttpRequest>> requestList = new SoftReference<>(new ArrayList<HttpRequest>());
 	// responseList
-	private List<FullHttpResponse> responseList = new ArrayList<>();
+	private SoftReference<List<FullHttpResponse>> responseList = new SoftReference<>(new ArrayList<FullHttpResponse>());
 	// pipe status
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// event
@@ -52,11 +53,11 @@ public class WtPipe {
 	}
 
 	void addRequest(HttpRequest request) {
-		this.requestList.add(request);
+		this.requestList.get().add(request);
 	}
 
 	void addResponse(FullHttpResponse response) {
-		this.responseList.add(response);
+		this.responseList.get().add(response);
 	}
 
 	void setStatusMap(Map<Long, PipeStatus> statusMap) {
@@ -73,5 +74,13 @@ public class WtPipe {
 
 	void setName(String name) {
 		this.name = name;
+	}
+
+	public List<HttpRequest> getRequestList() {
+		return this.requestList.get();
+	}
+
+	public List<FullHttpResponse> getResponseList() {
+		return this.responseList.get();
 	}
 }
