@@ -8,7 +8,13 @@ import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.console.http.config.WtConsoleHttpConfig;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
+import org.hum.wiretiger.proxy.mock.InterceptorPicture;
+import org.hum.wiretiger.proxy.mock.Mock;
+import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
+
+import io.netty.handler.codec.http.HttpRequest;
 
 public class WiretigerServerRun {
 
@@ -22,7 +28,7 @@ public class WiretigerServerRun {
 				config.setPort(52007);
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
-				config.setInterceptors(buildInterceptor());
+//				config.setInterceptors(buildMock());
 				
 				WtServerBuilder.init(config).addEventListener(new Console4WsListener()).build().start();
 			}
@@ -65,8 +71,12 @@ public class WiretigerServerRun {
 		/*** 根据Response拦截 ****/
 		InterceptorPicture picture4Res = new InterceptorPicture(InterceptorType.Repsonse);
 		// 自定义拦截逻辑
-		picture4Res.eval((fullHttpRequest) -> {
-			
+		picture4Res.eval(new HttpRequestInterceptor() {
+			@Override
+			public boolean eval(HttpRequest request) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 		// 拦截request.header.Host
 		picture4Req.header("Host").equal("xxx");
