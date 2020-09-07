@@ -13,4 +13,5 @@ public class WiretigerSessionDetailVO implements Serializable {
 	private String responseHeader;
 	private String responseBody4Source;
 	private String responseBody4Parsed;
+	private Long pipeId;
 }

@@ -50,6 +50,7 @@ public class SessionService {
 		WiretigerFullSession simpleSession = sessionManagerLite.getById(id);
 		detailVo.setRequest(convert2RequestString(simpleSession));
 		detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
+		detailVo.setPipeId(simpleSession.getPipeId());
 		
 		if (simpleSession.getResponseBody() != null && simpleSession.getResponseBody().length > 0) {
 			Map<String, String> headers = simpleSession.getResponseHeaders();

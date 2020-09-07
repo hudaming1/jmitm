@@ -32,6 +32,7 @@ public class WiretigerSessionManagerLite {
 		}
 		
 		WiretigerFullSession fullSession = new WiretigerFullSession();
+		fullSession.setPipeId(wtSession.getPipeId());
 		fullSession.setMethod(wtSession.getRequest().method().name());
 		fullSession.setProtocol(wtSession.getRequest().protocolVersion().protocolName());
 		fullSession.setUri(wtSession.getRequest().uri());

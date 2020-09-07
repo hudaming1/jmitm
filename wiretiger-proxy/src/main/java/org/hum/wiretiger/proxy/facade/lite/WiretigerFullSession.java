@@ -6,7 +6,9 @@ import lombok.Data;
 
 @Data
 public class WiretigerFullSession {
-
+	
+	private Long pipeId;
+	
 	private String method;
 	private String uri;
 	private String protocol;
