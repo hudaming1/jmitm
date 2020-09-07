@@ -14,7 +14,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.http.DefaultHttpContent;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -55,9 +54,6 @@ public class FullPipe extends AbstractPipeHandler {
 			wtContext.appendRequest((HttpRequest) msg);
 		} else if (msg instanceof LastHttpContent) {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
-		} else if (msg instanceof DefaultHttpContent){
-			log.info("[NOTICE] host=" + wtContext.getName() + "/" + wtContext.getUri());
-			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
@@ -93,6 +89,8 @@ public class FullPipe extends AbstractPipeHandler {
 			
 			// 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
 			eventHandler.fireNewSessionEvent(wtContext, session);
+		} else if (msg instanceof LastHttpContent) { 
+			log.warn("need support more types, find type=" + msg.getClass());
 		} else {
 			wtContext.addEvent(PipeEventType.Received, "读取服务端请求(" + msg.getClass() + ")");
 			log.warn("need support more types, find type=" + msg.getClass());
@@ -125,8 +123,8 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Client(ChannelHandlerContext ctx) throws Exception {
-		if (super.back.getChannel().isActive()) {
-			super.back.getChannel().close();
+		if (back.getChannel().isActive()) {
+			back.getChannel().close();
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
@@ -135,8 +133,8 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Server(ChannelHandlerContext ctx) throws Exception {
-		if (super.front.getChannel().isActive()) {
-			super.front.getChannel().close();
+		if (wtContext.isHttps() && front.getChannel().isActive()) {
+			front.getChannel().close();
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");

@@ -118,6 +118,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
 		boolean needDel = false;
 		while (iterator.hasNext()) {
+			// FullPipe怎么才能作为变量传进来
 			if (iterator.next().getValue() instanceof FullPipe) {
 				needDel = true;
 			}

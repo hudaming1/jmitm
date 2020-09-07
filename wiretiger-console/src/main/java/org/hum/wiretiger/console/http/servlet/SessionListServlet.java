@@ -26,6 +26,7 @@ public class SessionListServlet extends HttpServlet {
 		
 		WiretigerSessionListQueryVO query = new WiretigerSessionListQueryVO();
 		query.setPipeId(pipeId == null ? null : Long.parseLong(pipeId));
+		query.setKeyword(req.getParameter("keyword"));
 		
 		resp.setHeader("Content-Type", "application/json");
 		resp.getWriter().print(JSON.toJSONString(sessionService.list(query)));

@@ -24,20 +24,22 @@ public class SessionService {
 	private WiretigerSessionManagerLite sessionManagerLite = WiretigerSessionManagerLite.get();
 
 	public List<WiretigerSessionListVO> list(WiretigerSessionListQueryVO query) {
-		List<WiretigerSessionListVO> connList = new ArrayList<>();
+		List<WiretigerSessionListVO> sessionList = new ArrayList<>();
 		sessionManagerLite.getAll().forEach(session -> {
 			if (!isMatch(query, session)) {
 				return ;
 			}
-			connList.add(ConsoleHelper.parse2WtSessionListVO(session));
+			sessionList.add(ConsoleHelper.parse2WtSessionListVO(session));
 		});
-		return connList;
+		return sessionList;
 	}
 	
 	private boolean isMatch(WiretigerSessionListQueryVO condition, WiretigerSimpleSession session) {
 		if (condition == null || condition.isEmpty()) {
 			return true;
 		} else if (condition.getPipeId() != null && condition.getPipeId().equals(session.getPipeId())) {
+			return true;
+		} else if (condition.getKeyword() != null && !condition.getKeyword().isEmpty() && session.getUri().contains(condition.getKeyword())) {
 			return true;
 		}
 		return false;
