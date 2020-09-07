@@ -39,8 +39,7 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.recordStatus(PipeStatus.Parsed);
 		wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 准备连接目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
 		wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
-//		back.relation(this);
-//		front.getChannel().pipeline().addLast(this);
+		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
@@ -136,7 +135,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Server(ChannelHandlerContext ctx) throws Exception {
-		if (wtContext.isHttps() && front.getChannel().isActive()) {
+		if (front.getChannel().isActive()) {
 			front.getChannel().close();
 		}
 		wtContext.recordStatus(PipeStatus.Closed);

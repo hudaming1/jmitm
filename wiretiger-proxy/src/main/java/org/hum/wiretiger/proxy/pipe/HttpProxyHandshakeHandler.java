@@ -106,8 +106,8 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		wtContext.setProtocol(Protocol.HTTP);
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
-//    		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
-//    		client2ProxyCtx.pipeline().addLast(full);
+    		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
+    		client2ProxyCtx.pipeline().addLast(full);
     		// [HTTP] 2.建立back端连接
     		log.info("[" + wtContext.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
     		full.connect().addListener(future-> {
