@@ -22,6 +22,11 @@ public class InterceptorPicture {
 		return this;
 	}
 
+	public InterceptorPicture eval(HttpResponseInterceptor httpResponseInterceptor) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 	public InterceptorPicture header(String string) {
 		// TODO Auto-generated method stub
 		return this;
