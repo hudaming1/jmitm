@@ -1,6 +1,5 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -8,6 +7,7 @@ import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
@@ -24,8 +24,6 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -40,14 +38,12 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.fireChannelActive();
-        InetSocketAddress remoteAddress = (InetSocketAddress) ctx.channel().remoteAddress();
-        log.info("channel{} online", remoteAddress.getPort());
         // [HTTP] 1.建立front连接
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
         log.info("[" + wtContext.getId() + "] 1");
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         eventHandler.fireConnectEvent(wtContext);
+        ctx.fireChannelActive();
     }
 
 	@Override
@@ -59,28 +55,29 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		int port = guessPort(request.method().name(), hostAndPort);
 		
 		// wrap pipeholder
-		WtPipeContext pipeHolder = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		
     	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
-    		log.info("[" + pipeHolder.getId() + "] HTTPS 2 CONNECT " + host + ":" + port);
-    		pipeHolder.setProtocol(Protocol.HTTPS);
+    		log.info("[" + wtContext.getId() + "] HTTPS 2 CONNECT " + host + ":" + port);
+    		wtContext.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
-    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
-			sslHandler.handshakeFuture().addListener(new GenericFutureListener<Future<? super Channel>>() {
-				@Override
-				public void operationComplete(Future<? super Channel> future) throws Exception {
-					if (!future.isSuccess()) {
-						full.close();
-						log.error("{}, handshake failed, close pipe", hostAndPort, future.cause());
-						return ;
-					}
-					pipeHolder.addEvent(PipeEventType.ClientTlsFinish, "客户端TLS握手完成");
-		    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-		    		client2ProxyCtx.pipeline().addLast(full);
+			sslHandler.handshakeFuture().addListener(future -> {
+				if (!future.isSuccess()) {
+					wtContext.addEvent(PipeEventType.ClientClosed, "客户端TLS握手失败：" + future.cause().getLocalizedMessage());
+					wtContext.recordStatus(PipeStatus.Closed);
+					eventHandler.fireDisconnectEvent(wtContext);
+					full.close();
+					log.error("[" + wtContext.getId() + "]{}, client-tls handshake failed, close pipe", hostAndPort, future.cause());
+					return ;
 				}
+				wtContext.addEvent(PipeEventType.ClientTlsFinish, "客户端TLS握手完成");
+				eventHandler.fireChangeEvent(wtContext);
+	    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
+	    		client2ProxyCtx.pipeline().addLast(full);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -90,26 +87,36 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 			client2ProxyCtx.pipeline().remove(this);
 			
 			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
-			full.connect().addListener(f -> {
-				// FIXME 这里空指针
-				if (client2ProxyCtx.pipeline() == null || client2ProxyCtx.pipeline().firstContext() == null) {
-					log.warn("pipeline is null, holder=" + pipeHolder.getId());
+			full.connect().addListener(future -> {
+				// 连接失败
+				if (!future.isSuccess()) {
+					full.close();
+					wtContext.addEvent(PipeEventType.ServerClosed, "服务端建立连接失败：" + future.cause().getLocalizedMessage());
+					wtContext.recordStatus(PipeStatus.Closed);
+					eventHandler.fireDisconnectEvent(wtContext);
+					log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", hostAndPort, future.cause());
 					return; 
-				} 
-				client2ProxyCtx.pipeline().firstContext().writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
+				}  
+				wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端建立连接完成");
+				wtContext.recordStatus(PipeStatus.Connected);
+				eventHandler.fireChangeEvent(wtContext);
+				client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
 			});
     	} else {
-    		pipeHolder.setProtocol(Protocol.HTTP);
+    		wtContext.setProtocol(Protocol.HTTP);
     		BackPipe back = new BackPipe(host, port, false);
-    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
-    		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
-    		client2ProxyCtx.pipeline().addLast(full);
+    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
+//    		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
+//    		client2ProxyCtx.pipeline().addLast(full);
     		// [HTTP] 2.建立back端连接
-    		log.info("[" + pipeHolder.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
-    		full.connect().addListener(f-> {
+    		log.info("[" + wtContext.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
+    		full.connect().addListener(future-> {
+    			if (!future.isSuccess()) {
+    				return ;
+    			}
     			// [HTTP] 4.将front收到的Request转发给back
     			back.getChannel().writeAndFlush(request);
-    			log.info("[" + pipeHolder.getId() + "] 4");
+    			log.info("[" + wtContext.getId() + "] 4");
     		});
     	}
 	}

@@ -37,14 +37,17 @@ public class FullPipe extends AbstractPipeHandler {
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
 		wtContext.recordStatus(PipeStatus.Parsed);
-		wtContext.addEvent(PipeEventType.Parsed, "解析连接协议");
+		wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 准备连接目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
+		wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
+//		back.relation(this);
+//		front.getChannel().pipeline().addLast(this);
 	}
 
 	@Override
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 		wtContext.registServer(ctx.channel());
 		wtContext.recordStatus(PipeStatus.Connected);
-		wtContext.addEvent(PipeEventType.ServerConnected, "连接服务端(" + back.getHost() + ":" + back.getPort() + ")");
+		wtContext.addEvent(PipeEventType.ServerConnected, "完成与目标服务器(" + back.getHost() + ":" + back.getPort() + ")建立连接");
 	}
 
 	@Override
@@ -59,7 +62,7 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		super.back.getChannel().writeAndFlush(msg);
 		wtContext.recordStatus(PipeStatus.Read);
-		eventHandler.fireReadEvent(wtContext);
+		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	/**
@@ -97,7 +100,7 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		
 		wtContext.recordStatus(PipeStatus.Received);
-		eventHandler.fireReceiveEvent(wtContext);
+		eventHandler.fireChangeEvent(wtContext);
 		super.front.getChannel().writeAndFlush(msg);
 	}
 
@@ -106,7 +109,7 @@ public class FullPipe extends AbstractPipeHandler {
 		log.info("[" + wtContext.getId() + "] 7");
 		wtContext.recordStatus(PipeStatus.Flushed);
 		wtContext.addEvent(PipeEventType.Flushed, "已将服务端响应转发给客户端");
-		eventHandler.fireFlushEvent(wtContext);
+		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
@@ -118,7 +121,7 @@ public class FullPipe extends AbstractPipeHandler {
 		log.info("[" + wtContext.getId() + "] 5");
 		wtContext.recordStatus(PipeStatus.Forward);
 		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
-		eventHandler.fireForwardEvent(wtContext);
+		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
@@ -145,28 +148,36 @@ public class FullPipe extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		log.error("front exception, pipeId=" + wtContext.getId(), cause);
+		wtContext.recordStatus(PipeStatus.Error);
+		wtContext.addEvent(PipeEventType.Error, "客户端异常：" + cause.getMessage());
 		ctx.close();
 		if (super.back.getChannel().isActive()) {
 			super.back.getChannel().close();
 		}
-		wtContext.recordStatus(PipeStatus.Error);
-		wtContext.addEvent(PipeEventType.Error, cause.getMessage());
 	}
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		log.error("back exception, pipeId=" + wtContext.getId(), cause);
+		wtContext.recordStatus(PipeStatus.Error);
+		wtContext.addEvent(PipeEventType.Error, "服务端异常：" + cause.getMessage());
+		eventHandler.fireErrorEvent(wtContext);
 		ctx.close();
 		if (super.front.getChannel().isActive()) {
 			super.front.getChannel().close();
 		}
-		wtContext.recordStatus(PipeStatus.Error);
-		wtContext.addEvent(PipeEventType.Error, cause.getMessage());
-		eventHandler.fireErrorEvent(wtContext);
 	}
 
 	public ChannelFuture connect() {
 		return back.connect().addListener(f -> {
+			if (!f.isSuccess()) {
+				log.error("[" + wtContext.getId() + "] server connect error,", f);
+				this.close();
+				wtContext.recordStatus(PipeStatus.Error);
+				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getLocalizedMessage());
+				eventHandler.fireErrorEvent(wtContext);
+				return ;
+			}
 			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
 			log.info("[" + wtContext.getId() + "] 3");
 			// FIXME pipe在connect后才添加上，导致事件丢失
@@ -175,9 +186,15 @@ public class FullPipe extends AbstractPipeHandler {
 				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
 					@Override
 					public void operationComplete(Future<Channel> future) throws Exception {
-						if (future.isSuccess()) {
-							wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
+						if (!future.isSuccess()) {
+							log.error("[" + wtContext.getId() + "] server tls error,", future);
+							wtContext.recordStatus(PipeStatus.Closed);
+							wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getMessage());
+							eventHandler.fireChangeEvent(wtContext);
+							return ;
 						}
+						wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
+						eventHandler.fireChangeEvent(wtContext);
 					}
 				});
 			}
@@ -187,9 +204,11 @@ public class FullPipe extends AbstractPipeHandler {
 	public void close() {
 		if (front.getChannel() != null && front.getChannel().isActive()) {
 			front.getChannel().close();
+			wtContext.recordStatus(PipeStatus.Closed);
 		}
 		if (back.getChannel() != null && back.getChannel().isActive()) {
 			back.getChannel().close();
+			wtContext.recordStatus(PipeStatus.Closed);
 		}
 	}
 }

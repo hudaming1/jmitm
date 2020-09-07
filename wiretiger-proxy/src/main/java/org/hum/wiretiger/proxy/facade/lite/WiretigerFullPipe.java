@@ -12,6 +12,7 @@ import lombok.Data;
 public class WiretigerFullPipe {
 
 	private String pipeId;
+	private String pipeName;
 	private String sourceHost;
 	private Integer sourcePort;
 	private String targetHost;

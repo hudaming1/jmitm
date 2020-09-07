@@ -24,10 +24,10 @@ public class WiretigerPipeManagerLite {
 	}
 
 	public WiretigerFullPipe getById(Long id) {
-		WtPipeContext holder = WtPipeManager.get().getById(id);
-		WiretigerFullPipe fullPipe = parse2WiretigerFullPipe(holder);
+		WtPipeContext wtcontext = WtPipeManager.get().getById(id);
+		WiretigerFullPipe fullPipe = parse2WiretigerFullPipe(wtcontext);
 		fullPipe.setEvents(new ArrayList<>());
-		holder.getEventList().forEach(event -> {
+		wtcontext.getEventList().forEach(event -> {
 			WiretigerPipeEvent e = new WiretigerPipeEvent();
 			e.setDesc(event.getDesc());
 			e.setTime(event.getTime());
@@ -39,28 +39,29 @@ public class WiretigerPipeManagerLite {
 
 	public Collection<WiretigerFullPipe> getAll() {
 		List<WiretigerFullPipe> list = new ArrayList<>();
-		for (WtPipeContext holder : WtPipeManager.get().getAll()) {
-			list.add(parse2WiretigerFullPipe(holder));
+		for (WtPipeContext context : WtPipeManager.get().getAll()) {
+			list.add(parse2WiretigerFullPipe(context));
 		}
 		return list;
 	}
 
-	private WiretigerFullPipe parse2WiretigerFullPipe(WtPipeContext holder) {
-		if (holder == null) {
+	private WiretigerFullPipe parse2WiretigerFullPipe(WtPipeContext wtContext) {
+		if (wtContext == null) {
 			return null;
 		}
-		InetSocketAddress source = (InetSocketAddress) holder.getClientChannel().remoteAddress();
+		InetSocketAddress source = (InetSocketAddress) wtContext.getClientChannel().remoteAddress();
 		WiretigerFullPipe fullPipe = new WiretigerFullPipe();
-		fullPipe.setPipeId(holder.getId() + "");
-		fullPipe.setProtocol(holder.getProtocol());
+		fullPipe.setPipeId(wtContext.getId() + "");
+		fullPipe.setPipeName(wtContext.getName());
+		fullPipe.setProtocol(wtContext.getProtocol());
 		fullPipe.setSourceHost(source.getHostName());
 		fullPipe.setSourcePort(source.getPort());
-		if (holder.getServerChannel() != null && holder.getServerChannel().remoteAddress() != null) {
-			InetSocketAddress target = (InetSocketAddress) holder.getServerChannel().remoteAddress();
+		if (wtContext.getServerChannel() != null && wtContext.getServerChannel().remoteAddress() != null) {
+			InetSocketAddress target = (InetSocketAddress) wtContext.getServerChannel().remoteAddress();
 			fullPipe.setTargetHost(target.getHostName());
 			fullPipe.setTargetPort(target.getPort());
 		}
-		fullPipe.setStatus(WiretigerPipeStatus.getEnum(holder.getCurrentStatus().getCode()));
+		fullPipe.setStatus(WiretigerPipeStatus.getEnum(wtContext.getCurrentStatus().getCode()));
 		return fullPipe;
 	}
 }
