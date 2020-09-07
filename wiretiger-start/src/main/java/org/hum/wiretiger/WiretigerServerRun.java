@@ -8,8 +8,11 @@ import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.console.http.config.WtConsoleHttpConfig;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.mock.HttpHeaderInterceptor;
+import org.hum.wiretiger.proxy.mock.HttpStringModifier;
 import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.InterceptorPicture;
+import org.hum.wiretiger.proxy.mock.InterceptorRebuilder;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
@@ -28,7 +31,7 @@ public class WiretigerServerRun {
 				config.setPort(52007);
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
-//				config.setInterceptors(buildMock());
+				config.setMock(buildMock());
 				
 				WtServerBuilder.init(config).addEventListener(new Console4WsListener()).build().start();
 			}
@@ -65,11 +68,10 @@ public class WiretigerServerRun {
 	public static List<Mock> buildMock() {
 		List<Mock> mocks = new ArrayList<>();
 		
-		Mock mock = new Mock();
 		/*** 根据Request拦截 ****/
 		InterceptorPicture picture4Req = new InterceptorPicture(InterceptorType.Request);
 		/*** 根据Response拦截 ****/
-		InterceptorPicture picture4Res = new InterceptorPicture(InterceptorType.Repsonse);
+		InterceptorPicture picture4Res = new InterceptorPicture(InterceptorType.Response);
 		// 自定义拦截逻辑
 		picture4Res.eval(new HttpRequestInterceptor() {
 			@Override
@@ -82,8 +84,12 @@ public class WiretigerServerRun {
 		picture4Req.header("Host").equal("xxx");
 		picture4Req.header("Host").like("xxx");
 		// 通过自定义表达式拦截
-		picture4Req.header("Host").eval((headerVal)-> {
-			return headerVal + "XXX";
+		picture4Req.header("Host").eval(new HttpHeaderInterceptor() {
+			@Override
+			public boolean eval(String headerValue) {
+				// TODO Auto-generated method stub
+				return false;
+			}
 		});
 		// 通过request.uri拦截
 		picture4Req.uri("xxx");
@@ -91,19 +97,22 @@ public class WiretigerServerRun {
 		picture4Req.keyword("xxx");
 		
 		// 对请求进行改造
-		criminal.rebuild(InterceptorType.Request).header("Host").modify("http://www.baidu.com");
-		criminal.rebuild(InterceptorType.Request).header("Host").modify((headerVal -> {
-			return headerVal + "XXX";
-		}));
+		InterceptorRebuilder rebuilder = picture4Req.rebuild(InterceptorType.Request).header("Host").modify("http://www.baidu.com");
+		rebuilder = picture4Req.rebuild(InterceptorType.Request).header("Host").modify(new HttpStringModifier() {
+			@Override
+			public String modify(String headerValue) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 
 		// 对响应进行改造
-		criminal.rebuild(InterceptorType.Response).header("Host").modify("http://www.baidu.com");
-		criminal.rebuild(InterceptorType.Response).bdoy().modify((headerVal -> {
-			return headerVal + "XXX";
+		rebuilder = picture4Req.rebuild(InterceptorType.Response).header("Host").modify("http://www.baidu.com");
+		rebuilder = picture4Req.rebuild(InterceptorType.Response).body().modify((bodyVal -> {
+			return bodyVal + "XXX";
 		}));
 		
-		mock.setInterceporPicture(picture4Req);
-		mocks.add(mock);
+		mocks.add(rebuilder.mock());
 		return mocks;
 	}
 }
