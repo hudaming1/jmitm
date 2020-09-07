@@ -20,9 +20,8 @@ import org.hum.wiretiger.proxy.server.WtServerBuilder;
 import io.netty.handler.codec.http.FullHttpResponse;
 
 public class WiretigerServerRun {
-
-	public static void main(String[] args) throws Exception {
-		
+	
+	public static void start() {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -63,6 +62,10 @@ public class WiretigerServerRun {
 				}
 			}
 		}).start();
+	}
+
+	public static void main(String[] args) throws Exception {
+		WiretigerServerRun.start();
 	}
 	
 	public static List<Mock> buildMock() {

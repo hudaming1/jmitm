@@ -18,7 +18,13 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    	channelActive4Server(ctx);
+    	if (ctx.channel() == back.getChannel()) {
+    		channelActive4Server(ctx);
+    	} else if (ctx.channel() == front.getChannel()) {
+    		log.warn("front-channel active");
+    	} else {
+    		log.warn("unknow channel active");
+    	}
     }
 
 	@Override

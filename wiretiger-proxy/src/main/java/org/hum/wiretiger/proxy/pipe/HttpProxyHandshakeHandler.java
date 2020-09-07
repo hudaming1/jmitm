@@ -1,6 +1,8 @@
 package org.hum.wiretiger.proxy.pipe;
 
 import java.net.InetSocketAddress;
+import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
@@ -12,6 +14,7 @@ import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -99,6 +102,8 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		pipeHolder.setProtocol(Protocol.HTTP);
     		BackPipe back = new BackPipe(host, port, false);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, pipeHolder);
+    		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
+    		client2ProxyCtx.pipeline().addLast(full);
     		// [HTTP] 2.建立back端连接
     		log.info("[" + pipeHolder.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
     		full.connect().addListener(f-> {
@@ -107,6 +112,19 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     			log.info("[" + pipeHolder.getId() + "] 4");
     		});
     	}
+	}
+	
+	private void deleteFullPipeIfNesscessary(Channel channel) {
+		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
+		boolean needDel = false;
+		while (iterator.hasNext()) {
+			if (iterator.next().getValue() instanceof FullPipe) {
+				needDel = true;
+			}
+		}
+		if (needDel) {
+			channel.pipeline().remove(FullPipe.class);
+		}
 	}
 	
 	private int guessPort(String method, String[] hostAndPort) {

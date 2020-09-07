@@ -107,7 +107,7 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		log.info("[" + wtContext.getId() + "] 7");
 		wtContext.recordStatus(PipeStatus.Flushed);
-		wtContext.addEvent(PipeEventType.Flushed, "已将客户端请求转发给服务端");
+		wtContext.addEvent(PipeEventType.Flushed, "已将服务端响应转发给客户端");
 		eventHandler.fireFlushEvent(wtContext);
 	}
 
@@ -119,7 +119,7 @@ public class FullPipe extends AbstractPipeHandler {
 		// [HTTP] 5.ChannelHandler拦截写事件
 		log.info("[" + wtContext.getId() + "] 5");
 		wtContext.recordStatus(PipeStatus.Forward);
-		wtContext.addEvent(PipeEventType.Forward, "已将服务端响应转发给客户端");
+		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
 		eventHandler.fireForwardEvent(wtContext);
 	}
 
