@@ -63,8 +63,10 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
+			log.info("[" + wtContext.getId() + "] 2.1 create full_pipe");
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
+    		log.info("[" + wtContext.getId() + "] 2.1.1 create ssl_engine");
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
 					wtContext.addEvent(PipeEventType.ClientClosed, "客户端TLS握手失败：" + future.cause().getLocalizedMessage());
@@ -80,12 +82,14 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 	    		client2ProxyCtx.pipeline().addLast(full);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
+			log.info("[" + wtContext.getId() + "] 2.2 create ssl_handler");
 			
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
 			client2ProxyCtx.pipeline().remove(this);
-			
+			log.info("[" + wtContext.getId() + "] 2.3 remove all_handler");
+
 			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
 			full.connect().addListener(future -> {
 				// 连接失败
