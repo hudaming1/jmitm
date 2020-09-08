@@ -14,6 +14,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -33,13 +34,16 @@ public class FullPipe extends AbstractPipeHandler {
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 
 	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeContext wtContext) {
+		// init
 		super(front, back);
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
-		wtContext.recordStatus(PipeStatus.Parsed);
-		wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 准备连接目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
-		wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
-		eventHandler.fireChangeEvent(wtContext);
+		
+		// init context
+		this.wtContext.recordStatus(PipeStatus.Parsed);
+		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 准备连接目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
+		this.wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
+		this.eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
@@ -52,6 +56,12 @@ public class FullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof HttpRequest) {
+			
+//			HttpRequest req = (HttpRequest) msg;
+//			if (req.uri().contains("PCtm_d9c8750bed0b3c7d089fa7d55720d6cf")) {
+//				req.setUri("hudaming_mock.png");
+//			}
+			
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			wtContext.appendRequest((HttpRequest) msg);
 		} else if (msg instanceof LastHttpContent) {

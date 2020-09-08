@@ -36,11 +36,11 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Sharable
-public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
+public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private EventHandler eventHandler;
 	
-	public HttpProxyHandshakeHandler(EventHandler eventHandler) {
+	public ProxyHandshakeHandler(EventHandler eventHandler) {
 		this.eventHandler = eventHandler;
 	}
 	
