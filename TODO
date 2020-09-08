@@ -13,6 +13,7 @@
 【OK】重构，改用MavenModule
 【OK】在代理握手时，删除自己写的HttpRequest，使用Netty.HttpRequestDecoder代替，以此方式减少一次序列化
 【OK】【M9W1】HTTP协议的百度新闻首页打不开：http://news.baidu.com/
+【OK】还有一些链接一直处于Init状态，需要查看详细归属(状态不一致导致，实际状态早Close了)
 
 ##功能开发
 【M9W2】Mock功能
@@ -31,7 +32,7 @@ clear按钮做成菜单
 Pipe的事件和实际连接状态还是没有完全保持同步，尤其是在ClientConnect阶段退出后，由于还没有加入Handler，Pipe状态都没有同步
 
 ##BUG
-还有一些链接一直处于Init状态，需要查看详细归属
+启动后第1、2个Pipe总是直接close，需要通过抓包软件分析了
 
 ##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口

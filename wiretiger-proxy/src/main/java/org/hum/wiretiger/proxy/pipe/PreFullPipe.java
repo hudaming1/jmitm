@@ -28,6 +28,12 @@ public class PreFullPipe extends ChannelInboundHandlerAdapter {
     	eventHandler.fireDisconnectEvent(wtContext);
         ctx.fireChannelInactive();
     }
+    
+    @Override
+    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+    	log.info("[{}] fire read_event", wtContext.getId());
+        ctx.fireChannelRead(msg);
+    }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
