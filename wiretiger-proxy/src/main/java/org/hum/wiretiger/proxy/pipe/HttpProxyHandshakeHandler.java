@@ -26,6 +26,13 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * <pre>
+ *   <b>1.Channel添加FullPipe时机与应用协议相关</b>
+ *     HTTP协议在解析完Request报文后才添加FullPipe，因此可能遗漏监听包含：(1)建立连接后没有触发Read；(2)连接完成后因异常关闭了连接
+ *     HTTPS协议在客户端握手完成后才添加FullPipe，因此可能遗漏的监听包括：(1)同HTTP问题；(2)抛出上述1以外，握手失败也会遗漏监听
+ * </pre>
+ */
 @Slf4j
 @Sharable
 public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
@@ -44,6 +51,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         eventHandler.fireConnectEvent(wtContext);
         ctx.fireChannelActive();
+        ctx.pipeline().addLast(new PreFullPipe(wtContext, eventHandler));
     }
 
 	@Override
@@ -79,6 +87,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 				eventHandler.fireChangeEvent(wtContext);
 	    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
 	    		client2ProxyCtx.pipeline().addLast(full);
+	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -109,6 +118,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
     		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
     		client2ProxyCtx.pipeline().addLast(full);
+    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
     		// [HTTP] 2.建立back端连接
     		log.info("[" + wtContext.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
     		full.connect().addListener(future-> {

@@ -125,7 +125,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Client(ChannelHandlerContext ctx) throws Exception {
-		if (back.getChannel().isActive()) {
+		if (back.getChannel() != null && back.getChannel().isActive()) {
 			back.getChannel().close();
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
@@ -135,7 +135,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Server(ChannelHandlerContext ctx) throws Exception {
-		if (front.getChannel().isActive()) {
+		if (front.getChannel() != null && front.getChannel().isActive()) {
 			front.getChannel().close();
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
