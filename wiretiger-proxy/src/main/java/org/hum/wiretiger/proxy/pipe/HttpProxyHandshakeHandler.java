@@ -122,7 +122,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
     		deleteFullPipeIfNesscessary(client2ProxyCtx.channel());
     		client2ProxyCtx.pipeline().addLast(full);
-    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
+    		deletePreFullPipeIfNesscessary(client2ProxyCtx.channel());
     		// [HTTP] 2.建立back端连接
     		log.info("[" + wtContext.getId() + "] HTTP 2 CONNECT " + host + ":" + port);
     		full.connect().addListener(future-> {
@@ -147,6 +147,20 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		}
 		if (needDel) {
 			channel.pipeline().remove(FullPipe.class);
+		}
+	}
+	
+	private void deletePreFullPipeIfNesscessary(Channel channel) {
+		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
+		boolean needDel = false;
+		while (iterator.hasNext()) {
+			// FullPipe怎么才能作为变量传进来
+			if (iterator.next().getValue() instanceof PreFullPipe) {
+				needDel = true;
+			}
+		}
+		if (needDel) {
+			channel.pipeline().remove(PreFullPipe.class);
 		}
 	}
 	
