@@ -149,10 +149,7 @@ public class FullPipe extends AbstractPipeHandler {
 		log.error("front exception, pipeId=" + wtContext.getId(), cause);
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "客户端异常：" + cause.getMessage());
-		ctx.close();
-		if (super.back.getChannel().isActive()) {
-			super.back.getChannel().close();
-		}
+		close();
 	}
 
 	@Override
@@ -161,10 +158,7 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "服务端异常：" + cause.getMessage());
 		eventHandler.fireErrorEvent(wtContext);
-		ctx.close();
-		if (super.front.getChannel().isActive()) {
-			super.front.getChannel().close();
-		}
+		close();
 	}
 
 	public ChannelFuture connect() {
@@ -203,11 +197,11 @@ public class FullPipe extends AbstractPipeHandler {
 	public void close() {
 		if (front.getChannel() != null && front.getChannel().isActive()) {
 			front.getChannel().close();
-			wtContext.recordStatus(PipeStatus.Closed);
 		}
 		if (back.getChannel() != null && back.getChannel().isActive()) {
 			back.getChannel().close();
-			wtContext.recordStatus(PipeStatus.Closed);
 		}
+		// 确保最终状态是closed
+		wtContext.recordStatus(PipeStatus.Closed);
 	}
 }
