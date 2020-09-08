@@ -168,7 +168,6 @@ public class FullPipe extends AbstractPipeHandler {
 	}
 
 	public ChannelFuture connect() {
-		log.info("[" + wtContext.getId() + "] 2.4 prepare connect");
 		return back.connect().addListener(f -> {
 			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
 			log.info("[" + wtContext.getId() + "] 3 " + f.isSuccess());
