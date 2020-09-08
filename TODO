@@ -28,6 +28,7 @@ PIPE删除Request和Response，只显示汇总信息
 设定服务端只能保留N条请求，并做成可配置
 clear按钮做成菜单
 显示当前存活连接数
+Pipe的事件和实际连接状态还是没有完全保持同步，尤其是在ClientConnect阶段退出后，由于还没有加入Handler，Pipe状态都没有同步
 
 ##BUG
 还有一些链接一直处于Init状态，需要查看详细归属

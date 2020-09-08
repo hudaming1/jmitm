@@ -67,7 +67,8 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
-					wtContext.addEvent(PipeEventType.ClientClosed, "客户端TLS握手失败：" + future.cause().getLocalizedMessage());
+					// java.nio.channels.ClosedChannelException时,message is null?
+					wtContext.addEvent(PipeEventType.ClientClosed, "客户端TLS握手失败：" + future.cause().getMessage());
 					wtContext.recordStatus(PipeStatus.Closed);
 					eventHandler.fireDisconnectEvent(wtContext);
 					full.close();
@@ -91,7 +92,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 				// 连接失败
 				if (!future.isSuccess()) {
 					full.close();
-					wtContext.addEvent(PipeEventType.ServerClosed, "服务端建立连接失败：" + future.cause().getLocalizedMessage());
+					wtContext.addEvent(PipeEventType.ServerClosed, "服务端建立连接失败：" + future.cause().getMessage());
 					wtContext.recordStatus(PipeStatus.Closed);
 					eventHandler.fireDisconnectEvent(wtContext);
 					log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", hostAndPort, future.cause());

@@ -175,11 +175,11 @@ public class FullPipe extends AbstractPipeHandler {
 				log.error("[" + wtContext.getId() + "] server connect error,", f);
 				this.close();
 				wtContext.recordStatus(PipeStatus.Error);
-				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getLocalizedMessage());
+				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getMessage());
 				eventHandler.fireErrorEvent(wtContext);
 				return ;
 			}
-			// FIXME pipe在connect后才添加上，导致事件丢失
+			// Pipe在connect后才添加上，导致事件丢失
 			back.getChannel().pipeline().addLast(FullPipe.this);
 			if (wtContext.isHttps()) {
 				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
@@ -188,7 +188,7 @@ public class FullPipe extends AbstractPipeHandler {
 						if (!future.isSuccess()) {
 							log.error("[" + wtContext.getId() + "] server tls error,", future);
 							wtContext.recordStatus(PipeStatus.Closed);
-							wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getLocalizedMessage());
+							wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getMessage());
 							eventHandler.fireChangeEvent(wtContext);
 							return ;
 						}
