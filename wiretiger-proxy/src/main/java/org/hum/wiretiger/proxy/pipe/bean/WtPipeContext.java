@@ -16,6 +16,10 @@ import io.netty.handler.codec.http.HttpRequest;
 
 public class WtPipeContext {
 
+	private String sourceHost;
+	private int sourcePort;
+	private String targetHost;
+	private int targetPort;
 	private WtPipe pipe = new WtPipe();
 	
 	public WtPipeContext(int id, Channel clientChannel) {
@@ -116,6 +120,32 @@ public class WtPipeContext {
 		return status.get(0);
 	}
 	
+	public void setSource(String host, int port) {
+		this.sourceHost = host;
+		this.sourcePort = port;
+	}
+	
+	public void setTarget(String host, int port) {
+		this.targetHost = host;
+		this.targetPort = port;
+	}
+	
+	public String getSourceHost() {
+		return sourceHost;
+	}
+
+	public int getSourcePort() {
+		return sourcePort;
+	}
+
+	public String getTargetHost() {
+		return targetHost;
+	}
+
+	public int getTargetPort() {
+		return targetPort;
+	}
+
 	public boolean isHttps() {
 		return pipe.getProtocol() == Protocol.HTTPS;
 	}

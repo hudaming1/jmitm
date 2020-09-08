@@ -21,16 +21,9 @@ public class ConsoleHelper {
 
 	public static WiretigerPipeListVO parse2WtPipeListVO(WiretigerFullPipe item) {
 		
-		String source = item.getSourceHost() + ":" + item.getSourcePort();
-		
-		String target = "?";
-		if (item.getTargetHost() != null && item.getTargetPort() != null) {
-			target = item.getTargetHost() + ":" + item.getTargetPort();
-		}
-		
 		WiretigerPipeListVO vo = new WiretigerPipeListVO();
 		vo.setPipeId(item.getPipeId());
-		vo.setName(source + "->" + target);
+		vo.setName(item.getPipeName());
 		vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
 		vo.setStatus(item.getStatus().getDesc());
 		return vo;

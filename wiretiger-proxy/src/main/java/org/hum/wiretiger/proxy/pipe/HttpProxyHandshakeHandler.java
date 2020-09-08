@@ -1,5 +1,6 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -49,6 +50,8 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
         log.info("[" + wtContext.getId() + "] 1");
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
+        InetSocketAddress inetAddr = (InetSocketAddress) ctx.channel().remoteAddress();
+        wtContext.setSource(inetAddr.getHostString(), inetAddr.getPort());
         eventHandler.fireConnectEvent(wtContext);
         ctx.fireChannelActive();
         ctx.pipeline().addLast(new PreFullPipe(wtContext, eventHandler));
@@ -64,6 +67,7 @@ public class HttpProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpR
 		
 		// wrap pipeholder
 		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		wtContext.setTarget(host, port);
 		
     	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
     		log.info("[" + wtContext.getId() + "] HTTPS 2 CONNECT " + host + ":" + port);

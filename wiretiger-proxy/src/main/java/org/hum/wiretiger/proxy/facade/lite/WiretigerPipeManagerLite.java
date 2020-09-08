@@ -1,6 +1,5 @@
 package org.hum.wiretiger.proxy.facade.lite;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -49,18 +48,14 @@ public class WiretigerPipeManagerLite {
 		if (wtContext == null) {
 			return null;
 		}
-		InetSocketAddress source = (InetSocketAddress) wtContext.getClientChannel().remoteAddress();
 		WiretigerFullPipe fullPipe = new WiretigerFullPipe();
 		fullPipe.setPipeId(wtContext.getId() + "");
 		fullPipe.setPipeName(wtContext.getName());
 		fullPipe.setProtocol(wtContext.getProtocol());
-		fullPipe.setSourceHost(source.getHostName());
-		fullPipe.setSourcePort(source.getPort());
-		if (wtContext.getServerChannel() != null && wtContext.getServerChannel().remoteAddress() != null) {
-			InetSocketAddress target = (InetSocketAddress) wtContext.getServerChannel().remoteAddress();
-			fullPipe.setTargetHost(target.getHostName());
-			fullPipe.setTargetPort(target.getPort());
-		}
+		fullPipe.setSourceHost(wtContext.getSourceHost());
+		fullPipe.setSourcePort(wtContext.getSourcePort());
+		fullPipe.setTargetHost(wtContext.getTargetHost());
+		fullPipe.setTargetPort(wtContext.getTargetPort());
 		fullPipe.setStatus(WiretigerPipeStatus.getEnum(wtContext.getCurrentStatus().getCode()));
 		return fullPipe;
 	}
