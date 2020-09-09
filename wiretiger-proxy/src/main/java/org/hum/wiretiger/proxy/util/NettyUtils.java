@@ -38,4 +38,5 @@ public class NettyUtils {
 		InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
 		return address.getHostName() + ":" + address.getPort();
 	}
+	
 }

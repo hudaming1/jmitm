@@ -8,6 +8,8 @@ import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
@@ -37,7 +39,7 @@ public class FullPipe extends AbstractPipeHandler {
 		
 		// init context
 		this.wtContext.recordStatus(PipeStatus.Parsed);
-		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 准备连接目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
+		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 解析出目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
 		this.wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
 		this.eventHandler.fireChangeEvent(wtContext);
 	}
@@ -46,21 +48,25 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 		wtContext.registServer(ctx.channel());
 		wtContext.recordStatus(PipeStatus.Connected);
-		wtContext.addEvent(PipeEventType.ServerConnected, "完成与目标服务器(" + back.getHost() + ":" + back.getPort() + ")建立连接");
+		wtContext.addEvent(PipeEventType.ServerConnected, "与目标服务器(xxxxx)建立连接");
 		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof HttpRequest) {
-			
-//			HttpRequest req = (HttpRequest) msg;
-//			if (req.uri().contains("PCtm_d9c8750bed0b3c7d089fa7d55720d6cf")) {
-//				req.setUri("hudaming_mock.png");
-//			}
-			
+			HttpRequest request = (HttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
-			wtContext.appendRequest((HttpRequest) msg);
+			wtContext.appendRequest(request);
+			
+			// mock interceptor request
+			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request);
+			
+			BackPipe back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+
+			if (!back.isActive()) {
+	    		connect().sync();
+			}
 		} else if (msg instanceof LastHttpContent) {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
@@ -122,6 +128,14 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (msg instanceof HttpRequest) {
 			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (HttpRequest) msg, System.currentTimeMillis()));
+			
+//			TODO MOCK Check Request
+//			HttpRequest req = (HttpRequest) msg;
+//			if (req.uri().contains("PCtm_d9c8750bed0b3c7d089fa7d55720d6cf")) {
+//				req.setUri("hudaming_mock.png");
+//			}
+			
+			
 		}
 		// [HTTP] 5.ChannelHandler拦截写事件
 		log.info("[" + wtContext.getId() + "] 5");

@@ -7,6 +7,9 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.HttpRequest;
+import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +29,7 @@ public class HttpsFullPipe extends FullPipe {
 		log.error("[" + wtContext.getId() + "]{}, client-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);		
 	}
 
-	public void fireClientGlsHandshakeSuccess() {
+	public void fireClientTlsHandshakeSuccess() {
 		wtContext.addEvent(PipeEventType.ClientTlsFinish, "客户端TLS握手完成");
 		eventHandler.fireChangeEvent(wtContext);
 	}
@@ -39,6 +42,31 @@ public class HttpsFullPipe extends FullPipe {
 		log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);
 	}
 
+//	@Override
+//	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
+//		if (msg instanceof HttpRequest) {
+//			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
+//			wtContext.appendRequest((HttpRequest) msg);
+//
+//			// connect server
+//			connect().addListener(future -> {
+//				// 连接失败
+//				if (!future.isSuccess()) {
+//					fireServerActiveFailure(future.cause());
+//					return; 
+//				}  
+//			});
+//		} else if (msg instanceof LastHttpContent) {
+//			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
+//		} else {
+//			log.warn("need support more types, find type=" + msg.getClass());
+//		}
+//		super.back.getChannel().writeAndFlush(msg);
+//		wtContext.recordStatus(PipeStatus.Read);
+//		eventHandler.fireChangeEvent(wtContext);
+//	}
+
+	@Override
 	public ChannelFuture connect() {
 		return super.connect().addListener(f->{
 			back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {

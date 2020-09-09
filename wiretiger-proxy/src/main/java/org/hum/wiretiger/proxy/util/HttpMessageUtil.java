@@ -3,6 +3,8 @@ package org.hum.wiretiger.proxy.util;
 import java.util.List;
 import java.util.Map;
 
+import org.hum.wiretiger.common.constant.HttpConstant;
+
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -11,6 +13,8 @@ import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.internal.StringUtil;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 public class HttpMessageUtil {
 	
@@ -131,6 +135,31 @@ public class HttpMessageUtil {
     	}
     	return false;
     }
+    
+    public static InetAddress parse2InetAddress(HttpRequest request) {
+		// read host and port from http-request
+		String[] hostAndPort = request.headers().get(HttpConstant.Host).split(":");
+		String host = hostAndPort[0];
+		int port = guessPort(request.method().name(), hostAndPort);
+		return new InetAddress(host, port);
+    }
+	
+	private static int guessPort(String method, String[] hostAndPort) {
+		if (hostAndPort.length == 2) {
+			return Integer.parseInt(hostAndPort[1]);
+		} else if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(method)) {
+			return HttpConstant.DEFAULT_HTTPS_PORT;
+		} else {
+			return HttpConstant.DEFAULT_HTTP_PORT;
+		}
+	}
 
     private HttpMessageUtil() { }
+    
+    @Getter
+    @AllArgsConstructor
+    public static class InetAddress {
+    	private String host;
+    	private int port;
+    }
 }
