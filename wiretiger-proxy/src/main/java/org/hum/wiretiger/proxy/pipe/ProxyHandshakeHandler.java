@@ -7,8 +7,6 @@ import java.util.Map.Entry;
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
@@ -74,24 +72,19 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		wtContext.setProtocol(Protocol.HTTPS);
     		// 根据域名颁发证书
 			BackPipe back = new BackPipe(host, port, true);
-    		FullPipe full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
+			HttpsFullPipe httpsFull = new HttpsFullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(host));
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
 					// java.nio.channels.ClosedChannelException时,message is null?
-					wtContext.addEvent(PipeEventType.ClientClosed, "客户端TLS握手失败：" + future.cause().getMessage());
-					wtContext.recordStatus(PipeStatus.Closed);
-					eventHandler.fireDisconnectEvent(wtContext);
-					full.close();
-					log.error("[" + wtContext.getId() + "]{}, client-tls handshake failed, close pipe", hostAndPort, future.cause());
+					httpsFull.fireClientTlsHandshakeFailure(future.cause());
 					return ;
 				}
-				wtContext.addEvent(PipeEventType.ClientTlsFinish, "客户端TLS握手完成");
-				eventHandler.fireChangeEvent(wtContext);
 	    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-	    		client2ProxyCtx.pipeline().addLast(full);
+	    		client2ProxyCtx.pipeline().addLast(httpsFull);
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
+	    		httpsFull.fireClientGlsHandshakeSuccess();
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -101,19 +94,12 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(this);
 
 			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
-			full.connect().addListener(future -> {
+			httpsFull.connect().addListener(future -> {
 				// 连接失败
 				if (!future.isSuccess()) {
-					full.close();
-					wtContext.addEvent(PipeEventType.ServerClosed, "服务端建立连接失败：" + future.cause().getMessage());
-					wtContext.recordStatus(PipeStatus.Closed);
-					eventHandler.fireDisconnectEvent(wtContext);
-					log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", hostAndPort, future.cause());
+					httpsFull.fireServerActiveFailure(future.cause());
 					return; 
 				}  
-				wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端建立连接完成");
-				wtContext.recordStatus(PipeStatus.Connected);
-				eventHandler.fireChangeEvent(wtContext);
 				client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
 			});
     	} else {

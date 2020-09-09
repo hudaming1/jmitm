@@ -9,25 +9,21 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Sharable
 public class FullPipe extends AbstractPipeHandler {
 	
-	private EventHandler eventHandler;
-	private WtPipeContext wtContext;
+	protected EventHandler eventHandler;
+	protected WtPipeContext wtContext;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
@@ -51,6 +47,7 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.registServer(ctx.channel());
 		wtContext.recordStatus(PipeStatus.Connected);
 		wtContext.addEvent(PipeEventType.ServerConnected, "完成与目标服务器(" + back.getHost() + ":" + back.getPort() + ")建立连接");
+		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	@Override
@@ -185,22 +182,6 @@ public class FullPipe extends AbstractPipeHandler {
 			}
 			// Pipe在connect后才添加上，导致事件丢失
 			back.getChannel().pipeline().addLast(FullPipe.this);
-			if (wtContext.isHttps()) {
-				back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
-					@Override
-					public void operationComplete(Future<Channel> future) throws Exception {
-						if (!future.isSuccess()) {
-							log.error("[" + wtContext.getId() + "] server tls error,", future);
-							wtContext.recordStatus(PipeStatus.Closed);
-							wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getMessage());
-							eventHandler.fireChangeEvent(wtContext);
-							return ;
-						}
-						wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
-						eventHandler.fireChangeEvent(wtContext);
-					}
-				});
-			}
 		});
 	}
 	
