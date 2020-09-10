@@ -106,13 +106,10 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     	} else {
     		wtContext.setProtocol(Protocol.HTTP);
     		
-    		FullPipe full = null;
-    		BackPipe back = null;
-    		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
-    			back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
-    			full = new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
-    			client2ProxyCtx.pipeline().addLast(full);
+    			BackPipe back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext));
+    			client2ProxyCtx.pipeline().remove(this);
     		}
     		
     		deletePreFullPipeIfNesscessary(client2ProxyCtx.channel());

@@ -51,6 +51,8 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.addEvent(PipeEventType.ServerConnected, "与目标服务器(xxxxx)建立连接");
 		eventHandler.fireChangeEvent(wtContext);
 	}
+	
+	private BackPipe current;
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -62,17 +64,20 @@ public class FullPipe extends AbstractPipeHandler {
 			// mock interceptor request
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request);
 			
-			BackPipe back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
-
-			if (!back.isActive()) {
-	    		connect().sync();
+			current = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
+			if (current == null) {
+				current = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+			}
+			if (!current.isActive()) {
+				current.connect().sync();
+				current.getChannel().pipeline().addLast(this);
 			}
 		} else if (msg instanceof LastHttpContent) {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
-		super.back.getChannel().writeAndFlush(msg);
+		current.getChannel().writeAndFlush(msg);
 		wtContext.recordStatus(PipeStatus.Read);
 		eventHandler.fireChangeEvent(wtContext);
 	}
@@ -146,8 +151,12 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Client(ChannelHandlerContext ctx) throws Exception {
-		if (back.getChannel() != null && back.getChannel().isActive()) {
-			back.getChannel().close();
+		if (backMap != null && !backMap.isEmpty()) {
+			for (BackPipe back : backMap.values()) {
+				if (back.isActive()) {
+					back.getChannel().close();
+				}
+			}
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
@@ -183,28 +192,33 @@ public class FullPipe extends AbstractPipeHandler {
 	}
 
 	public ChannelFuture connect() {
-		return back.connect().addListener(f -> {
-			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
-			log.info("[" + wtContext.getId() + "] 3 " + f.isSuccess());
-			if (!f.isSuccess()) {
-				log.error("[" + wtContext.getId() + "] server connect error,", f);
-				this.close();
-				wtContext.recordStatus(PipeStatus.Error);
-				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getMessage());
-				eventHandler.fireErrorEvent(wtContext);
-				return ;
-			}
-			// Pipe在connect后才添加上，导致事件丢失
-			back.getChannel().pipeline().addLast(FullPipe.this);
-		});
+//		return back.connect().addListener(f -> {
+//			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
+//			log.info("[" + wtContext.getId() + "] 3 " + f.isSuccess());
+//			if (!f.isSuccess()) {
+//				log.error("[" + wtContext.getId() + "] server connect error,", f);
+//				this.close();
+//				wtContext.recordStatus(PipeStatus.Error);
+//				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getMessage());
+//				eventHandler.fireErrorEvent(wtContext);
+//				return ;
+//			}
+//			// Pipe在connect后才添加上，导致事件丢失
+//			back.getChannel().pipeline().addLast(FullPipe.this);
+//		});
+		return null;
 	}
 	
 	public void close() {
 		if (front.getChannel() != null && front.getChannel().isActive()) {
 			front.getChannel().close();
 		}
-		if (back.getChannel() != null && back.getChannel().isActive()) {
-			back.getChannel().close();
+		if (backMap != null && !backMap.isEmpty()) {
+			for (BackPipe back : backMap.values()) {
+				if (back.isActive()) {
+					back.getChannel().close();
+				}
+			}
 		}
 		// 确保最终状态是closed
 		wtContext.recordStatus(PipeStatus.Closed);

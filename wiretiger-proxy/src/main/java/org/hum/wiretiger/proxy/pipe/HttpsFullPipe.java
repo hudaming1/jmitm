@@ -26,7 +26,7 @@ public class HttpsFullPipe extends FullPipe {
 		wtContext.recordStatus(PipeStatus.Closed);
 		eventHandler.fireDisconnectEvent(wtContext);
 		close();
-		log.error("[" + wtContext.getId() + "]{}, client-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);		
+//		log.error("[" + wtContext.getId() + "]{}, client-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);		
 	}
 
 	public void fireClientTlsHandshakeSuccess() {
@@ -39,7 +39,7 @@ public class HttpsFullPipe extends FullPipe {
 		wtContext.addEvent(PipeEventType.ServerClosed, "服务端建立连接失败：" + cause.getMessage());
 		wtContext.recordStatus(PipeStatus.Closed);
 		eventHandler.fireDisconnectEvent(wtContext);
-		log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);
+//		log.error("[" + wtContext.getId() + "]{}, server-tls handshake failed, close pipe", back.getHost() + ":" + back.getPort(), cause);
 	}
 
 //	@Override
@@ -68,21 +68,22 @@ public class HttpsFullPipe extends FullPipe {
 
 	@Override
 	public ChannelFuture connect() {
-		return super.connect().addListener(f->{
-			back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
-				@Override
-				public void operationComplete(Future<Channel> future) throws Exception {
-					if (!future.isSuccess()) {
-						log.error("[" + wtContext.getId() + "] server tls error,", future);
-						wtContext.recordStatus(PipeStatus.Closed);
-						wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getMessage());
-						eventHandler.fireChangeEvent(wtContext);
-						return ;
-					}
-					wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
-					eventHandler.fireChangeEvent(wtContext);
-				}
-			});
-		});
+//		return super.connect().addListener(f->{
+//			back.handshakeFuture().addListener(new GenericFutureListener<Future<Channel>>() {
+//				@Override
+//				public void operationComplete(Future<Channel> future) throws Exception {
+//					if (!future.isSuccess()) {
+//						log.error("[" + wtContext.getId() + "] server tls error,", future);
+//						wtContext.recordStatus(PipeStatus.Closed);
+//						wtContext.addEvent(PipeEventType.ServerClosed, "服务端TLS握手失败：" + future.cause().getMessage());
+//						eventHandler.fireChangeEvent(wtContext);
+//						return ;
+//					}
+//					wtContext.addEvent(PipeEventType.ServerTlsFinish, "服务端TLS握手完成");
+//					eventHandler.fireChangeEvent(wtContext);
+//				}
+//			});
+//		});
+		return null;
 	}
 }
