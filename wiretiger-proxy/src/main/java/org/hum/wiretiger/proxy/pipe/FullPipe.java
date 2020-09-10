@@ -63,14 +63,14 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
-		log.info("[" + wtContext.getId() + "] channel read, msg=" + msg);
+		log.info("[" + wtContext.getId() + "] channel read");
 		if (msg instanceof HttpRequest) {
 			HttpRequest request = (HttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			wtContext.appendRequest(request);
 			
 			// mock interceptor request
-			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request);
+			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			
 			currentBack = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
 			if (currentBack == null) {
@@ -79,7 +79,7 @@ public class FullPipe extends AbstractPipeHandler {
 			}
 			
 			if (isHttps) {
-				log.info("[" + wtContext.getId() + "] connect " + request.headers().get("Host"));
+				log.info("[" + wtContext.getId() + "] connect " + InetAddress);
 				if (!currentBack.isActive()) {
 					ChannelFuture connectFuture = currentBack.connect();
 					connectFuture.addListener(f->{
