@@ -69,6 +69,10 @@ public class FullPipe extends AbstractPipeHandler {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			wtContext.appendRequest(request);
 			
+			if (request.headers().get("Host") == null) {
+				log.warn("request=" + request);
+			}
+			
 			// mock interceptor request
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			
