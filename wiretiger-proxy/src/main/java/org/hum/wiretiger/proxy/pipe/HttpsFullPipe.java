@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class HttpsFullPipe extends FullPipe {
 
 	public HttpsFullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeContext wtContext) {
-		super(front, back, eventHandler, wtContext);
+		super(front, eventHandler, wtContext);
 	}
 
 	public void fireClientTlsHandshakeFailure(Throwable cause) {

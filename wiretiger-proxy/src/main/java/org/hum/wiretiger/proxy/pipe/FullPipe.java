@@ -1,8 +1,8 @@
 package org.hum.wiretiger.proxy.pipe;
 
 import java.util.Iterator;
-import java.util.Stack;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
@@ -11,6 +11,7 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
+import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
@@ -33,6 +34,8 @@ public class FullPipe extends AbstractPipeHandler {
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
+	// 当前保持的服务端连接
+	private BackPipe currentBack;
 
 	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext) {
 		// init
@@ -42,8 +45,7 @@ public class FullPipe extends AbstractPipeHandler {
 		
 		// init context
 		this.wtContext.recordStatus(PipeStatus.Parsed);
-//		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 解析出目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
-//		this.wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
+		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 解析出目标服务器(XXX)");
 		this.eventHandler.fireChangeEvent(wtContext);
 	}
 
@@ -52,11 +54,9 @@ public class FullPipe extends AbstractPipeHandler {
 		log.info("[" + wtContext.getId() + "]server connect");
 		wtContext.registServer(ctx.channel());
 		wtContext.recordStatus(PipeStatus.Connected);
-		wtContext.addEvent(PipeEventType.ServerConnected, "与目标服务器(xxxxx)建立连接");
+		wtContext.addEvent(PipeEventType.ServerConnected, "与目标服务器(" + NettyUtils.toHostAndPort(ctx.channel()) + ")建立连接");
 		eventHandler.fireChangeEvent(wtContext);
 	}
-	
-	private BackPipe currentBack;
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
