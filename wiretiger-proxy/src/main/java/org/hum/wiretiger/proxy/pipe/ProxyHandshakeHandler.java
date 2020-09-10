@@ -70,21 +70,23 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
     		log.info("[" + wtContext.getId() + "] HTTPS 2 CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		wtContext.setProtocol(Protocol.HTTPS);
-    		// 根据域名颁发证书
-			BackPipe back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), true);
-			HttpsFullPipe httpsFull = new HttpsFullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext);
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
 					// java.nio.channels.ClosedChannelException时,message is null?
-					httpsFull.fireClientTlsHandshakeFailure(future.cause());
+					client2ProxyCtx.close();
+					log.error("[" + wtContext.getId() + "] handshake failure", future.cause());
 					return ;
 				}
+				// 握手成功
 	    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
-	    		client2ProxyCtx.pipeline().addLast(httpsFull);
+	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
-	    		httpsFull.fireClientTlsHandshakeSuccess();
+	    		log.info("[" + wtContext.getId() + "] client handshake success");
+//	    		client2ProxyCtx.pipeline().addLast(httpsFull);
+//	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
+//	    		httpsFull.fireClientTlsHandshakeSuccess();
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -92,22 +94,24 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
 			client2ProxyCtx.pipeline().remove(this);
+			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
+			log.info("[" + wtContext.getId() + "] flush connectline");
 
 			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
-			httpsFull.connect().addListener(future -> {
-				// 连接失败
-				if (!future.isSuccess()) {
-					httpsFull.fireServerActiveFailure(future.cause());
-					return; 
-				}  
-				client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
-			});
+//			httpsFull.connect().addListener(future -> {
+//				// 连接失败
+//				if (!future.isSuccess()) {
+//					httpsFull.fireServerActiveFailure(future.cause());
+//					return; 
+//				}  
+//				client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
+//			});
 			
     	} else {
     		wtContext.setProtocol(Protocol.HTTP);
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
-    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext));
+    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, false));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		

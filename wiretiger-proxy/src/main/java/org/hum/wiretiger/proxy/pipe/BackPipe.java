@@ -26,7 +26,6 @@ public class BackPipe {
 	private int port;
 	private Bootstrap bootStrap = null;
 	private Channel channel;
-	private FullPipe relationFullPipe;
 	private SslHandler sslHandler;
 	private volatile boolean acitve = false;
 	static {
@@ -59,7 +58,6 @@ public class BackPipe {
 				proxy2ServerChannel.pipeline().addLast(sslHandler);
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
-				proxy2ServerChannel.pipeline().addLast(relationFullPipe);
 			}
 		});
 	}
@@ -73,7 +71,6 @@ public class BackPipe {
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
 				proxy2ServerChannel.pipeline().addLast(new HttpResponseDecoder());
 				proxy2ServerChannel.pipeline().addLast(new HttpRequestEncoder(), new HttpObjectAggregator(Integer.MAX_VALUE));
-				proxy2ServerChannel.pipeline().addLast(relationFullPipe);
 			}
 		});
 	}
@@ -95,10 +92,6 @@ public class BackPipe {
 
 	public Channel getChannel() {
 		return this.channel;
-	}
-	
-	public void relation(FullPipe fullPipe) {
-		this.relationFullPipe = fullPipe;
 	}
 
 	public String getHost() {

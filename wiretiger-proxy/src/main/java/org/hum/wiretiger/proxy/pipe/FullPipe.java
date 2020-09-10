@@ -23,6 +23,7 @@ import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
+import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -36,12 +37,14 @@ public class FullPipe extends AbstractPipeHandler {
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 	// 当前保持的服务端连接
 	private BackPipe currentBack;
+	private boolean isHttps;
 
-	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext) {
+	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext, boolean isHttps) {
 		// init
 		super(wtContext, front);
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
+		this.isHttps = isHttps;
 		
 		// init context
 		this.wtContext.recordStatus(PipeStatus.Parsed);
@@ -60,6 +63,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
+		log.info("[" + wtContext.getId() + "] channel read, msg=" + msg);
 		if (msg instanceof HttpRequest) {
 			HttpRequest request = (HttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
@@ -70,20 +74,48 @@ public class FullPipe extends AbstractPipeHandler {
 			
 			currentBack = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
 			if (currentBack == null) {
-				currentBack = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+				currentBack = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), isHttps);
 				super.backMap.put(InetAddress.getHost() + ":" + InetAddress.getPort(), currentBack);
 			}
 			
-			if (!currentBack.isActive()) {
-				currentBack.connect().sync();
-				log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
-				currentBack.getChannel().pipeline().addLast(this);
+			if (isHttps) {
+				log.info("[" + wtContext.getId() + "] connect " + request.headers().get("Host"));
+				if (!currentBack.isActive()) {
+					ChannelFuture connectFuture = currentBack.connect();
+					connectFuture.addListener(f->{
+						if (!f.isSuccess()) {
+							log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
+							return ;
+						}
+						log.info("[" + wtContext.getId() + "] server connect ok(listener)");
+					});
+					connectFuture.sync();
+					log.info("[" + wtContext.getId() + "] server connect ok(sync)");
+					Future<Channel> handshakeFuture = currentBack.handshakeFuture();
+					handshakeFuture.addListener(tls-> {
+						if (!tls.isSuccess()) {
+							log.error("[" + wtContext.getId() + "] server tls error", tls.cause());
+							return ;
+						}
+						log.info("[" + wtContext.getId() + "] server tls ok");
+					});
+					handshakeFuture.sync();
+					log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
+					currentBack.getChannel().pipeline().addLast(this);
+				}
+			} else {
+				if (!currentBack.isActive()) {
+					currentBack.connect().sync();
+					log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
+					currentBack.getChannel().pipeline().addLast(this);
+				}
 			}
 		} else if (msg instanceof LastHttpContent) {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
+		log.info("[" + wtContext.getId() + "] flush to server.");
 		currentBack.getChannel().writeAndFlush(msg);
 		wtContext.recordStatus(PipeStatus.Read);
 		eventHandler.fireChangeEvent(wtContext);
