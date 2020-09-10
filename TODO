@@ -35,6 +35,7 @@ clear按钮做成菜单
 【P0】Console没有探活，页面刷新后连接没有断开
 【P0】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【P1】HTTP和HTTPS的Handler要拆开 
+【P0】找大段时间再整体重构吧，需要将front和back重构为一对多的关系，才能支持后续的mock功能
 
 
 ##BUG

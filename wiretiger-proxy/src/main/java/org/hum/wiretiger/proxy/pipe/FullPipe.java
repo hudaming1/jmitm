@@ -34,16 +34,16 @@ public class FullPipe extends AbstractPipeHandler {
 	 */
 	private Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 
-	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeContext wtContext) {
+	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext) {
 		// init
-		super(wtContext, front, back);
+		super(wtContext, front);
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
 		
 		// init context
 		this.wtContext.recordStatus(PipeStatus.Parsed);
-		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 解析出目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
-		this.wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
+//		this.wtContext.addEvent(PipeEventType.Parsed, "解析连接协议, 解析出目标服务器(" + back.getHost() + ":" + back.getPort() + ")");
+//		this.wtContext.setName(front.getHost() + ":" + front.getPort() + "->" + back.getHost() + ":" + back.getPort());
 		this.eventHandler.fireChangeEvent(wtContext);
 	}
 
@@ -59,7 +59,7 @@ public class FullPipe extends AbstractPipeHandler {
 	private BackPipe currentBack;
 
 	@Override
-	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
+	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
 		if (msg instanceof HttpRequest) {
 			HttpRequest request = (HttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
@@ -69,10 +69,11 @@ public class FullPipe extends AbstractPipeHandler {
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request);
 			
 			currentBack = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
-			if (currentBack == null || currentBack != ctx.channel()) {
+			if (currentBack == null) {
 				currentBack = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
 				super.backMap.put(InetAddress.getHost() + ":" + InetAddress.getPort(), currentBack);
 			}
+			
 			if (!currentBack.isActive()) {
 				currentBack.connect().sync();
 				log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());

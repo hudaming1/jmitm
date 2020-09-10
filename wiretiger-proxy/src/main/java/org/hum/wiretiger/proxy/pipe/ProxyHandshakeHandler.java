@@ -107,8 +107,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		wtContext.setProtocol(Protocol.HTTP);
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
-    			BackPipe back = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
-    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), back, eventHandler, wtContext));
+    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		

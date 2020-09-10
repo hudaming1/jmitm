@@ -18,11 +18,10 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	protected Map<String, BackPipe> backMap;
 	protected WtPipeContext wtContext;
 	
-	public AbstractPipeHandler(WtPipeContext wtContext, FrontPipe front, BackPipe back) {
+	public AbstractPipeHandler(WtPipeContext wtContext, FrontPipe front) {
 		this.front = front;
 		this.backMap = new ConcurrentHashMap<>();
 		this.wtContext = wtContext;
-		backMap.put(back.getHost() + ":" + back.getPort(), back);
 	}
 	
 	private boolean isBackChannel(Channel channel) {
