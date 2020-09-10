@@ -1,6 +1,8 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import java.util.Iterator;
 import java.util.Stack;
+import java.util.Map.Entry;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
@@ -11,7 +13,9 @@ import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -25,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 public class FullPipe extends AbstractPipeHandler {
 	
 	protected EventHandler eventHandler;
-	protected WtPipeContext wtContext;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
@@ -33,7 +36,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	public FullPipe(FrontPipe front, BackPipe back, EventHandler eventHandler, WtPipeContext wtContext) {
 		// init
-		super(front, back);
+		super(wtContext, front, back);
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
 		
@@ -46,13 +49,14 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
+		log.info("[" + wtContext.getId() + "]server connect");
 		wtContext.registServer(ctx.channel());
 		wtContext.recordStatus(PipeStatus.Connected);
 		wtContext.addEvent(PipeEventType.ServerConnected, "与目标服务器(xxxxx)建立连接");
 		eventHandler.fireChangeEvent(wtContext);
 	}
 	
-	private BackPipe current;
+	private BackPipe currentBack;
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -64,20 +68,22 @@ public class FullPipe extends AbstractPipeHandler {
 			// mock interceptor request
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request);
 			
-			current = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
-			if (current == null) {
-				current = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+			currentBack = super.backMap.get(InetAddress.getHost() + ":" + InetAddress.getPort());
+			if (currentBack == null || currentBack != ctx.channel()) {
+				currentBack = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+				super.backMap.put(InetAddress.getHost() + ":" + InetAddress.getPort(), currentBack);
 			}
-			if (!current.isActive()) {
-				current.connect().sync();
-				current.getChannel().pipeline().addLast(this);
+			if (!currentBack.isActive()) {
+				currentBack.connect().sync();
+				log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
+				currentBack.getChannel().pipeline().addLast(this);
 			}
 		} else if (msg instanceof LastHttpContent) {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
-		current.getChannel().writeAndFlush(msg);
+		currentBack.getChannel().writeAndFlush(msg);
 		wtContext.recordStatus(PipeStatus.Read);
 		eventHandler.fireChangeEvent(wtContext);
 	}
@@ -222,5 +228,16 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		// 确保最终状态是closed
 		wtContext.recordStatus(PipeStatus.Closed);
+	}
+
+	private boolean fullPipeIsExists(Channel channel) {
+		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
+		while (iterator.hasNext()) {
+			// FullPipe怎么才能作为变量传进来
+			if (iterator.next().getValue() instanceof FullPipe) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

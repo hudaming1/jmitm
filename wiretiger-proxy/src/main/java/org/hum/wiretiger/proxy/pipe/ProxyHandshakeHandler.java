@@ -48,7 +48,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // [HTTP] 1.建立front连接
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
-        log.info("[" + wtContext.getId() + "] 1");
+        log.info("[" + wtContext.getId() + "] 1 " + ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         InetSocketAddress inetAddr = (InetSocketAddress) ctx.channel().remoteAddress();
         wtContext.setSource(inetAddr.getHostString(), inetAddr.getPort());

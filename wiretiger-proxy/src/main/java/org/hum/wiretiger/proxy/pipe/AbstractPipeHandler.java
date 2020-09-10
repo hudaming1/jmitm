@@ -3,6 +3,8 @@ package org.hum.wiretiger.proxy.pipe;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -14,10 +16,12 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	protected FrontPipe front;
 	protected Map<String, BackPipe> backMap;
+	protected WtPipeContext wtContext;
 	
-	public AbstractPipeHandler(FrontPipe front, BackPipe back) {
+	public AbstractPipeHandler(WtPipeContext wtContext, FrontPipe front, BackPipe back) {
 		this.front = front;
 		this.backMap = new ConcurrentHashMap<>();
+		this.wtContext = wtContext;
 		backMap.put(back.getHost() + ":" + back.getPort(), back);
 	}
 	
@@ -32,12 +36,13 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    	log.info("[" + wtContext.getId() + "]back connect, channel=" + ctx.channel());
     	if (isBackChannel(ctx.channel())) {
     		channelActive4Server(ctx);
     	} else if (ctx.channel() == front.getChannel()) {
-    		log.warn("front-channel active");
+    		log.warn("[" + wtContext.getId() + "]front-channel active");
     	} else {
-    		log.warn("unknow channel active");
+			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
     	}
     }
 
@@ -48,7 +53,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		} else if (isBackChannel(ctx.channel())) {
 			channelInactive4Server(ctx);
 		} else {
-			log.warn("unknown channel type");
+			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
 			ctx.fireChannelInactive();
 		}
 	} 
@@ -60,7 +65,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		} else if (isBackChannel(ctx.channel())) {
 			channelRead4Server(ctx, msg);
 		} else {
-			log.warn("unknown channel type");
+			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
 			ctx.fireChannelRead(msg);
 		}
 	}
@@ -72,7 +77,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		} else if (isBackChannel(ctx.channel())) {
 			exceptionCaught4Server(ctx, cause);
 		} else {
-			log.warn("unknown channel type");
+			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
 			ctx.fireExceptionCaught(cause);
 		}
 	}
@@ -84,7 +89,10 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		} else if (isBackChannel(ctx.channel())) {
 			channelWrite4Server(ctx, msg, promise);
 		} else {
-			log.warn("unknown channel type");
+			for (BackPipe back : backMap.values()) {
+				log.info("[" + wtContext.getId() + "]back=" + back.getChannel());
+			}
+			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
 		}
 		ctx.write(msg, promise);
 	}
