@@ -19,6 +19,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
@@ -39,6 +40,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private EventHandler eventHandler;
+	private final int _1K = 1024;
+	private final int RequestLineMaxLen = 32 * _1K;
+	private final int RequestHeaderMaxLen = 8 * _1K;
+	private final int RequestChunkedMaxLen = 1024 * _1K;
 	
 	public ProxyHandshakeHandler(EventHandler eventHandler) {
 		this.eventHandler = eventHandler;
@@ -80,7 +85,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 					return ;
 				}
 				// 握手成功
-	    		client2ProxyCtx.pipeline().addLast(new HttpServerCodec());
+	    		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), new HttpObjectAggregator(Integer.MAX_VALUE));
 	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
 	    		log.info("[" + wtContext.getId() + "] client handshake success");

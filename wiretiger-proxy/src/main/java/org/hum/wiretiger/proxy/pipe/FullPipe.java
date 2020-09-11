@@ -69,6 +69,10 @@ public class FullPipe extends AbstractPipeHandler {
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			wtContext.appendRequest(request);
 			
+			if (request.decoderResult().isFailure()) {
+				log.error("[" + wtContext.getId() + "] decode failure, cause=" + request.decoderResult().cause().getMessage());
+				return ;
+			}
 			if (request.headers().get("Host") == null) {
 				log.warn("request=" + request);
 			}
