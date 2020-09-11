@@ -1,7 +1,5 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Stack;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
@@ -11,19 +9,15 @@ import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
-import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
+import org.hum.wiretiger.proxy.util.NettyUtils;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
-import io.netty.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -73,9 +67,6 @@ public class FullPipe extends AbstractPipeHandler {
 				log.error("[" + wtContext.getId() + "] decode failure, cause=" + request.decoderResult().cause().getMessage());
 				return ;
 			}
-			if (request.headers().get("Host") == null) {
-				log.warn("request=" + request);
-			}
 			
 			// mock interceptor request
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
@@ -89,25 +80,21 @@ public class FullPipe extends AbstractPipeHandler {
 			if (isHttps) {
 				log.info("[" + wtContext.getId() + "] connect " + InetAddress);
 				if (!currentBack.isActive()) {
-					ChannelFuture connectFuture = currentBack.connect();
-					connectFuture.addListener(f->{
+					currentBack.connect().addListener(f->{
 						if (!f.isSuccess()) {
 							log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
 							return ;
 						}
 						log.info("[" + wtContext.getId() + "] server connect ok(listener)");
-					});
-					connectFuture.sync();
+					}).sync();
 					log.info("[" + wtContext.getId() + "] server connect ok(sync)");
-					Future<Channel> handshakeFuture = currentBack.handshakeFuture();
-					handshakeFuture.addListener(tls-> {
+					currentBack.handshakeFuture().addListener(tls-> {
 						if (!tls.isSuccess()) {
 							log.error("[" + wtContext.getId() + "] server tls error", tls.cause());
 							return ;
 						}
 						log.info("[" + wtContext.getId() + "] server tls ok");
-					});
-					handshakeFuture.sync();
+					}).sync();
 					log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
 					currentBack.getChannel().pipeline().addLast(this);
 				}
@@ -180,14 +167,6 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (msg instanceof HttpRequest) {
 			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (HttpRequest) msg, System.currentTimeMillis()));
-			
-//			TODO MOCK Check Request
-//			HttpRequest req = (HttpRequest) msg;
-//			if (req.uri().contains("PCtm_d9c8750bed0b3c7d089fa7d55720d6cf")) {
-//				req.setUri("hudaming_mock.png");
-//			}
-			
-			
 		}
 		// [HTTP] 5.ChannelHandler拦截写事件
 		log.info("[" + wtContext.getId() + "] 5");
@@ -237,24 +216,6 @@ public class FullPipe extends AbstractPipeHandler {
 		eventHandler.fireErrorEvent(wtContext);
 		close();
 	}
-
-	public ChannelFuture connect() {
-//		return back.connect().addListener(f -> {
-//			// [HTTP] 3.给back端挂上ChannelHandler，监管所有读写操作
-//			log.info("[" + wtContext.getId() + "] 3 " + f.isSuccess());
-//			if (!f.isSuccess()) {
-//				log.error("[" + wtContext.getId() + "] server connect error,", f);
-//				this.close();
-//				wtContext.recordStatus(PipeStatus.Error);
-//				wtContext.addEvent(PipeEventType.Error, "与目标服务器建立连接失败：" + f.cause().getMessage());
-//				eventHandler.fireErrorEvent(wtContext);
-//				return ;
-//			}
-//			// Pipe在connect后才添加上，导致事件丢失
-//			back.getChannel().pipeline().addLast(FullPipe.this);
-//		});
-		return null;
-	}
 	
 	public void close() {
 		if (front.getChannel() != null && front.getChannel().isActive()) {
@@ -269,16 +230,5 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		// 确保最终状态是closed
 		wtContext.recordStatus(PipeStatus.Closed);
-	}
-
-	private boolean fullPipeIsExists(Channel channel) {
-		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
-		while (iterator.hasNext()) {
-			// FullPipe怎么才能作为变量传进来
-			if (iterator.next().getValue() instanceof FullPipe) {
-				return true;
-			}
-		}
-		return false;
 	}
 }

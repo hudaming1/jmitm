@@ -23,7 +23,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
@@ -89,9 +88,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
 	    		log.info("[" + wtContext.getId() + "] client handshake success");
-//	    		client2ProxyCtx.pipeline().addLast(httpsFull);
-//	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
-//	    		httpsFull.fireClientTlsHandshakeSuccess();
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -101,17 +97,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
 			log.info("[" + wtContext.getId() + "] flush connectline");
-
-			// 打通全链路后，给客户端发送200完成请求，告知可以发送业务数据
-//			httpsFull.connect().addListener(future -> {
-//				// 连接失败
-//				if (!future.isSuccess()) {
-//					httpsFull.fireServerActiveFailure(future.cause());
-//					return; 
-//				}  
-//				client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
-//			});
-			
     	} else {
     		wtContext.setProtocol(Protocol.HTTP);
     		
