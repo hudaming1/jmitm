@@ -61,10 +61,18 @@ public class FullPipe extends AbstractPipeHandler {
 			
 			// TODO 
 			// mock intercept request ... 
+			log.info("host=" + request.headers().get("Host").split(":")[0]);
+			log.info("uri=" + request.uri());
+			if ("www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && 
+					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()))) {
+				log.info("hit baidu_log");
+				request.headers().set("Host", "p.ssl.qhimg.com:443");
+				request.setUri("/t012cdb572f41b93733.png");
+			}
 
+			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			wtContext.appendRequest(request);
 			
-			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			currentBack = super.select(InetAddress.getHost(), InetAddress.getPort());
 			if (currentBack == null) {
 				currentBack = initBackpipe(InetAddress, isHttps);
