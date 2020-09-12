@@ -29,7 +29,7 @@ public class InterceptorRebuilder {
 	
 
 	public Mock mock() {
-		return new Mock(picture, this);
+		return new Mock(System.currentTimeMillis() + "", picture, this);
 	}
 
 	public InterceptorRebuilder body() {

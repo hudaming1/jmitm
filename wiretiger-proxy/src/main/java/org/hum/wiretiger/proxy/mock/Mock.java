@@ -1,9 +1,19 @@
 package org.hum.wiretiger.proxy.mock;
 
-public class Mock {
+import lombok.Getter;
 
-	public Mock(InterceptorPicture picture, InterceptorRebuilder interceptorRebuilder) {
-		// TODO Auto-generated constructor stub
+@Getter
+public class Mock {
+	
+	private String id;
+	private InterceptorPicture picture;
+	private InterceptorRebuilder interceptorRebuilder;
+
+	public Mock(String id, InterceptorPicture picture, InterceptorRebuilder interceptorRebuilder) {
+		this.id = id;
+		this.picture = picture;
+		this.interceptorRebuilder = interceptorRebuilder;
 	}
 
+	
 }

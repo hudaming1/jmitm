@@ -2,6 +2,7 @@ package org.hum.wiretiger.proxy.pipe;
 
 import java.util.Stack;
 
+import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class FullPipe extends AbstractPipeHandler {
 	
+	protected MockHandler mockHandler;
 	protected EventHandler eventHandler;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
@@ -61,6 +63,7 @@ public class FullPipe extends AbstractPipeHandler {
 			
 			// TODO 
 			// mock intercept request ... 
+			mockHandler.mock(request);
 			if ("www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && 
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()))) {
 				log.info("hit baidu_logo");
@@ -146,20 +149,21 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		log.info("[" + wtContext.getId() + "] 6");
 		if (msg instanceof FullHttpResponse) {
-			FullHttpResponse resp = (FullHttpResponse) msg;
-			
-			// TODO 
-			// do mock response..
-
-			wtContext.appendResponse(resp);
-			wtContext.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
-			
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 				super.front.getChannel().writeAndFlush(msg);
 				return ;
 			}
 			WtSession session = reqStack4WattingResponse.pop();
+			FullHttpResponse resp = (FullHttpResponse) msg;
+			
+			// TODO 
+			// do mock response..
+			mockHandler.mock(session.getRequest(), resp);
+
+			wtContext.appendResponse(resp);
+			wtContext.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
+			
 			byte[] bytes = null;
 			if (resp.content().readableBytes() > 0) {
 				bytes = new byte[resp.content().readableBytes()];

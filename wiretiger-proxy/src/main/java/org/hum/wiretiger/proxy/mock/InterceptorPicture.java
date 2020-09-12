@@ -60,5 +60,4 @@ public class InterceptorPicture {
 		// TODO Auto-generated method stub
 		return new InterceptorRebuilder(request, this);
 	}
-
 }
