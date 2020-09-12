@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -17,6 +18,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	protected FrontPipe front;
 	protected Map<String, BackPipe> backMap;
 	protected WtPipeContext wtContext;
+	private final String BACK_PIPE_KEY = "%s:%s";
 	
 	public AbstractPipeHandler(WtPipeContext wtContext, FrontPipe front) {
 		this.front = front;
@@ -24,19 +26,33 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		this.wtContext = wtContext;
 	}
 	
-	private boolean isBackChannel(Channel channel) {
+	protected BackPipe getBackChannel(Channel channel) {
 		for (BackPipe back : backMap.values()) {
 			if (back.getChannel() == channel) {
-				return true;
+				return back;
 			}
 		}
-		return false;
+		return null;
+	}
+
+	protected BackPipe initBackpipe(InetAddress InetAddress, boolean isHttps) {
+		BackPipe newBackpipe = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), isHttps);
+		backMap.put(String.format(BACK_PIPE_KEY, InetAddress.getHost(), InetAddress.getPort()), newBackpipe);
+		return newBackpipe;
+	}
+	
+	protected BackPipe select(String host, int port) {
+		return backMap.get(String.format(BACK_PIPE_KEY, host, port));
+	}
+	
+	protected void removeBackpipe(BackPipe back) {
+		backMap.remove(String.format(BACK_PIPE_KEY, back.getHost(), back.getPort()));
 	}
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
     	log.info("[" + wtContext.getId() + "]back connect, channel=" + ctx.channel());
-    	if (isBackChannel(ctx.channel())) {
+    	if (getBackChannel(ctx.channel()) == null) {
     		channelActive4Server(ctx);
     	} else if (ctx.channel() == front.getChannel()) {
     		log.warn("[" + wtContext.getId() + "]front-channel active");
@@ -49,7 +65,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelInactive4Client(ctx);
-		} else if (isBackChannel(ctx.channel())) {
+		} else if (getBackChannel(ctx.channel()) == null) {
 			channelInactive4Server(ctx);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -61,7 +77,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelRead4Client(ctx, msg);
-		} else if (isBackChannel(ctx.channel())) {
+		} else if (getBackChannel(ctx.channel()) == null) {
 			channelRead4Server(ctx, msg);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -73,7 +89,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			exceptionCaught4Client(ctx, cause);
-		} else if (isBackChannel(ctx.channel())) {
+		} else if (getBackChannel(ctx.channel()) == null) {
 			exceptionCaught4Server(ctx, cause);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -85,7 +101,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelWrite4Client(ctx, msg, promise);
-		} else if (isBackChannel(ctx.channel())) {
+		} else if (getBackChannel(ctx.channel()) == null) {
 			channelWrite4Server(ctx, msg, promise);
 		} else {
 			for (BackPipe back : backMap.values()) {

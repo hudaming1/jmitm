@@ -3,6 +3,8 @@ package org.hum.wiretiger.proxy.util;
 import java.net.InetSocketAddress;
 import java.util.concurrent.ThreadFactory;
 
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
+
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -34,9 +36,9 @@ public class NettyUtils {
 		return isSupportNativeET() ? new EpollEventLoopGroup(threadCount, threadFactory) : new NioEventLoopGroup(threadCount, threadFactory);
 	}
 	
-	public static String toHostAndPort(Channel channel) {
+	public static InetAddress toHostAndPort(Channel channel) {
 		InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-		return address.getHostName() + ":" + address.getPort();
+		return new InetAddress(address.getHostName(), address.getPort());
 	}
 	
 }

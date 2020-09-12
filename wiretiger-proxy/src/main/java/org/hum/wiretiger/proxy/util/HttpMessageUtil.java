@@ -15,7 +15,6 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.internal.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 
 public class HttpMessageUtil {
 	
@@ -153,6 +152,10 @@ public class HttpMessageUtil {
 		} else {
 			return HttpConstant.DEFAULT_HTTP_PORT;
 		}
+	}
+	
+	public static boolean isHttpsRequest(HttpRequest request) {
+		return HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name());
 	}
 
     private HttpMessageUtil() { }

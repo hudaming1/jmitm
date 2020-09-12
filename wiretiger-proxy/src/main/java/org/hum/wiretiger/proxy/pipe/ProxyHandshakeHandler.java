@@ -1,16 +1,18 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
+import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
+import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
@@ -27,13 +29,6 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * <pre>
- *   <b>1.Channel添加FullPipe时机与应用协议相关</b>
- *     HTTP协议在解析完Request报文后才添加FullPipe，因此可能遗漏监听包含：(1)建立连接后没有触发Read；(2)连接完成后因异常关闭了连接
- *     HTTPS协议在客户端握手完成后才添加FullPipe，因此可能遗漏的监听包括：(1)同HTTP问题；(2)抛出上述1以外，握手失败也会遗漏监听
- * </pre>
- */
 @Slf4j
 @Sharable
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
@@ -54,10 +49,9 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
         log.info("[" + wtContext.getId() + "] 1 " + ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
-        InetSocketAddress inetAddr = (InetSocketAddress) ctx.channel().remoteAddress();
-        wtContext.setSource(inetAddr.getHostString(), inetAddr.getPort());
+        InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
+        wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         eventHandler.fireConnectEvent(wtContext);
-        ctx.fireChannelActive();
         ctx.pipeline().addLast(new PreFullPipe(wtContext, eventHandler));
     }
 
@@ -70,10 +64,13 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		// wrap pipeholder
 		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		wtContext.setTarget(InetAddress.getHost(), InetAddress.getPort());
+		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
+		wtContext.recordStatus(PipeStatus.Parsed);
+		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
+		this.eventHandler.fireChangeEvent(wtContext);
 		
-    	if (HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name())) {
+    	if (wtContext.getProtocol() == Protocol.HTTPS) {
     		log.info("[" + wtContext.getId() + "] HTTPS 2 CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
-    		wtContext.setProtocol(Protocol.HTTPS);
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
 			sslHandler.handshakeFuture().addListener(future -> {
@@ -98,7 +95,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
 			log.info("[" + wtContext.getId() + "] flush connectline");
     	} else {
-    		wtContext.setProtocol(Protocol.HTTP);
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
     			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, false));
