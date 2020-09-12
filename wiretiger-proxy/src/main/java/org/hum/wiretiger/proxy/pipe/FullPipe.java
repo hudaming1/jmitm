@@ -65,7 +65,7 @@ public class FullPipe extends AbstractPipeHandler {
 			log.info("uri=" + request.uri());
 			if ("www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && 
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()))) {
-				log.info("hit baidu_log");
+				log.info("hit baidu_logo");
 				request.headers().set("Host", "p.ssl.qhimg.com:443");
 				request.setUri("/t012cdb572f41b93733.png");
 			}
