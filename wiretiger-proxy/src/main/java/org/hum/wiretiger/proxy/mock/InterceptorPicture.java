@@ -2,10 +2,13 @@ package org.hum.wiretiger.proxy.mock;
 
 import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
 
-import io.netty.handler.codec.http.HttpRequest;
-
 public class InterceptorPicture {
-
+	
+	private Object requestPicture;
+	private Object responsePicture;
+	private Object requestRebuilder;
+	private Object responseRebuilder;
+	
 	public InterceptorPicture(InterceptorType request) {
 		// TODO Auto-generated constructor stub
 	}
