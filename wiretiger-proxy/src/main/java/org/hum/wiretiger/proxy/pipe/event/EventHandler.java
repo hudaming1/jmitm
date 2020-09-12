@@ -28,34 +28,6 @@ public class EventHandler {
 			listener.onConnect(convert(context));
 		}
 	}
-
-	@Deprecated
-	public void fireReadEvent(WtPipeContext context) {
-		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(context));
-		}
-	}
-
-	@Deprecated
-	public void fireReceiveEvent(WtPipeContext context) {
-		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(context));
-		}
-	}
-
-	@Deprecated
-	public void fireForwardEvent(WtPipeContext context) {
-		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(context));
-		}
-	}
-
-	@Deprecated
-	public void fireFlushEvent(WtPipeContext context) {
-		for (EventListener listener : listeners) {
-			listener.onPipeStatusChange(convert(context));
-		}
-	}
 	
 	public void fireChangeEvent(WtPipeContext context) {
 		for (EventListener listener : listeners) {

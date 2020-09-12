@@ -52,7 +52,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
     	log.info("[" + wtContext.getId() + "]back connect, channel=" + ctx.channel());
-    	if (getBackChannel(ctx.channel()) == null) {
+    	if (getBackChannel(ctx.channel()) != null) {
     		channelActive4Server(ctx);
     	} else if (ctx.channel() == front.getChannel()) {
     		log.warn("[" + wtContext.getId() + "]front-channel active");
@@ -65,7 +65,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelInactive4Client(ctx);
-		} else if (getBackChannel(ctx.channel()) == null) {
+		} else if (getBackChannel(ctx.channel()) != null) {
 			channelInactive4Server(ctx);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -77,7 +77,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelRead4Client(ctx, msg);
-		} else if (getBackChannel(ctx.channel()) == null) {
+		} else if (getBackChannel(ctx.channel()) != null) {
 			channelRead4Server(ctx, msg);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -89,7 +89,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			exceptionCaught4Client(ctx, cause);
-		} else if (getBackChannel(ctx.channel()) == null) {
+		} else if (getBackChannel(ctx.channel()) != null) {
 			exceptionCaught4Server(ctx, cause);
 		} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -101,7 +101,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		if (front.getChannel() == ctx.channel()) {
 			channelWrite4Client(ctx, msg, promise);
-		} else if (getBackChannel(ctx.channel()) == null) {
+		} else if (getBackChannel(ctx.channel()) != null) {
 			channelWrite4Server(ctx, msg, promise);
 		} else {
 			for (BackPipe back : backMap.values()) {

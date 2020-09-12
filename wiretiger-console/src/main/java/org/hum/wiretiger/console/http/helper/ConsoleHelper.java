@@ -23,7 +23,7 @@ public class ConsoleHelper {
 		
 		WiretigerPipeListVO vo = new WiretigerPipeListVO();
 		vo.setPipeId(item.getPipeId());
-		vo.setName(item.getPipeName());
+		vo.setName(item.getSourceHost() + ":" + item.getSourcePort() + "->" + item.getTargetHost() + ":" + item.getTargetPort());
 		vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
 		vo.setStatus(item.getStatus().getDesc());
 		return vo;

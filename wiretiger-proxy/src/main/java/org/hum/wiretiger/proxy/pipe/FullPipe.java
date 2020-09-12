@@ -206,6 +206,7 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
+		eventHandler.fireDisconnectEvent(wtContext);
 		log.info("client disconnect");
 	}
 
