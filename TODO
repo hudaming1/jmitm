@@ -35,13 +35,13 @@ clear按钮做成菜单
 【P0】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【P0】Console没有探活，页面刷新后连接没有断开
 【P1】HTTP和HTTPS的Handler要拆开 
-
+【P1】ProxyHandshakeHandler和Fullpipe都要重构(用WiretigerFullHandler串起所有事件，然后将eventHandler、statusHandler、mockHandler形成一个handlerChain)
 
 ##BUG
 
 ##技术优化
 后面用netty替换掉jetty吧，http和ws走一个端口
-用WiretigerFullHandler串起所有事件，然后将eventHandler、statusHandler、mockHandler形成一个handlerChain
+
 
 HTTP连接：http://www.cankaoxiaoxi.com/kuaixun/20200901/2419633.shtml
 http://www.cqcoal.com/index/main.js
