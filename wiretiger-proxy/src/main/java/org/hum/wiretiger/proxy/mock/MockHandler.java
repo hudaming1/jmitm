@@ -1,8 +1,11 @@
 package org.hum.wiretiger.proxy.mock;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.hum.wiretiger.proxy.mock.enumtype.PictureOp;
+import org.hum.wiretiger.proxy.mock.picture.StringEvalFn;
 import org.hum.wiretiger.proxy.mock.picture.InterceptorPicture;
 import org.hum.wiretiger.proxy.mock.picture.RequestHeaderPicture;
 import org.hum.wiretiger.proxy.mock.picture.RequestPicture;
@@ -34,29 +37,51 @@ public class MockHandler {
 	}
 
 	private boolean isHit(InterceptorPicture picture, HttpRequest request) {
-		// TODO
 		if (picture.getRequestPicture() == null) {
 			return false;
 		}
 		
 		RequestPicture reqPic = picture.getRequestPicture();
 		RequestUriPicture uriPicture = reqPic.getUriPicture();
-		List<RequestHeaderPicture> headerPicture = reqPic.getHeaderPicture();
+		List<RequestHeaderPicture> headerPictureList = reqPic.getHeaderPicture();
 		// checkpoint -> 1.uri
 		if (uriPicture != null) {
 			if (uriPicture.getOp() == PictureOp.Equals && !uriPicture.getValue().equals(request.uri())) {
 				return false;
-			} else if (uriPicture.getOp() == PictureOp.Like && !request.uri().contains(uriPicture.getValue())) {
+			} else if (uriPicture.getOp() == PictureOp.Like && !request.uri().contains(uriPicture.getValue().toString())) {
 				return false;
-			} else if (uriPicture.getOp() == PictureOp.Prefix && !request.uri().startsWith(uriPicture.getValue())) {
+			} else if (uriPicture.getOp() == PictureOp.Prefix && !request.uri().startsWith(uriPicture.getValue().toString())) {
 				return false;
+			} else if (uriPicture.getOp() == PictureOp.Eval) {
+				StringEvalFn evalFn = (StringEvalFn) uriPicture.getValue();
+				if (!evalFn.isHit(request.uri())) {
+					return false;
+				}
 			}
 		}
 		// checkpoint -> 2.header
-		if (headerPicture != null && !headerPicture.isEmpty()) {
+		if (headerPictureList != null && !headerPictureList.isEmpty()) {
+			for (RequestHeaderPicture headerPic : headerPictureList) {
+				if (request.headers().get(headerPic.getHeader()) == null) {
+					continue;
+				}
+				if (headerPic.getOp() == PictureOp.Equals && !headerPic.getValue().equals(request.headers().get(headerPic.getHeader()))) {
+					return false;
+				} else if (headerPic.getOp() == PictureOp.Like && !request.headers().get(headerPic.getHeader()).contains(headerPic.getValue().toString())) {
+					return false;
+				} else if (headerPic.getOp() == PictureOp.Prefix && !request.headers().get(headerPic.getHeader()).startsWith(headerPic.getValue().toString())) {
+					return false;
+				} else if (headerPic.getOp() == PictureOp.Eval) {
+					StringEvalFn evalFn = (StringEvalFn) uriPicture.getValue();
+					if (!evalFn.isHit(request.uri())) {
+						return false;
+					}
+				}
+			}
 		}
 		
 		// checkpoint -> 3.body
+		// TODO
 		
 		return false;
 	}

@@ -8,5 +8,5 @@ import lombok.Data;
 public class RequestUriPicture {
 
 	private PictureOp op;
-	private String value;
+	private Object value;
 }
