@@ -24,6 +24,7 @@
   3.第三阶段：实现剩下ResponseMock功能
 
 ##功能优化
+start-module需要重构，封装成可配置化
 控制台增加断开连接的按钮
 Request支持分页
 修改Session创建时机，不要等到Response完成后才创建Session
