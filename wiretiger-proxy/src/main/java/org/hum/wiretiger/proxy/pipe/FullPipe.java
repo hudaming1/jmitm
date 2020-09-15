@@ -61,15 +61,14 @@ public class FullPipe extends AbstractPipeHandler {
 				return ;
 			}
 			
-			// TODO 
-			// mock intercept request ... 
+			// mock
 			mockHandler.mock(request);
-			if ("www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && 
-					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()))) {
-				log.info("hit baidu_logo");
-				request.headers().set("Host", "p.ssl.qhimg.com:443");
-				request.setUri("/t012cdb572f41b93733.png");
-			}
+//			if ("www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && 
+//					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()))) {
+//				log.info("hit baidu_logo");
+//				request.headers().set("Host", "p.ssl.qhimg.com:443");
+//				request.setUri("/t012cdb572f41b93733.png");
+//			}
 
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			wtContext.appendRequest(request);
@@ -157,7 +156,6 @@ public class FullPipe extends AbstractPipeHandler {
 			WtSession session = reqStack4WattingResponse.pop();
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			
-			// TODO 
 			// do mock response..
 			mockHandler.mock(session.getRequest(), resp);
 

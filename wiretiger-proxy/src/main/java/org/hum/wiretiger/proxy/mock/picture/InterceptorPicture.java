@@ -1,10 +1,17 @@
-package org.hum.wiretiger.proxy.mock;
+package org.hum.wiretiger.proxy.mock.picture;
 
+import org.hum.wiretiger.proxy.mock.HttpHeaderInterceptor;
+import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
+import org.hum.wiretiger.proxy.mock.HttpResponseInterceptor;
+import org.hum.wiretiger.proxy.mock.InterceptorRebuilder;
 import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
 
+import lombok.Getter;
+
+@Getter
 public class InterceptorPicture {
 	
-	private Object requestPicture;
+	private RequestPicture requestPicture;
 	private Object responsePicture;
 	private Object requestRebuilder;
 	private Object responseRebuilder;

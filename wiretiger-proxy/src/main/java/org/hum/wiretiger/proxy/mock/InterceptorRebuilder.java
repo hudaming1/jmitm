@@ -1,6 +1,7 @@
 package org.hum.wiretiger.proxy.mock;
 
 import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
+import org.hum.wiretiger.proxy.mock.picture.InterceptorPicture;
 
 public class InterceptorRebuilder {
 	

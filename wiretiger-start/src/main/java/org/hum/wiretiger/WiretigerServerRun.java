@@ -11,10 +11,10 @@ import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.mock.HttpHeaderInterceptor;
 import org.hum.wiretiger.proxy.mock.HttpResponseInterceptor;
 import org.hum.wiretiger.proxy.mock.HttpStringModifier;
-import org.hum.wiretiger.proxy.mock.InterceptorPicture;
 import org.hum.wiretiger.proxy.mock.InterceptorRebuilder;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.mock.enumtype.InterceptorType;
+import org.hum.wiretiger.proxy.mock.picture.InterceptorPicture;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
 
 import io.netty.handler.codec.http.FullHttpResponse;

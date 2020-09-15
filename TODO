@@ -19,6 +19,8 @@
 
 ##功能开发
 【M9W2】Mock功能
+  1.完成MockRequest
+  2.完成MockResponse
 
 ##功能优化
 控制台增加断开连接的按钮

@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.mock;
 
+import org.hum.wiretiger.proxy.mock.picture.InterceptorPicture;
+
 import lombok.Getter;
 
 @Getter
