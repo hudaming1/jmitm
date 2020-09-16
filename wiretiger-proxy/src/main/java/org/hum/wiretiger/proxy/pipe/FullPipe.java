@@ -45,12 +45,10 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
-		log.info("[" + wtContext.getId() + "]server connect");
 	}
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
-		log.info("[" + wtContext.getId() + "] channel read");
 		wtContext.recordStatus(PipeStatus.Read);
 		
 		if (msg instanceof HttpRequest) {
@@ -76,7 +74,6 @@ public class FullPipe extends AbstractPipeHandler {
 			}
 			
 			if (isHttps) {
-				log.info("[" + wtContext.getId() + "] connect " + InetAddress);
 				if (!currentBack.isActive()) {
 					currentBack.connect().addListener(f->{
 						if (!f.isSuccess()) {
@@ -91,9 +88,7 @@ public class FullPipe extends AbstractPipeHandler {
 						wtContext.recordStatus(PipeStatus.Connected);
 						eventHandler.fireChangeEvent(wtContext);
 						wtContext.addEvent(PipeEventType.ServerConnected, "与服务端" + InetAddress + "建立连接完成");
-						log.info("[" + wtContext.getId() + "] server connect ok(listener)");
 					}).sync();
-					log.info("[" + wtContext.getId() + "] server connect ok(sync)");
 					currentBack.handshakeFuture().addListener(tls-> {
 						if (!tls.isSuccess()) {
 							log.error("[" + wtContext.getId() + "] server tls error", tls.cause());
@@ -103,14 +98,12 @@ public class FullPipe extends AbstractPipeHandler {
 							close();
 							return ;
 						}
-						log.info("[" + wtContext.getId() + "] server tls ok");
 						wtContext.addEvent(PipeEventType.ServerTlsFinish, "与服务端" + InetAddress + "握手完成");
 						currentBack.getChannel().pipeline().addLast(this);
 					}).sync();
 				}
 			} else {
 				if (!currentBack.isActive()) {
-					log.info("[" + wtContext.getId() + "]server active, channel=" + currentBack.getChannel());
 					currentBack.connect().addListener(f-> {
 						if (!f.isSuccess()) {
 							log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
@@ -133,7 +126,6 @@ public class FullPipe extends AbstractPipeHandler {
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
-		log.info("[" + wtContext.getId() + "] flush to server.");
 		currentBack.getChannel().writeAndFlush(msg);
 		eventHandler.fireChangeEvent(wtContext);
 	}
@@ -143,7 +135,6 @@ public class FullPipe extends AbstractPipeHandler {
 	 */
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
-		log.info("[" + wtContext.getId() + "] 6");
 		if (msg instanceof FullHttpResponse) {
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
@@ -184,7 +175,6 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		log.info("[" + wtContext.getId() + "] 7");
 		wtContext.recordStatus(PipeStatus.Flushed);
 		wtContext.addEvent(PipeEventType.Flushed, "已将服务端响应转发给客户端");
 		eventHandler.fireChangeEvent(wtContext);
@@ -196,7 +186,6 @@ public class FullPipe extends AbstractPipeHandler {
 			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (HttpRequest) msg, System.currentTimeMillis()));
 		}
 		// [HTTP] 5.ChannelHandler拦截写事件
-		log.info("[" + wtContext.getId() + "] 5");
 		wtContext.recordStatus(PipeStatus.Forward);
 		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
 		eventHandler.fireChangeEvent(wtContext);
@@ -214,7 +203,6 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
 		eventHandler.fireDisconnectEvent(wtContext);
-		log.info("client disconnect");
 	}
 
 	@Override
@@ -226,7 +214,6 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
 		eventHandler.fireDisconnectEvent(wtContext);
-		log.info("server disconnect");
 	}
 
 	@Override

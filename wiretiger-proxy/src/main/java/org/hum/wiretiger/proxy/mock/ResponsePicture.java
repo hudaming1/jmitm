@@ -1,7 +1,4 @@
-package org.hum.wiretiger.proxy.mock.picture;
-
-import org.hum.wiretiger.proxy.mock.Mock;
-import org.hum.wiretiger.proxy.mock.rebuild.ResponseRebuild;
+package org.hum.wiretiger.proxy.mock;
 
 public class ResponsePicture {
 	

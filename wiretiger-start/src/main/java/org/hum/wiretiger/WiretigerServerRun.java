@@ -5,7 +5,8 @@ import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.console.http.config.WtConsoleHttpConfig;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
-import org.hum.wiretiger.proxy.mock.picture.RequestPicture;
+import org.hum.wiretiger.proxy.mock.RequestPicture;
+import org.hum.wiretiger.proxy.mock.ResponsePicture;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
 
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +23,8 @@ public class WiretigerServerRun {
 				config.setPort(52007);
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
-				// mock request
 				
+				// mock request
 				config.addMock(new RequestPicture().eval(request -> {
 					return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 							("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
@@ -38,13 +39,13 @@ public class WiretigerServerRun {
 				}).mock());
 				
 				// mock response
-//				config.addMock(new ResponsePicture().eval(response -> {
-//					
-//					return "123456".equals(response.headers().get("wiretiger_mock"));
-//				}).rebuildResponse(response -> {
-//					
-//					return response;
-//				}).mock());
+				config.addMock(new ResponsePicture().eval(response -> {
+					System.out.println("content-length:" + response.headers().get("content-length"));
+					return "https://www.baidu.com/".equals(response.headers().get("Referer"));
+				}).rebuildResponse(response -> {
+					response.headers().set("Referer", "https://www.google.com/");
+					return response;
+				}).mock());
 				
 				WtServerBuilder.init(config).addEventListener(new Console4WsListener()).build().start();
 			}

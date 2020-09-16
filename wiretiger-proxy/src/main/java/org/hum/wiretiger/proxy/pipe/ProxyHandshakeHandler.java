@@ -50,7 +50,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // [HTTP] 1.建立front连接
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
-        log.info("[" + wtContext.getId() + "] 1 " + ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
@@ -73,7 +72,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		this.eventHandler.fireChangeEvent(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		log.info("[" + wtContext.getId() + "] HTTPS 2 CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
+    		log.info("[" + wtContext.getId() + "] HTTPS CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
 			sslHandler.handshakeFuture().addListener(future -> {
@@ -87,7 +86,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), new HttpObjectAggregator(Integer.MAX_VALUE));
 	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
-	    		log.info("[" + wtContext.getId() + "] client handshake success");
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -96,7 +94,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
-			log.info("[" + wtContext.getId() + "] flush connectline");
     	} else {
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
@@ -107,7 +104,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		deletePreFullPipeIfNesscessary(client2ProxyCtx.channel());
     		
     		// [HTTP] 2.建立back端连接
-    		log.info("[" + wtContext.getId() + "] HTTP 2 CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
+    		log.info("[" + wtContext.getId() + "] HTTP CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		
     		client2ProxyCtx.fireChannelRead(request);
     	}

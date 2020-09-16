@@ -35,7 +35,8 @@ public class MockHandler {
 		}
 		
 		for (Mock mock : mockList) {
-			if (!request.headers().contains(WT_MOCK_SIGN) && mock.getResponseInterceptor() != null && !mock.getResponseInterceptor().isHit(resp)) {
+			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false;
+			if (requestMiss && mock.getResponseInterceptor() == null || !mock.getResponseInterceptor().isHit(resp)) {
 				continue;
 			}
 			if (mock.getResponseRebuild() != null) {

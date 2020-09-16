@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.mock.rebuild;
+package org.hum.wiretiger.proxy.mock;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 

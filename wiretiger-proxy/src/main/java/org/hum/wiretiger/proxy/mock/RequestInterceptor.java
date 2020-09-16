@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.mock.picture;
+package org.hum.wiretiger.proxy.mock;
 
 import io.netty.handler.codec.http.HttpRequest;
 
