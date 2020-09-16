@@ -148,7 +148,7 @@ public class FullPipe extends AbstractPipeHandler {
 			if (mockHandler != null) {
 				mockHandler.mock(session.getRequest(), resp);
 			}
-
+			
 			wtContext.appendResponse(resp);
 			wtContext.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
 			

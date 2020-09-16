@@ -34,16 +34,15 @@ public class WiretigerServerRun {
 					request.setUri("/t012cdb572f41b93733.png");
 					return request;
 				}).rebuildResponse(response -> {
-					response.headers().add("wiretiger_mock", System.currentTimeMillis());
+					response.headers().add("wiretiger_mock", "redirect to 360_search");
 					return response;
 				}).mock());
 				
 				// mock response
 				config.addMock(new ResponsePicture().eval(response -> {
-					System.out.println("content-length:" + response.headers().get("content-length"));
-					return "https://www.baidu.com/".equals(response.headers().get("Referer"));
+					return true;
 				}).rebuildResponse(response -> {
-					response.headers().set("Referer", "https://www.google.com/");
+					response.headers().set("wiretiger_mock", "response mock");
 					return response;
 				}).mock());
 				

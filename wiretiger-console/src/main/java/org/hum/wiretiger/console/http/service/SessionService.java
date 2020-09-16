@@ -89,7 +89,7 @@ public class SessionService {
 			return "";
 		}
 		StringBuilder headerString = new StringBuilder();
-		for (Entry<String, String> header : session.getRequestHeaders().entrySet()) {
+		for (Entry<String, String> header : session.getResponseHeaders().entrySet()) {
 			headerString.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
 		return headerString.toString();
