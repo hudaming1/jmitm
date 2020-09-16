@@ -8,6 +8,9 @@ import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.mock.picture.RequestPicture;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class WiretigerServerRun {
 	
 	public static void start() {
@@ -20,10 +23,14 @@ public class WiretigerServerRun {
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
 				// mock request
+				
 				config.addMock(new RequestPicture().eval(request -> {
-					return "www.baidu.com".equals(request.headers().get("Host"));
+					return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
+							("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
 				}).rebuildRequest(request -> {
-					request.setUri("www.google.com");
+					log.info("hit baidu_logo");
+					request.headers().set("Host", "p.ssl.qhimg.com:443");
+					request.setUri("/t012cdb572f41b93733.png");
 					return request;
 				}).rebuildResponse(response -> {
 					response.headers().add("wiretiger_mock", System.currentTimeMillis());

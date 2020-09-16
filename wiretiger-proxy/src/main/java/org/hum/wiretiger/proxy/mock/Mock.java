@@ -10,6 +10,7 @@ import lombok.Getter;
 @Getter
 public class Mock {
 	
+	private String id;
 	private RequestInterceptor requestInterceptor;
 	private ResponseInterceptor responseInterceptor;
 	private RequestRebuilder requestRebuilder;
@@ -20,6 +21,7 @@ public class Mock {
 		this.responseInterceptor = responseInterceptor;
 		this.requestRebuilder = requestRebuilder;
 		this.responseRebuild = responseRebuild;
+		this.id = System.nanoTime() + "";
 	}
 
 }

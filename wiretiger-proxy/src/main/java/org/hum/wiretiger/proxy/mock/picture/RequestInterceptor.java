@@ -4,5 +4,5 @@ import io.netty.handler.codec.http.HttpRequest;
 
 public interface RequestInterceptor {
 
-	public boolean eval(HttpRequest request);
+	public boolean isHit(HttpRequest request);
 }
