@@ -34,9 +34,10 @@ public class FullPipe extends AbstractPipeHandler {
 	private BackPipe currentBack;
 	private boolean isHttps;
 
-	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext, boolean isHttps) {
+	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext, boolean isHttps, MockHandler mockHandler) {
 		// init
 		super(wtContext, front);
+		this.mockHandler = mockHandler;
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
 		this.isHttps = isHttps;

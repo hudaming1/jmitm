@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
@@ -34,13 +35,15 @@ import lombok.extern.slf4j.Slf4j;
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private EventHandler eventHandler;
+	private MockHandler mockHandler;
 	private final int _1K = 1024;
 	private final int RequestLineMaxLen = 32 * _1K;
 	private final int RequestHeaderMaxLen = 8 * _1K;
 	private final int RequestChunkedMaxLen = 1024 * _1K;
 	
-	public ProxyHandshakeHandler(EventHandler eventHandler) {
+	public ProxyHandshakeHandler(EventHandler eventHandler, MockHandler mockHandler) {
 		this.eventHandler = eventHandler;
+		this.mockHandler = mockHandler;
 	}
 	
     @Override
@@ -82,7 +85,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 				}
 				// 握手成功
 	    		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), new HttpObjectAggregator(Integer.MAX_VALUE));
-	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true));
+	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
 	    		log.info("[" + wtContext.getId() + "] client handshake success");
 			});
@@ -97,7 +100,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     	} else {
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
-    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, false));
+    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, false, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		

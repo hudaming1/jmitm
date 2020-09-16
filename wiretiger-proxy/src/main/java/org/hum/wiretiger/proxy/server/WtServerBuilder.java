@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.mock.MockHandler;
 
 public class WtServerBuilder {
 	
@@ -30,6 +31,7 @@ public class WtServerBuilder {
 	public WtServer build() {
 		WtDefaultServer server = new WtDefaultServer(config);
 		server.setListeners(listeners);
+		server.setMockHandler(new MockHandler(config.getMockList()));
 		return server;
 	}
 }

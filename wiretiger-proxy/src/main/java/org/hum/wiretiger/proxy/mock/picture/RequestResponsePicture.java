@@ -4,31 +4,30 @@ import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.mock.rebuild.RequestRebuilder;
 import org.hum.wiretiger.proxy.mock.rebuild.ResponseRebuild;
 
-import lombok.Data;
+public class RequestResponsePicture {
 
-@Data
-public class RequestPicture {
-	
 	private RequestInterceptor requestInterceptor;
+	private ResponseInterceptor responseInterceptor;
 	private RequestRebuilder requestRebuilder;
 	private ResponseRebuild responseRebuild;
 
-	public RequestPicture eval(RequestInterceptor requestInterceptor) {
+	public RequestResponsePicture eval(RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
 		this.requestInterceptor = requestInterceptor;
+		this.responseInterceptor = responseInterceptor;
 		return this;
 	}
 
-	public RequestPicture rebuildRequest(RequestRebuilder requestRebuilder) {
+	public RequestResponsePicture rebuildRequest(RequestRebuilder requestRebuilder) {
 		this.requestRebuilder = requestRebuilder;
 		return this;
 	}
 
-	public RequestPicture rebuildResponse(ResponseRebuild responseRebuild) {
+	public RequestResponsePicture rebuildResponse(ResponseRebuild responseRebuild) {
 		this.responseRebuild = responseRebuild;
 		return this;
 	}
 
 	public Mock mock() {
-		return new Mock(requestInterceptor, null, requestRebuilder, responseRebuild);
+		return new Mock(requestInterceptor, responseInterceptor, requestRebuilder, responseRebuild);
 	}
 }

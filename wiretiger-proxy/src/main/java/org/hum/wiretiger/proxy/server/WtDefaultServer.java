@@ -6,6 +6,7 @@ import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -29,6 +30,8 @@ public class WtDefaultServer implements WtServer {
 	private WtCoreConfig config;
 	
 	private List<EventListener> listeners;
+	
+	private MockHandler mockHandler;
 
 	public WtDefaultServer(WtCoreConfig config) {
 		this.config = config;
@@ -46,7 +49,7 @@ public class WtDefaultServer implements WtServer {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
-		ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(eventHandler);
+		ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(eventHandler, mockHandler);
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
@@ -82,4 +85,9 @@ public class WtDefaultServer implements WtServer {
 	public void setListeners(List<EventListener> listeners) {
 		this.listeners = listeners;
 	}
+
+	public void setMockHandler(MockHandler mockHandler) {
+		this.mockHandler = mockHandler;
+	}
+	
 }

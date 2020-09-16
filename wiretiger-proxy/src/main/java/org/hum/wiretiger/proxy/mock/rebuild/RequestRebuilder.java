@@ -1,11 +1,8 @@
 package org.hum.wiretiger.proxy.mock.rebuild;
 
-import lombok.Data;
+import io.netty.handler.codec.http.HttpRequest;
 
-@Data
-public class RequestRebuilder {
+public interface RequestRebuilder {
 
-	private RequestUriRebuilder uriRebuilder;
-	private RequestHeaderRebuilder headerRebuilder;
-	private RequestBodyRebuilder bodyRebuilder;
+	public HttpRequest eval(HttpRequest request);
 }
