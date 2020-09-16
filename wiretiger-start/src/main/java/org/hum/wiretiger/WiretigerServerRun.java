@@ -24,6 +24,14 @@ public class WiretigerServerRun {
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
 				
+				// 将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
+				config.addMock(new RequestPicture().eval(request -> {
+					return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
+				}).rebuildRequest(request -> {
+					request.headers().set("Host", "localhost:8080");
+					return request;
+				}).mock());
+				
 				// mock request
 				config.addMock(new RequestPicture().eval(request -> {
 					return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&

@@ -16,12 +16,7 @@
 【OK】还有一些链接一直处于Init状态，需要查看详细归属(状态不一致导致，实际状态早Close了)
 【OK】Pipe的事件和实际连接状态还是没有完全保持同步，尤其是在ClientConnect阶段退出后，由于还没有加入Handler，Pipe状态都没有同步
 【OK】找大段时间再整体重构吧，需要将front和back重构为一对多的关系，才能支持后续的mock功能
-
-##功能开发
-【M9W2】Mock功能
-  1.第一阶段：实现RequestMock功能（仅包含Header和URI即可，而且都是Equals类型），并能Rebuild Request的Uri和Header
-  2.第二阶段：将RequestMock其他功能补齐，画像类型支持增加Like、Prefix和Eval，捕获范围增加Body维度；Rebuild维度同步跟进。
-  3.第三阶段：实现剩下ResponseMock功能
+【OK】Mock功能
 
 ##功能优化
 start-module需要重构，封装成可配置化
