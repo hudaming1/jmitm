@@ -1,6 +1,5 @@
 package org.hum.wiretiger.proxy.mock.picture;
 
-import org.hum.wiretiger.proxy.mock.HttpHeaderInterceptor;
 import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.HttpResponseInterceptor;
 import org.hum.wiretiger.proxy.mock.InterceptorRebuilder;
@@ -20,49 +19,14 @@ public class InterceptorPicture {
 		// TODO Auto-generated constructor stub
 	}
 
-	public InterceptorPicture eval(HttpRequestInterceptor interceptor) {
+	public InterceptorPicture evalRequest(HttpRequestInterceptor interceptor) {
 		// TODO Auto-generated method stub
 		
 		return this;
 	}
 
-	public InterceptorPicture eval(HttpHeaderInterceptor interceptor) {
+	public InterceptorPicture evalResponse(HttpResponseInterceptor httpResponseInterceptor) {
 		// TODO Auto-generated method stub
-		
-		return this;
-	}
-
-	public InterceptorPicture eval(HttpResponseInterceptor httpResponseInterceptor) {
-		// TODO Auto-generated method stub
-		return this;
-	}
-
-	public InterceptorPicture header(String string) {
-		// TODO Auto-generated method stub
-		return this;
-	}
-
-	public InterceptorPicture equal(String string) {
-		// TODO Auto-generated method stub
-		
-		return this;
-	}
-
-	public InterceptorPicture like(String string) {
-		// TODO Auto-generated method stub
-	
-		return this;
-	}
-
-	public InterceptorPicture uri(String string) {
-		// TODO Auto-generated method stub
-		
-		return this;
-	}
-
-	public InterceptorPicture keyword(String string) {
-		// TODO Auto-generated method stub
-		
 		return this;
 	}
 

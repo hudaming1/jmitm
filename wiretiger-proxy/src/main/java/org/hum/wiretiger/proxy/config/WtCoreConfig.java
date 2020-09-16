@@ -1,5 +1,6 @@
 package org.hum.wiretiger.proxy.config;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hum.wiretiger.proxy.mock.Mock;
@@ -16,5 +17,9 @@ public class WtCoreConfig {
 	//
 	private boolean isDebug;
 	//
-	private List<Mock> mock;
+	private List<Mock> mockList = new ArrayList<Mock>();
+	
+	public void addMock(Mock mock) {
+		this.mockList.add(mock);
+	}
 }

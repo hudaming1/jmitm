@@ -1,15 +1,19 @@
 package org.hum.wiretiger.proxy.mock;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.hum.wiretiger.proxy.mock.enumtype.PictureOp;
-import org.hum.wiretiger.proxy.mock.picture.StringEvalFn;
+import org.hum.wiretiger.proxy.mock.enumtype.RebuildOp;
 import org.hum.wiretiger.proxy.mock.picture.InterceptorPicture;
 import org.hum.wiretiger.proxy.mock.picture.RequestHeaderPicture;
 import org.hum.wiretiger.proxy.mock.picture.RequestPicture;
 import org.hum.wiretiger.proxy.mock.picture.RequestUriPicture;
+import org.hum.wiretiger.proxy.mock.picture.StringEvalFn;
+import org.hum.wiretiger.proxy.mock.rebuild.ReplaceValue;
+import org.hum.wiretiger.proxy.mock.rebuild.RequestBodyRebuilder;
+import org.hum.wiretiger.proxy.mock.rebuild.RequestHeaderRebuilder;
+import org.hum.wiretiger.proxy.mock.rebuild.RequestRebuilder;
+import org.hum.wiretiger.proxy.mock.rebuild.RequestUriRebuilder;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
@@ -83,7 +87,7 @@ public class MockHandler {
 		// checkpoint -> 3.body
 		// TODO
 		
-		return false;
+		return true;
 	}
 
 	private boolean isHit(InterceptorPicture picture, FullHttpResponse resp) {
@@ -98,10 +102,35 @@ public class MockHandler {
 
 	private void rebuild(InterceptorRebuilder interceptorRebuilder, HttpRequest request) {
 		// TODO Auto-generated method stub
+		if (interceptorRebuilder.getRequestRebuilder() == null) {
+			return ;
+		}
+		
+		RequestRebuilder requestRebuilder = interceptorRebuilder.getRequestRebuilder();
+		RequestUriRebuilder uriRebuilder = requestRebuilder.getUriRebuilder();
+		RequestHeaderRebuilder headerRebuilder = requestRebuilder.getHeaderRebuilder();
+		RequestBodyRebuilder bodyRebuilder = requestRebuilder.getBodyRebuilder();
 		
 		// rebuild-point -> 1.uri
+		if (uriRebuilder != null) {
+			if (uriRebuilder.getOp() == RebuildOp.Append) {
+				request.setUri(request.uri() + uriRebuilder.getValue());
+			} else if (uriRebuilder.getOp() == RebuildOp.Update) {
+				request.setUri(uriRebuilder.getValue().toString());
+			} else if (uriRebuilder.getOp() == RebuildOp.Replace) {
+				ReplaceValue replaceVal = (ReplaceValue) uriRebuilder.getValue();
+			}
+		}
+		
 		// rebuild-point -> 2.header
+		if (headerRebuilder != null) {
+			
+		}
+		
 		// rebuild-point -> 3.body		
+		if (bodyRebuilder != null) {
+			
+		}
 	}
 
 	private void rebuild(InterceptorRebuilder interceptorRebuilder, FullHttpResponse resp) {
