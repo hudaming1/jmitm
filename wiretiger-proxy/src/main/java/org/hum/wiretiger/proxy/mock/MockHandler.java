@@ -37,7 +37,7 @@ public class MockHandler {
 		for (Mock mock : mockList) {
 			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false;
 			ResponseInterceptor responseInterceptor = mock.getResponseInterceptor();
-			if (requestMiss || responseInterceptor == null || !responseInterceptor.isHit(resp)) {
+			if (requestMiss && (responseInterceptor == null || !responseInterceptor.isHit(resp))) {
 				continue;
 			}
 			if (mock.getResponseRebuild() != null) {

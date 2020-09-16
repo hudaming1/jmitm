@@ -24,7 +24,7 @@ public class WiretigerServerRun {
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
 				
-				// 将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
+				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				config.addMock(new RequestPicture().eval(request -> {
 					return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
 				}).rebuildRequest(request -> {
@@ -32,7 +32,7 @@ public class WiretigerServerRun {
 					return request;
 				}).mock());
 				
-				// mock request
+				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
 				config.addMock(new RequestPicture().eval(request -> {
 					return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 							("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
@@ -46,11 +46,11 @@ public class WiretigerServerRun {
 					return response;
 				}).mock());
 				
-				// mock response
+				// DEMO3：拦截所有响应，对响应打标记
 				config.addMock(new ResponsePicture().eval(response -> {
 					return true;
 				}).rebuildResponse(response -> {
-					response.headers().set("wiretiger_mock", "response mock");
+					response.headers().set("signby", "hudaming");
 					return response;
 				}).mock());
 				

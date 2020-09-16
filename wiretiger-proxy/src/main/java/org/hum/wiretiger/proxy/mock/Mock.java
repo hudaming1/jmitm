@@ -1,10 +1,13 @@
 package org.hum.wiretiger.proxy.mock;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import lombok.Getter;
 
 @Getter
 public class Mock {
 	
+	private static AtomicInteger idGenerator = new AtomicInteger(1);
 	private String id;
 	private RequestInterceptor requestInterceptor;
 	private ResponseInterceptor responseInterceptor;
@@ -16,7 +19,7 @@ public class Mock {
 		this.responseInterceptor = responseInterceptor;
 		this.requestRebuilder = requestRebuilder;
 		this.responseRebuild = responseRebuild;
-		this.id = System.nanoTime() + "";
+		this.id = idGenerator.getAndIncrement() + "";
 	}
 
 }
