@@ -19,9 +19,9 @@
 【OK】Mock功能
 
 ##功能优化
-【P0】【M9W3】Post请求的Request目前还无法转发
-【P0】【M9W4】手机连接不行啊，只能发起连接，连Read事件都触发不了
+【P0】【M9W3】Post请求的Request目前还无法抓取（目前已经实现FullHttpRequestDecoder，剩下的就是要将fullpipe中的channelread，读取FullHttpRequest）
 【P0】【M9W3】ProxyHandshakeHandler和Fullpipe都要重构(用WiretigerFullHandler串起所有事件，然后将eventHandler、statusHandler、mockHandler形成一个handlerChain)
+【P0】【M9W4】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【P1】【M9W4】start-module需要重构，封装成可配置化
 【P1】Console没有探活，页面刷新后连接没有断开
 【P1】HTTP和HTTPS的Handler要拆开 
