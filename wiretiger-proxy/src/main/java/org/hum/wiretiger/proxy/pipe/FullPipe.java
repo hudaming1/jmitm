@@ -50,7 +50,6 @@ public class FullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
 		wtContext.recordStatus(PipeStatus.Read);
-		
 		if (msg instanceof HttpRequest) {
 			HttpRequest request = (HttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");

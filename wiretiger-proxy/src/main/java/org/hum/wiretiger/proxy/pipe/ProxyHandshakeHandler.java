@@ -75,6 +75,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		log.info("[" + wtContext.getId() + "] HTTPS CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
+    		log.info("[" + wtContext.getId() + "] create ssl_handler");
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
 					// java.nio.channels.ClosedChannelException时,message is null?
@@ -83,7 +84,11 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 					return ;
 				}
 				// 握手成功
-	    		client2ProxyCtx.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), new HttpObjectAggregator(Integer.MAX_VALUE));
+	    		client2ProxyCtx.pipeline().addLast(
+	    				new HttpResponseEncoder(), 
+	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
+	    				new HttpObjectAggregator(Integer.MAX_VALUE),
+	    				new FullRequestDecoder());
 	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
 			});
@@ -92,6 +97,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(HttpResponseEncoder.class);
+			client2ProxyCtx.pipeline().remove(FullRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
     	} else {

@@ -7,6 +7,7 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
+import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -60,7 +61,7 @@ public class WtDefaultServer implements WtServer {
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , httpProxyHandshakeHandler);
+					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}
 			});
 
