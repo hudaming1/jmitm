@@ -20,6 +20,7 @@ public class WtCoreConfig {
 	private List<Mock> mockList = new ArrayList<Mock>();
 	
 	public void addMock(Mock mock) {
+		// TODO check mock is complete
 		this.mockList.add(mock);
 	}
 }
