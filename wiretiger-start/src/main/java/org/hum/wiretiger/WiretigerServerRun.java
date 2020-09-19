@@ -40,7 +40,7 @@ public class WiretigerServerRun {
 				// DEMO4：拦截所有响应，对响应打标记
 				config.addMock(mockDemo4());
 
-				// DEMO5：拦截所有响应，对响应打标记
+				// DEMO5：MockResponse
 				config.addMock(mockDemo5());
 				
 				WtServerBuilder.init(config).addEventListener(new Console4WsListener()).build().start();
