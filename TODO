@@ -17,9 +17,10 @@
 【OK】Pipe的事件和实际连接状态还是没有完全保持同步，尤其是在ClientConnect阶段退出后，由于还没有加入Handler，Pipe状态都没有同步
 【OK】找大段时间再整体重构吧，需要将front和back重构为一对多的关系，才能支持后续的mock功能
 【OK】Mock功能
+【OK】Post请求的Request目前还无法抓取
+【OK】MockResponse可以读取本地文件Demo
 
 ##功能优化
-【P0】【M9W3】Post请求的Request目前还无法抓取（目前已经实现FullHttpRequestDecoder，剩下的就是要将fullpipe中的channelread，读取FullHttpRequest）
 【P0】【M9W3】ProxyHandshakeHandler和Fullpipe都要重构(用WiretigerFullHandler串起所有事件，然后将eventHandler、statusHandler、mockHandler形成一个handlerChain)
 【P0】【M9W4】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【P1】【M9W4】start-module需要重构，封装成可配置化

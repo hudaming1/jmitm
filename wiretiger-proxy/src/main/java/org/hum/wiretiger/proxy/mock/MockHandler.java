@@ -23,8 +23,8 @@ public class MockHandler {
 			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
 				if (mock.getRequestRebuilder() != null) {
 					request = mock.getRequestRebuilder().eval(request);
-					request.headers().set(WT_MOCK_SIGN, mock.getId());
 				}
+				request.headers().set(WT_MOCK_SIGN, mock.getId());
 			}
 		}
 	}
@@ -35,7 +35,7 @@ public class MockHandler {
 		}
 		
 		for (Mock mock : mockList) {
-			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false;
+			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false || !mock.getId().equals(request.headers().get(WT_MOCK_SIGN));
 			ResponseInterceptor responseInterceptor = mock.getResponseInterceptor();
 			if (requestMiss && (responseInterceptor == null || !responseInterceptor.isHit(resp))) {
 				continue;

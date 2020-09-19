@@ -52,6 +52,8 @@ public class FullPipe extends AbstractPipeHandler {
 		wtContext.recordStatus(PipeStatus.Read);
 		if (msg instanceof FullHttpRequest) {
 			FullHttpRequest request = (FullHttpRequest) msg;
+			
+			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), request, System.currentTimeMillis()));
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			
 			if (request.decoderResult().isFailure()) {
@@ -181,9 +183,6 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		if (msg instanceof FullHttpRequest) {
-			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (FullHttpRequest) msg, System.currentTimeMillis()));
-		}
 		// [HTTP] 5.ChannelHandler拦截写事件
 		wtContext.recordStatus(PipeStatus.Forward);
 		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
