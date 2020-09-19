@@ -2,8 +2,8 @@ package org.hum.wiretiger.proxy.mock;
 
 import java.util.List;
 
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 
 public class MockHandler {
 	
@@ -14,7 +14,7 @@ public class MockHandler {
 		this.mockList = mocks;
 	}
 
-	public void mock(HttpRequest request) {
+	public void mock(FullHttpRequest request) {
 		if (mockList == null || mockList.isEmpty()) {
 			return ;
 		}
@@ -29,7 +29,7 @@ public class MockHandler {
 		}
 	}
 
-	public void mock(HttpRequest request, FullHttpResponse resp) {
+	public void mock(FullHttpRequest request, FullHttpResponse resp) {
 		if (mockList == null || mockList.isEmpty()) {
 			return ;
 		}

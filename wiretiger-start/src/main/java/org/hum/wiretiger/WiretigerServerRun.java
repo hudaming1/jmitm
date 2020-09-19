@@ -46,6 +46,19 @@ public class WiretigerServerRun {
 					return response;
 				}).mock());
 				
+				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
+				config.addMock(new RequestPicture().eval(request -> {
+					return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && request.uri().contains("hqydong_4f3f63f09807e2a2535ee5c2b6100511"); 
+				}).rebuildRequest(request -> {
+					log.info("hit baidu_logo");
+					request.headers().set("Host", "p.ssl.qhimg.com:443");
+					request.setUri("/t012cdb572f41b93733.png");
+					return request;
+				}).rebuildResponse(response -> {
+					response.headers().add("wiretiger_mock", "redirect to 360_search");
+					return response;
+				}).mock());
+				
 				// DEMO3：拦截所有响应，对响应打标记
 				config.addMock(new ResponsePicture().eval(response -> {
 					return true;

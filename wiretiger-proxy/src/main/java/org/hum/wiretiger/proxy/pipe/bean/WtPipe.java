@@ -10,8 +10,8 @@ import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 
 import io.netty.channel.Channel;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import lombok.Getter;
 
 @Getter
@@ -26,7 +26,7 @@ public class WtPipe {
 	// proxy->server
 	private Channel targetCtx;
 	// request
-	private SoftReference<List<HttpRequest>> requestList = new SoftReference<>(new ArrayList<HttpRequest>());
+	private SoftReference<List<FullHttpRequest>> requestList = new SoftReference<>(new ArrayList<>());
 	// responseList
 	private SoftReference<List<FullHttpResponse>> responseList = new SoftReference<>(new ArrayList<FullHttpResponse>());
 	// pipe status
@@ -52,7 +52,7 @@ public class WtPipe {
 		this.targetCtx = targetCtx;
 	}
 
-	void addRequest(HttpRequest request) {
+	void addRequest(FullHttpRequest request) {
 		this.requestList.get().add(request);
 	}
 
@@ -76,7 +76,7 @@ public class WtPipe {
 		this.name = name;
 	}
 
-	public List<HttpRequest> getRequestList() {
+	public List<FullHttpRequest> getRequestList() {
 		return this.requestList.get();
 	}
 

@@ -15,8 +15,8 @@ import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,8 +50,8 @@ public class FullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
 		wtContext.recordStatus(PipeStatus.Read);
-		if (msg instanceof HttpRequest) {
-			HttpRequest request = (HttpRequest) msg;
+		if (msg instanceof FullHttpRequest) {
+			FullHttpRequest request = (FullHttpRequest) msg;
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			
 			if (request.decoderResult().isFailure()) {
@@ -181,8 +181,8 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		if (msg instanceof HttpRequest) {
-			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (HttpRequest) msg, System.currentTimeMillis()));
+		if (msg instanceof FullHttpRequest) {
+			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), (FullHttpRequest) msg, System.currentTimeMillis()));
 		}
 		// [HTTP] 5.ChannelHandler拦截写事件
 		wtContext.recordStatus(PipeStatus.Forward);

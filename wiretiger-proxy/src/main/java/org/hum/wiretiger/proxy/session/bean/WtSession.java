@@ -2,8 +2,8 @@ package org.hum.wiretiger.proxy.session.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpRequest;
 import lombok.Getter;
 
 @Getter
@@ -13,13 +13,13 @@ public class WtSession {
 	
 	private long id;
 	private Long pipeId;
-	private HttpRequest request;
+	private FullHttpRequest request;
 	private long requestTime;
 	private FullHttpResponse response;
 	private byte[] responseBytes;
 	private long responseTime;
 	
-	public WtSession(Long pipeId, HttpRequest request, long requestTime) {
+	public WtSession(Long pipeId, FullHttpRequest request, long requestTime) {
 		this.id = IdCreator.incrementAndGet();
 		this.pipeId = pipeId;
 		this.request = request;
