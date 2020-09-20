@@ -26,6 +26,7 @@
 【P1】【M9W4】start-module需要重构，封装成可配置化
 【P1】Console没有探活，页面刷新后连接没有断开
 【P1】HTTP和HTTPS的Handler要拆开 
+【P1】简化Mock的API
 
 【P3】Request支持分页
 【P3】修改Session创建时机，不要等到Response完成后才创建Session
