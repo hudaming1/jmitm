@@ -36,7 +36,7 @@ public class FullPipe extends AbstractPipeHandler {
 
 	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext, boolean isHttps, MockHandler mockHandler) {
 		// init
-		super(wtContext, front);
+		super(wtContext);
 		this.mockHandler = mockHandler;
 		this.eventHandler = eventHandler;
 		this.wtContext = wtContext;
@@ -139,7 +139,7 @@ public class FullPipe extends AbstractPipeHandler {
 		if (msg instanceof FullHttpResponse) {
 			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
-				super.front.getChannel().writeAndFlush(msg);
+				wtContext.getClientChannel().writeAndFlush(msg);
 				return ;
 			}
 			WtSession session = reqStack4WattingResponse.pop();
@@ -171,7 +171,7 @@ public class FullPipe extends AbstractPipeHandler {
 		
 		wtContext.recordStatus(PipeStatus.Received);
 		eventHandler.fireChangeEvent(wtContext);
-		super.front.getChannel().writeAndFlush(msg);
+		wtContext.getClientChannel().writeAndFlush(msg);
 	}
 
 	@Override
@@ -205,8 +205,8 @@ public class FullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelInactive4Server(ChannelHandlerContext ctx) throws Exception {
-		if (front.getChannel() != null && front.getChannel().isActive()) {
-			front.getChannel().close();
+		if (wtContext.getClientChannel() != null && wtContext.getClientChannel().isActive()) {
+			wtContext.getClientChannel().close();
 		}
 		removeBackpipe(getBackChannel(ctx.channel()));
 		wtContext.recordStatus(PipeStatus.Closed);
@@ -232,8 +232,8 @@ public class FullPipe extends AbstractPipeHandler {
 	}
 	
 	public void close() {
-		if (front.getChannel() != null && front.getChannel().isActive()) {
-			front.getChannel().close();
+		if (wtContext.getClientChannel() != null && wtContext.getClientChannel().isActive()) {
+			wtContext.getClientChannel().close();
 		}
 		if (backMap != null && !backMap.isEmpty()) {
 			for (BackPipe back : backMap.values()) {

@@ -15,13 +15,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
-	protected FrontPipe front;
 	protected Map<String, BackPipe> backMap;
 	protected WtPipeContext wtContext;
 	private final String BACK_PIPE_KEY = "%s:%s";
 	
-	public AbstractPipeHandler(WtPipeContext wtContext, FrontPipe front) {
-		this.front = front;
+	public AbstractPipeHandler(WtPipeContext wtContext) {
 		this.backMap = new ConcurrentHashMap<>();
 		this.wtContext = wtContext;
 	}
@@ -54,7 +52,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
     	log.info("[" + wtContext.getId() + "]back connect, channel=" + ctx.channel());
     	if (getBackChannel(ctx.channel()) != null) {
     		channelActive4Server(ctx);
-    	} else if (ctx.channel() == front.getChannel()) {
+    	} else if (ctx.channel() == wtContext.getClientChannel()) {
     		log.warn("[" + wtContext.getId() + "]front-channel active");
     	} else {
 			log.warn("[" + wtContext.getId() + "]unknown channel type=" + ctx.channel());
@@ -63,7 +61,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-		if (front.getChannel() == ctx.channel()) {
+		if (wtContext.getClientChannel() == ctx.channel()) {
 			channelInactive4Client(ctx);
 		} else if (getBackChannel(ctx.channel()) != null) {
 			channelInactive4Server(ctx);
@@ -75,7 +73,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		if (front.getChannel() == ctx.channel()) {
+		if (wtContext.getClientChannel() == ctx.channel()) {
 			channelRead4Client(ctx, msg);
 		} else if (getBackChannel(ctx.channel()) != null) {
 			channelRead4Server(ctx, msg);
@@ -87,7 +85,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (front.getChannel() == ctx.channel()) {
+		if (wtContext.getClientChannel() == ctx.channel()) {
 			exceptionCaught4Client(ctx, cause);
 		} else if (getBackChannel(ctx.channel()) != null) {
 			exceptionCaught4Server(ctx, cause);
@@ -99,7 +97,7 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
 	@Override
 	public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		if (front.getChannel() == ctx.channel()) {
+		if (wtContext.getClientChannel() == ctx.channel()) {
 			channelWrite4Client(ctx, msg, promise);
 		} else if (getBackChannel(ctx.channel()) != null) {
 			channelWrite4Server(ctx, msg, promise);
