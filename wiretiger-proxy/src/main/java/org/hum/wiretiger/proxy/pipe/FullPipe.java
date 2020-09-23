@@ -53,6 +53,7 @@ public class FullPipe extends AbstractPipeHandler {
 		if (msg instanceof FullHttpRequest) {
 			FullHttpRequest request = (FullHttpRequest) msg;
 			
+			// XXX
 			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), request, System.currentTimeMillis()));
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			

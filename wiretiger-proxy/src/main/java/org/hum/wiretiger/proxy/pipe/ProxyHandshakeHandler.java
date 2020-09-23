@@ -53,8 +53,9 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
+        ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, eventHandler));
+//      XXX FIRE CLIENT-CONNECT
         eventHandler.fireConnectEvent(wtContext);
-        ctx.pipeline().addLast(new PreFullPipe(wtContext, eventHandler));
     }
 
 	@Override
@@ -69,7 +70,9 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
 		wtContext.recordStatus(PipeStatus.Parsed);
 		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
-		this.eventHandler.fireChangeEvent(wtContext);
+		
+//		XXX FIRE CLIENT PARSED
+//		this.eventHandler.fireChangeEvent(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
     		log.info("[" + wtContext.getId() + "] HTTPS CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
@@ -90,7 +93,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    				new HttpObjectAggregator(Integer.MAX_VALUE),
 	    				new FullRequestDecoder());
 	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true, mockHandler));
-	    		client2ProxyCtx.pipeline().remove(PreFullPipe.class);
+	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			
@@ -132,12 +135,12 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		boolean needDel = false;
 		while (iterator.hasNext()) {
 			// FullPipe怎么才能作为变量传进来
-			if (iterator.next().getValue() instanceof PreFullPipe) {
+			if (iterator.next().getValue() instanceof InactiveChannelHandler) {
 				needDel = true;
 			}
 		}
 		if (needDel) {
-			channel.pipeline().remove(PreFullPipe.class);
+			channel.pipeline().remove(InactiveChannelHandler.class);
 		}
 	}
 }

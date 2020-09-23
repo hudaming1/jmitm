@@ -10,12 +10,12 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PreFullPipe extends ChannelInboundHandlerAdapter {
+public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
 	
 	private EventHandler eventHandler;
 	private WtPipeContext wtContext;
 	
-	public PreFullPipe(WtPipeContext wtContext, EventHandler eventHandler) {
+	public InactiveChannelHandler(WtPipeContext wtContext, EventHandler eventHandler) {
 		this.wtContext = wtContext;
 		this.eventHandler = eventHandler;
 	}
@@ -24,7 +24,7 @@ public class PreFullPipe extends ChannelInboundHandlerAdapter {
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
     	log.info("[" + wtContext.getId() + "] client disconnect");
     	wtContext.recordStatus(PipeStatus.Closed);
-    	wtContext.addEvent(PipeEventType.ClientClosed, "客户端提前断开连接(PreFullPipe)");
+    	wtContext.addEvent(PipeEventType.ClientClosed, "客户端提前断开连接(InactiveChannelHandler)");
     	eventHandler.fireDisconnectEvent(wtContext);
         ctx.fireChannelInactive();
     }
