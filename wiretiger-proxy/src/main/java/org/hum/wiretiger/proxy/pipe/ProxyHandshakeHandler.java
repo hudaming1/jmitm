@@ -36,6 +36,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 
 	private EventHandler eventHandler;
 	private MockHandler mockHandler;
+	private FullPipeHandler fullPipeHandler;
 	private final int _1K = 1024;
 	private final int RequestLineMaxLen = 32 * _1K;
 	private final int RequestHeaderMaxLen = 8 * _1K;
@@ -55,6 +56,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, eventHandler));
 //      XXX FIRE CLIENT-CONNECT
+        fullPipeHandler.clientConnect(wtContext);
         eventHandler.fireConnectEvent(wtContext);
     }
 
