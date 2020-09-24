@@ -6,7 +6,6 @@ import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.WtSessionManager;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
@@ -25,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FullPipe extends AbstractPipeHandler {
 	
 	protected MockHandler mockHandler;
-	protected EventHandler eventHandler;
+	protected FullPipeHandler fullPipeHandler;
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
@@ -34,11 +33,11 @@ public class FullPipe extends AbstractPipeHandler {
 	private BackPipe currentBack;
 	private boolean isHttps;
 
-	public FullPipe(FrontPipe front, EventHandler eventHandler, WtPipeContext wtContext, boolean isHttps, MockHandler mockHandler) {
+	public FullPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, boolean isHttps, MockHandler mockHandler) {
 		// init
 		super(wtContext);
 		this.mockHandler = mockHandler;
-		this.eventHandler = eventHandler;
+		this.fullPipeHandler = fullPipeHandler;
 		this.wtContext = wtContext;
 		this.isHttps = isHttps;
 	}
@@ -66,6 +65,8 @@ public class FullPipe extends AbstractPipeHandler {
 			if (mockHandler != null) {
 				mockHandler.mock(request);
 			}
+			
+			fullPipeHandler.clientRead(wtContext, request);
 
 			InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, isHttps);
 			wtContext.appendRequest(request);
@@ -82,13 +83,15 @@ public class FullPipe extends AbstractPipeHandler {
 							log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
 							wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
 							wtContext.recordStatus(PipeStatus.Error);
-							eventHandler.fireChangeEvent(wtContext);
+							fullPipeHandler.serverConnectFailed(wtContext);
+//							eventHandler.fireChangeEvent(wtContext);
 							close();
 							return ;
 						}
 						wtContext.registServer(currentBack.getChannel());
 						wtContext.recordStatus(PipeStatus.Connected);
-						eventHandler.fireChangeEvent(wtContext);
+						fullPipeHandler.serverConnect(wtContext);
+//						eventHandler.fireChangeEvent(wtContext);
 						wtContext.addEvent(PipeEventType.ServerConnected, "与服务端" + InetAddress + "建立连接完成");
 					}).sync();
 					currentBack.handshakeFuture().addListener(tls-> {
@@ -96,12 +99,14 @@ public class FullPipe extends AbstractPipeHandler {
 							log.error("[" + wtContext.getId() + "] server tls error", tls.cause());
 							wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
 							wtContext.recordStatus(PipeStatus.Error);
-							eventHandler.fireChangeEvent(wtContext);
+							fullPipeHandler.serverHandshakeFail(wtContext);
+//							eventHandler.fireChangeEvent(wtContext);
 							close();
 							return ;
 						}
 						wtContext.addEvent(PipeEventType.ServerTlsFinish, "与服务端" + InetAddress + "握手完成");
 						currentBack.getChannel().pipeline().addLast(this);
+						fullPipeHandler.serverHandshakeSucc(wtContext);
 					}).sync();
 				}
 			} else {
@@ -111,13 +116,15 @@ public class FullPipe extends AbstractPipeHandler {
 							log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
 							wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
 							wtContext.recordStatus(PipeStatus.Error);
-							eventHandler.fireChangeEvent(wtContext);
+//							eventHandler.fireChangeEvent(wtContext);
+							fullPipeHandler.serverConnect(wtContext);
 							close();
 							return ;
 						}
 						wtContext.registServer(currentBack.getChannel());
 						wtContext.recordStatus(PipeStatus.Connected);
-						eventHandler.fireChangeEvent(wtContext);
+						fullPipeHandler.serverConnectFailed(wtContext);
+//						eventHandler.fireChangeEvent(wtContext);
 						wtContext.addEvent(PipeEventType.ServerConnected, "与服务端" + InetAddress + "建立连接完成");
 						currentBack.getChannel().pipeline().addLast(this);
 					}).sync();
@@ -129,7 +136,7 @@ public class FullPipe extends AbstractPipeHandler {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		currentBack.getChannel().writeAndFlush(msg);
-		eventHandler.fireChangeEvent(wtContext);
+//		eventHandler.fireChangeEvent(wtContext);
 	}
 
 	/**
@@ -162,7 +169,8 @@ public class FullPipe extends AbstractPipeHandler {
 			session.setResponse(resp, bytes, System.currentTimeMillis());
 			// TODO 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
 			WtSessionManager.get().add(session);
-			eventHandler.fireNewSessionEvent(wtContext, session);
+//			eventHandler.fireNewSessionEvent(wtContext, session);
+			fullPipeHandler.serverRead(wtContext, resp);
 		} else if (msg instanceof LastHttpContent) { 
 			log.warn("need support more types, find type=" + msg.getClass());
 		} else {
@@ -171,7 +179,7 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		
 		wtContext.recordStatus(PipeStatus.Received);
-		eventHandler.fireChangeEvent(wtContext);
+//		eventHandler.fireChangeEvent(wtContext);
 		wtContext.getClientChannel().writeAndFlush(msg);
 	}
 
@@ -179,7 +187,10 @@ public class FullPipe extends AbstractPipeHandler {
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		wtContext.recordStatus(PipeStatus.Flushed);
 		wtContext.addEvent(PipeEventType.Flushed, "已将服务端响应转发给客户端");
-		eventHandler.fireChangeEvent(wtContext);
+//		eventHandler.fireChangeEvent(wtContext);
+		if (msg instanceof FullHttpResponse) {
+			fullPipeHandler.clientFlush(wtContext, (FullHttpResponse) msg);
+		}
 	}
 
 	@Override
@@ -187,7 +198,10 @@ public class FullPipe extends AbstractPipeHandler {
 		// [HTTP] 5.ChannelHandler拦截写事件
 		wtContext.recordStatus(PipeStatus.Forward);
 		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
-		eventHandler.fireChangeEvent(wtContext);
+//		eventHandler.fireChangeEvent(wtContext);
+		if (msg instanceof FullHttpRequest) {
+			fullPipeHandler.serverFlush(wtContext, (FullHttpRequest) msg);
+		}
 	}
 
 	@Override
@@ -201,7 +215,8 @@ public class FullPipe extends AbstractPipeHandler {
 		}
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
-		eventHandler.fireDisconnectEvent(wtContext);
+		fullPipeHandler.clientClose(wtContext);
+//		eventHandler.fireDisconnectEvent(wtContext);
 	}
 
 	@Override
@@ -212,7 +227,8 @@ public class FullPipe extends AbstractPipeHandler {
 		removeBackpipe(getBackChannel(ctx.channel()));
 		wtContext.recordStatus(PipeStatus.Closed);
 		wtContext.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
-		eventHandler.fireDisconnectEvent(wtContext);
+		fullPipeHandler.serverClose(wtContext);
+//		eventHandler.fireDisconnectEvent(wtContext);
 	}
 
 	@Override
@@ -220,6 +236,7 @@ public class FullPipe extends AbstractPipeHandler {
 		log.error("front exception, pipeId=" + wtContext.getId(), cause);
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "客户端异常：" + cause.getMessage());
+		fullPipeHandler.clientError(wtContext, cause);
 		close();
 	}
 
@@ -228,7 +245,8 @@ public class FullPipe extends AbstractPipeHandler {
 		log.error("back exception, pipeId=" + wtContext.getId(), cause);
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "服务端异常：" + cause.getMessage());
-		eventHandler.fireErrorEvent(wtContext);
+//		eventHandler.fireErrorEvent(wtContext);
+		fullPipeHandler.serverError(wtContext, cause);
 		close();
 	}
 	

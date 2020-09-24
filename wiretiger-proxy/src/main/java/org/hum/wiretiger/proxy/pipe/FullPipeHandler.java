@@ -20,7 +20,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 
-	public abstract void clientConnect0(WtPipeContext ctx);
+	protected abstract void clientConnect0(WtPipeContext ctx);
 
 	public void clientDisconnect(WtPipeContext ctx) {
 		clientDisconnect0(ctx);
@@ -29,7 +29,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientDisconnect0(WtPipeContext ctx);
+	protected abstract void clientDisconnect0(WtPipeContext ctx);
 
 	public void clientParsed(WtPipeContext ctx) {
 		clientParsed0(ctx);
@@ -38,7 +38,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientParsed0(WtPipeContext ctx);
+	protected abstract void clientParsed0(WtPipeContext ctx);
 	
 	public void clientRead(WtPipeContext ctx, FullHttpRequest request) {
 		clientRead0(ctx, request);
@@ -47,7 +47,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientRead0(WtPipeContext ctx, FullHttpRequest request) ;
+	protected abstract void clientRead0(WtPipeContext ctx, FullHttpRequest request) ;
 	
 	public void serverConnect(WtPipeContext ctx) {
 		serverConnect0(ctx);
@@ -56,7 +56,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverConnect0(WtPipeContext ctx);
+	protected abstract void serverConnect0(WtPipeContext ctx);
 	
 	public void serverHandshakeSucc(WtPipeContext ctx) {
 		serverHandshakeSucc0(ctx);
@@ -65,7 +65,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverHandshakeSucc0(WtPipeContext ctx);
+	protected abstract void serverHandshakeSucc0(WtPipeContext ctx);
 	
 	public void serverFlush(WtPipeContext ctx, FullHttpRequest request) {
 
@@ -74,7 +74,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverRead0(WtPipeContext ctx, FullHttpResponse response) ;
+	protected abstract void serverRead0(WtPipeContext ctx, FullHttpResponse response) ;
 	
 	public void serverRead(WtPipeContext ctx, FullHttpResponse response) {
 		serverRead0(ctx, response);
@@ -83,7 +83,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientFlush0(WtPipeContext ctx, FullHttpResponse response) ;
+	protected abstract void clientFlush0(WtPipeContext ctx, FullHttpResponse response) ;
 	
 	public void clientFlush(WtPipeContext ctx, FullHttpResponse response) {
 		clientFlush0(ctx, response);
@@ -92,7 +92,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientClose0(WtPipeContext ctx) ;
+	protected abstract void clientClose0(WtPipeContext ctx) ;
 	
 	public void clientClose(WtPipeContext ctx) {
 		clientClose0(ctx);
@@ -101,7 +101,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverClose0(WtPipeContext ctx) ;
+	protected abstract void serverClose0(WtPipeContext ctx) ;
 	
 	public void serverClose(WtPipeContext ctx) {
 		serverClose0(ctx);
@@ -110,25 +110,25 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientError0(WtPipeContext ctx);
+	protected abstract void clientError0(WtPipeContext ctx, Throwable cause);
 	
-	public void clientError(WtPipeContext ctx) {
-		clientError0(ctx);
+	public void clientError(WtPipeContext ctx, Throwable cause) {
+		clientError0(ctx, cause);
 		if (next != null) {
-			this.next.clientError(ctx);
+			this.next.clientError(ctx, cause);
 		}
 	}
 	
-	public abstract void serverError0(WtPipeContext ctx) ;
+	protected abstract void serverError0(WtPipeContext ctx, Throwable cause) ;
 	
-	public void serverError(WtPipeContext ctx) {
-		serverError0(ctx);
+	public void serverError(WtPipeContext ctx, Throwable cause) {
+		serverError0(ctx, cause);
 		if (next != null) {
-			this.next.serverError(ctx);
+			this.next.serverError(ctx, cause);
 		}
 	}
 	
-	public abstract void clientHandshakeSucc0(WtPipeContext ctx) ;
+	protected abstract void clientHandshakeSucc0(WtPipeContext ctx) ;
 
 	public void clientHandshakeSucc(WtPipeContext ctx) {
 		clientHandshakeSucc0(ctx);
@@ -137,7 +137,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void clientHandshakeFail0(WtPipeContext ctx) ;
+	protected abstract void clientHandshakeFail0(WtPipeContext ctx) ;
 	
 	public void clientHandshakeFail(WtPipeContext ctx) {
 		clientHandshakeFail0(ctx);
@@ -146,7 +146,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverConnectFailed0(WtPipeContext ctx);
+	protected abstract void serverConnectFailed0(WtPipeContext ctx);
 	
 	public void serverConnectFailed(WtPipeContext ctx) {
 		serverConnectFailed0(ctx);
@@ -155,7 +155,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	public abstract void serverHandshakeFail0(WtPipeContext ctx) ;
+	protected abstract void serverHandshakeFail0(WtPipeContext ctx) ;
 	
 	public void serverHandshakeFail(WtPipeContext ctx) {
 		serverHandshakeFail0(ctx);

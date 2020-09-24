@@ -74,6 +74,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
 		
 //		XXX FIRE CLIENT PARSED
+		fullPipeHandler.clientParsed(wtContext);
 //		this.eventHandler.fireChangeEvent(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
@@ -94,7 +95,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
 	    				new HttpObjectAggregator(Integer.MAX_VALUE),
 	    				new FullRequestDecoder());
-	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, true, mockHandler));
+	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, true, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
@@ -108,7 +109,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     	} else {
     		
     		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
-    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), eventHandler, wtContext, false, mockHandler));
+    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, false, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		
