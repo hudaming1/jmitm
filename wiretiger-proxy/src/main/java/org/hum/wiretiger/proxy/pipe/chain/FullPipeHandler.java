@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.chain;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 

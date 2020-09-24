@@ -7,10 +7,10 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
-import org.hum.wiretiger.proxy.pipe.FullPipeEventHandler;
-import org.hum.wiretiger.proxy.pipe.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
+import org.hum.wiretiger.proxy.pipe.chain.FullPipeEventHandler;
+import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 

@@ -1,13 +1,11 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.chain;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class FullPipeEventHandler extends FullPipeHandler {
 	
 	private EventHandler eventHandler;
@@ -19,7 +17,6 @@ public class FullPipeEventHandler extends FullPipeHandler {
 
 	@Override
 	protected void clientConnect0(WtPipeContext ctx) {
-		log.info("FullPipeEventHandler connect log");
 		eventHandler.fireConnectEvent(ctx);
 	}
 

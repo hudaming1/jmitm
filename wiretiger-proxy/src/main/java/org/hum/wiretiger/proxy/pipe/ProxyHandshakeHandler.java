@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
@@ -53,9 +54,8 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, fullPipeHandler));
-//      XXX FIRE CLIENT-CONNECT
+        
         fullPipeHandler.clientConnect(wtContext);
-//        eventHandler.fireConnectEvent(wtContext);
     }
 
 	@Override
@@ -71,9 +71,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		wtContext.recordStatus(PipeStatus.Parsed);
 		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
 		
-//		XXX FIRE CLIENT PARSED
 		fullPipeHandler.clientParsed(wtContext);
-//		this.eventHandler.fireChangeEvent(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
     		log.info("[" + wtContext.getId() + "] HTTPS CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
