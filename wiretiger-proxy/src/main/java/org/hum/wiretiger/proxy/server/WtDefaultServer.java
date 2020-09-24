@@ -7,6 +7,8 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
+import org.hum.wiretiger.proxy.pipe.FullPipeEventHandler;
+import org.hum.wiretiger.proxy.pipe.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
@@ -50,7 +52,7 @@ public class WtDefaultServer implements WtServer {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
-		ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(eventHandler, mockHandler);
+		ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(buildFullPipeHandler(config, eventHandler), mockHandler);
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
@@ -76,6 +78,10 @@ public class WtDefaultServer implements WtServer {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();
 		}
+	}
+	
+	private FullPipeHandler buildFullPipeHandler(WtCoreConfig config, EventHandler eventHandler) {
+		return new FullPipeEventHandler(null, eventHandler);
 	}
 	
 	@Override

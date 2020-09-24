@@ -3,7 +3,6 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
@@ -12,12 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
 	
-	private EventHandler eventHandler;
+	private FullPipeHandler fullPipeHandler;
 	private WtPipeContext wtContext;
 	
-	public InactiveChannelHandler(WtPipeContext wtContext, EventHandler eventHandler) {
+	public InactiveChannelHandler(WtPipeContext wtContext, FullPipeHandler fullPipeHandler) {
 		this.wtContext = wtContext;
-		this.eventHandler = eventHandler;
+		this.fullPipeHandler = fullPipeHandler;
 	}
 
     @Override
@@ -25,7 +24,8 @@ public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
     	log.info("[" + wtContext.getId() + "] client disconnect");
     	wtContext.recordStatus(PipeStatus.Closed);
     	wtContext.addEvent(PipeEventType.ClientClosed, "客户端提前断开连接(InactiveChannelHandler)");
-    	eventHandler.fireDisconnectEvent(wtContext);
+//    	eventHandler.fireDisconnectEvent(wtContext);
+    	fullPipeHandler.clientClose(wtContext);
         ctx.fireChannelInactive();
     }
     
@@ -40,7 +40,8 @@ public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
     	log.error("[" + wtContext.getId() + "] client connection error", cause);
     	wtContext.recordStatus(PipeStatus.Error);
     	wtContext.addEvent(PipeEventType.Error, "客户端建立连接时发生异常," + cause.getMessage());
-    	eventHandler.fireChangeEvent(wtContext);
+//    	eventHandler.fireChangeEvent(wtContext);
+    	fullPipeHandler.clientError(wtContext, cause);
     	ctx.close();
     }
 }

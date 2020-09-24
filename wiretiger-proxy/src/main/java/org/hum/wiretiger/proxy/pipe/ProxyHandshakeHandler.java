@@ -10,7 +10,6 @@ import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
-import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -34,7 +33,6 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
-	private EventHandler eventHandler;
 	private MockHandler mockHandler;
 	private FullPipeHandler fullPipeHandler;
 	private final int _1K = 1024;
@@ -42,8 +40,8 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	private final int RequestHeaderMaxLen = 8 * _1K;
 	private final int RequestChunkedMaxLen = 1024 * _1K;
 	
-	public ProxyHandshakeHandler(EventHandler eventHandler, MockHandler mockHandler) {
-		this.eventHandler = eventHandler;
+	public ProxyHandshakeHandler(FullPipeHandler fullPipeHandler, MockHandler mockHandler) {
+		this.fullPipeHandler = fullPipeHandler;
 		this.mockHandler = mockHandler;
 	}
 	
@@ -54,10 +52,10 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
-        ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, eventHandler));
+        ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, fullPipeHandler));
 //      XXX FIRE CLIENT-CONNECT
         fullPipeHandler.clientConnect(wtContext);
-        eventHandler.fireConnectEvent(wtContext);
+//        eventHandler.fireConnectEvent(wtContext);
     }
 
 	@Override
