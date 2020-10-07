@@ -1,11 +1,14 @@
 package org.hum.wiretiger.proxy.util;
 
 import java.net.InetSocketAddress;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadFactory;
 
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -41,4 +44,14 @@ public class NettyUtils {
 		return new InetAddress(address.getHostName(), address.getPort());
 	}
 	
+	public static ChannelHandler findChannelHandler(Channel channel, Class<?> findType) {
+		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
+		while (iterator.hasNext()) {
+			ChannelHandler channelHandler = iterator.next().getValue();
+			if (findType.isInstance(channelHandler)) {
+				return channelHandler;
+			}
+		}
+		return null;
+	}
 }

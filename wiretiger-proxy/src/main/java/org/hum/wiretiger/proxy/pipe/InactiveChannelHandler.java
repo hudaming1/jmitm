@@ -25,7 +25,6 @@ public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
     	log.info("[" + wtContext.getId() + "] client disconnect");
     	wtContext.recordStatus(PipeStatus.Closed);
     	wtContext.addEvent(PipeEventType.ClientClosed, "客户端提前断开连接(InactiveChannelHandler)");
-//    	eventHandler.fireDisconnectEvent(wtContext);
     	fullPipeHandler.clientClose(wtContext);
         ctx.fireChannelInactive();
     }
@@ -41,7 +40,6 @@ public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
     	log.error("[" + wtContext.getId() + "] client connection error", cause);
     	wtContext.recordStatus(PipeStatus.Error);
     	wtContext.addEvent(PipeEventType.Error, "客户端建立连接时发生异常," + cause.getMessage());
-//    	eventHandler.fireChangeEvent(wtContext);
     	fullPipeHandler.clientError(wtContext, cause);
     	ctx.close();
     }

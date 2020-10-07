@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+import org.hum.wiretiger.proxy.util.NettyUtils;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +42,11 @@ public class WtPipeManager {
 			log.error(clientChannel + "has exists, id=" + pipes4ClientChannel.get(clientChannel).getId());
 			throw new WiretigerException(clientChannel + " has exists");
 		}
+		InetAddress inetAddr = NettyUtils.toHostAndPort(clientChannel);
+		
 		WtPipeContext context = new WtPipeContext(counter.getAndIncrement(), clientChannel);
 		context.setName(clientChannel.remoteAddress().toString());
+        context.setSource(inetAddr.getHost(), inetAddr.getPort());
 		pipes4Id.put(context.getId(), context);
 		pipes4ClientChannel.put(clientChannel, context);
 		return context;

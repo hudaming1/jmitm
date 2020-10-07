@@ -91,7 +91,7 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo3() {
 		return new RequestPicture().eval(request -> {
-			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && request.uri().contains("hqydong_4f3f63f09807e2a2535ee5c2b6100511"); 
+			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && request.uri().contains("dong_30a61f45c8d4634ca14da8829046271f"); 
 		}).rebuildResponse(response -> {
 			try {
 				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource("/mock/google.png").getFile()));

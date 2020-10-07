@@ -1,8 +1,5 @@
 package org.hum.wiretiger.proxy.pipe;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
@@ -17,7 +14,6 @@ import org.hum.wiretiger.proxy.util.NettyUtils;
 import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -51,8 +47,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         // [HTTP] 1.建立front连接
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
-        InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
-        wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, fullPipeHandler));
         
         fullPipeHandler.clientConnect(wtContext);
@@ -103,43 +97,21 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
     	} else {
-    		
-    		if (!fullPipeIsExists(client2ProxyCtx.channel())) {
+
+    		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), FullPipe.class) == null) {
     			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, false, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		
-    		deletePreFullPipeIfNesscessary(client2ProxyCtx.channel());
+    		ChannelHandler inactiveChannelHandler = NettyUtils.findChannelHandler(client2ProxyCtx.channel(), InactiveChannelHandler.class);
+    		if (inactiveChannelHandler != null) {
+    			client2ProxyCtx.pipeline().remove(inactiveChannelHandler);
+    		}
     		
     		// [HTTP] 2.建立back端连接
     		log.info("[" + wtContext.getId() + "] HTTP CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		
     		client2ProxyCtx.fireChannelRead(request);
     	}
-	}
-	
-	private boolean fullPipeIsExists(Channel channel) {
-		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
-		while (iterator.hasNext()) {
-			// FullPipe怎么才能作为变量传进来
-			if (iterator.next().getValue() instanceof FullPipe) {
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	private void deletePreFullPipeIfNesscessary(Channel channel) {
-		Iterator<Entry<String, ChannelHandler>> iterator = channel.pipeline().iterator();
-		boolean needDel = false;
-		while (iterator.hasNext()) {
-			// FullPipe怎么才能作为变量传进来
-			if (iterator.next().getValue() instanceof InactiveChannelHandler) {
-				needDel = true;
-			}
-		}
-		if (needDel) {
-			channel.pipeline().remove(InactiveChannelHandler.class);
-		}
 	}
 }
