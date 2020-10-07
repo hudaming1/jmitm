@@ -12,6 +12,10 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 定义了管道的生命周期
+ * @author hudaming
+ */
 @Slf4j
 public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 

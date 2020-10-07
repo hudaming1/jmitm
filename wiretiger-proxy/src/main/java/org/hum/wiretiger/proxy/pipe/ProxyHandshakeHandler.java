@@ -85,7 +85,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
 	    				new HttpObjectAggregator(Integer.MAX_VALUE),
 	    				new FullRequestDecoder());
-	    		client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, true, mockHandler));
+	    		client2ProxyCtx.pipeline().addLast(new HttpsPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
@@ -99,7 +99,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     	} else {
 
     		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), FullPipe.class) == null) {
-    			client2ProxyCtx.pipeline().addLast(new FullPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, false, mockHandler));
+    			client2ProxyCtx.pipeline().addLast(new HttpPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		
