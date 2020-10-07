@@ -5,6 +5,11 @@ import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 
+/**
+ * TODO 将所有abstract增加返回值，根据返回值判断是否需要调用下一个节点
+ * @author hudaming
+ *
+ */
 public abstract class FullPipeHandler {
 	
 	private FullPipeHandler next;

@@ -62,6 +62,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		wtContext.setTarget(InetAddress.getHost(), InetAddress.getPort());
 		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
+		// TODO Context Wrapper 将status和event都放到一个handler中
 		wtContext.recordStatus(PipeStatus.Parsed);
 		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
 		
