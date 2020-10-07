@@ -12,6 +12,7 @@ import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeEventHandler;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
+import org.hum.wiretiger.proxy.session.SessionManagerHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -81,7 +82,7 @@ public class WtDefaultServer implements WtServer {
 	}
 	
 	private FullPipeHandler buildFullPipeHandler(WtCoreConfig config, EventHandler eventHandler) {
-		return new FullPipeEventHandler(null, eventHandler);
+		return new SessionManagerHandler(new FullPipeEventHandler(null, eventHandler));
 	}
 	
 	@Override

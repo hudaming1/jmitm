@@ -7,8 +7,6 @@ import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiretiger.proxy.session.WtSessionManager;
-import org.hum.wiretiger.proxy.session.bean.WtSession;
 
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,12 +29,9 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	
 	protected MockHandler mockHandler;
 	protected FullPipeHandler fullPipeHandler;
-	/**
-	 * 保存了当前HTTP连接，没有等待响应的请求
-	 */
-	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 	// 当前保持的服务端连接
 	protected BackPipe currentBack;
+	protected Stack<FullHttpRequest> mockRequestStack = new Stack<>();
 
 	public AbstractFullPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
 		// init
@@ -56,8 +51,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 		if (msg instanceof FullHttpRequest) {
 			FullHttpRequest request = (FullHttpRequest) msg;
 			
-			// XXX
-			reqStack4WattingResponse.push(new WtSession(wtContext.getId(), request, System.currentTimeMillis()));
 			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			
 			if (request.decoderResult().isFailure()) {
@@ -68,6 +61,7 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 			// mock
 			if (mockHandler != null) {
 				mockHandler.mock(request);
+				mockRequestStack.push(request);
 			}
 			
 			fullPipeHandler.clientRead(wtContext, request);
@@ -89,30 +83,16 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelRead4Server(ChannelHandlerContext ctx, Object msg) throws Exception {
 		if (msg instanceof FullHttpResponse) {
-			if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
-				log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
-				wtContext.getClientChannel().writeAndFlush(msg);
-				return ;
-			}
-			WtSession session = reqStack4WattingResponse.pop();
 			FullHttpResponse resp = (FullHttpResponse) msg;
 			
 			// do mock response..
 			if (mockHandler != null) {
-				mockHandler.mock(session.getRequest(), resp);
+				mockHandler.mock(mockRequestStack.pop(), resp);
 			}
 			
 			wtContext.appendResponse(resp);
 			wtContext.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
 			
-			byte[] bytes = null;
-			if (resp.content().readableBytes() > 0) {
-				bytes = new byte[resp.content().readableBytes()];
-				resp.content().duplicate().readBytes(bytes);
-			}
-			session.setResponse(resp, bytes, System.currentTimeMillis());
-			// TODO 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
-			WtSessionManager.get().add(session);
 			fullPipeHandler.serverRead(wtContext, resp);
 		} else if (msg instanceof LastHttpContent) { 
 			log.warn("need support more types, find type=" + msg.getClass());
