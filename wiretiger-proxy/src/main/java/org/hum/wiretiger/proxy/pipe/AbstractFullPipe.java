@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Sharable
-public abstract class FullPipe extends AbstractPipeHandler {
+public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	
 	protected MockHandler mockHandler;
 	protected FullPipeHandler fullPipeHandler;
@@ -38,7 +38,7 @@ public abstract class FullPipe extends AbstractPipeHandler {
 	// 当前保持的服务端连接
 	protected BackPipe currentBack;
 
-	public FullPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
+	public AbstractFullPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
 		// init
 		super(wtContext);
 		this.mockHandler = mockHandler;

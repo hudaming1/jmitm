@@ -98,7 +98,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
     	} else {
 
-    		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), FullPipe.class) == null) {
+    		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), AbstractFullPipe.class) == null) {
     			client2ProxyCtx.pipeline().addLast(new HttpPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
