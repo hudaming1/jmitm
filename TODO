@@ -21,7 +21,6 @@
 【OK】MockResponse可以读取本地文件Demo
 
 ##功能优化
-【P0】【M9W3】ProxyHandshakeHandler和Fullpipe都要重构(用WiretigerFullHandler串起所有事件，然后将eventHandler、statusHandler、mockHandler形成一个handlerChain)
 【P0】【M9W4】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【P1】【M9W4】start-module需要重构，封装成可配置化
 【P1】Console没有探活，页面刷新后连接没有断开

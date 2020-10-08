@@ -3,9 +3,10 @@ package org.hum.wiretiger.console.http.config;
 import lombok.Data;
 
 @Data
-public class WtConsoleHttpConfig {
+public class WtConsoleConfig {
 
-	private int port;
+	private int httpPort;
+	private int webSocketPort;
 	private String webRoot;
 	private String webXmlPath;
 }

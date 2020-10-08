@@ -18,9 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * PipeContext的实现类，抽象了Pipe整个通信流程，不关心Http和Https协议
- * <pre>
- *    
- * </pre>
  * @author hudaming
  */
 @Slf4j

@@ -10,7 +10,6 @@ import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeEventHandler;
-import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.SessionManagerHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -60,11 +59,14 @@ public class WtDefaultServer implements WtServer {
 			if (config.isDebug()) {
 				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
+			// singleton
+			FullPipeEventHandler pipeEventHandler = new FullPipeEventHandler(null, eventHandler);
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					FullPipeHandler handlerChain = buildFullPipeHandler(config, eventHandler);
-					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(handlerChain, mockHandler);
+					// sessionManagerHandler需要保证每一个连接独享
+					SessionManagerHandler sessionManagerHandler = new SessionManagerHandler(pipeEventHandler);
+					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(sessionManagerHandler, mockHandler);
 					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}
 			});
@@ -80,10 +82,6 @@ public class WtDefaultServer implements WtServer {
 			bossGroup.shutdownGracefully();
 			masterThreadPool.shutdownGracefully();
 		}
-	}
-	
-	private FullPipeHandler buildFullPipeHandler(WtCoreConfig config, EventHandler eventHandler) {
-		return new SessionManagerHandler(new FullPipeEventHandler(null, eventHandler));
 	}
 	
 	@Override
