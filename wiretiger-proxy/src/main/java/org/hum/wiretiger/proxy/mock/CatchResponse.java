@@ -1,16 +1,16 @@
 package org.hum.wiretiger.proxy.mock;
 
-public class ResponsePicture {
+public class CatchResponse {
 	
 	private ResponseInterceptor responseInterceptor;
 	private ResponseRebuild responseRebuild;
 
-	public ResponsePicture eval(ResponseInterceptor responseInterceptor) {
+	public CatchResponse eval(ResponseInterceptor responseInterceptor) {
 		this.responseInterceptor = responseInterceptor;
 		return this;
 	}
 
-	public ResponsePicture rebuildResponse(ResponseRebuild responseRebuild) {
+	public CatchResponse rebuildResponse(ResponseRebuild responseRebuild) {
 		this.responseRebuild = responseRebuild;
 		return this;
 	}

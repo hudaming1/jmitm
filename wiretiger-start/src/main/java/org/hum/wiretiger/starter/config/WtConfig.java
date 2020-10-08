@@ -9,8 +9,13 @@ public class WtConfig {
 	private WtCoreConfig coreConfig = new WtCoreConfig();
 	private WtConsoleConfig consoleConfig = new WtConsoleConfig();
 	
-	public void addMock(Mock mock) {
-		this.coreConfig.addMock(mock);
+	public void addMock(Mock... mocks) {
+		if (mocks == null || mocks.length == 0) {
+			return ;
+		}
+		for (Mock mock : mocks) {
+			this.coreConfig.addMock(mock);
+		}
 	}
 
 	public int getProxyPort() {
@@ -36,14 +41,18 @@ public class WtConfig {
 	public void setDebug(boolean isDebug) {
 		coreConfig.setDebug(isDebug);
 	}
+	
+	public WtCoreConfig getWtCoreConfig() {
+		return coreConfig;
+	}
 
 	/** console config **/
 	
-	public int getConsolePort() {
+	public int getConsoleHttpPort() {
 		return consoleConfig.getHttpPort();
 	}
 
-	public void setConsolePort(int port) {
+	public void setConsoleHttpPort(int port) {
 		consoleConfig.setHttpPort(port);
 	}
 

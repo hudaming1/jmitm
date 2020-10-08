@@ -11,9 +11,9 @@ import lombok.Data;
 public class WtCoreConfig {
 
 	// 监听端口
-	private Integer port;
+	private int port;
 	// 线程池
-	private Integer threads;
+	private int threads = Runtime.getRuntime().availableProcessors();
 	//
 	private boolean isDebug;
 	//

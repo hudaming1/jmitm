@@ -4,28 +4,82 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.hum.wiretiger.console.common.listener.Console4WsListener;
+import org.hum.wiretiger.console.http.ConsoleServer;
+import org.hum.wiretiger.console.http.config.WtConsoleConfig;
+import org.hum.wiretiger.console.websocket.WebSocketServer;
+import org.hum.wiretiger.proxy.config.WtCoreConfig;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
 import org.hum.wiretiger.proxy.server.WtServerBuilder;
-import org.hum.wiretiger.starter.config.WtConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WiretigerServerRun {
+public class WiretigerServerRun2 {
 	
-	public static void main(String[] args) throws Exception {
-		WtConfig config = new WtConfig();
-		config.setProxyPort(52007);
-		config.setConsoleHttpPort(8080);
-		config.setConsoleWsPort(52996);
-		config.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
-		
-		WtServerBuilder.init(config.getWtCoreConfig()).addEventListener(new Console4WsListener()).build().start();
+	public static void start() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				// config
+				WtCoreConfig config = new WtCoreConfig();
+				config.setPort(52007);
+				config.setThreads(Runtime.getRuntime().availableProcessors());
+				config.setDebug(false);
+				
+				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
+				config.addMock(mockDemo1());
+				
+				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
+				config.addMock(mockDemo2());
+
+				// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
+				config.addMock(mockDemo3());
+				
+				// DEMO4：拦截所有响应，对响应打标记
+				config.addMock(mockDemo4());
+
+				// DEMO5：MockResponse
+				config.addMock(mockDemo5());
+				
+				WtServerBuilder.init(config).addEventListener(new Console4WsListener()).build().start();
+			}
+
+		}).start();
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					WtConsoleConfig consoleConfig = new WtConsoleConfig();
+					consoleConfig.setHttpPort(8080);
+					consoleConfig.setWebRoot(ConsoleServer.class.getResource("/webroot").getFile());
+					consoleConfig.setWebXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
+					ConsoleServer.startJetty(consoleConfig);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
+
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					new WebSocketServer(52996).start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}).start();
 	}
 
-	// DEMO4：拦截所有响应，对响应打标记
+	public static void main(String[] args) throws Exception {
+		WiretigerServerRun2.start();
+	}
+
 	private static Mock mockDemo4() {
 		return new CatchResponse().eval(response -> {
 			return true;
@@ -35,13 +89,12 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && request.uri().contains("dong_30a61f45c8d4634ca14da8829046271f"); 
 		}).rebuildResponse(response -> {
 			try {
-				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource("/mock/google.png").getFile()));
+				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun2.class.getResource("/mock/google.png").getFile()));
 				byte[] bytes = new byte[fileInputStream.available()];
 				fileInputStream.read(bytes);
 				fileInputStream.close();
@@ -57,7 +110,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
 	private static Mock mockDemo2() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
@@ -73,7 +125,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 	private static Mock mockDemo1() {
 		// 将wiretiger.com重定向到localhost:8080
 		return new CatchRequest().eval(request -> {
@@ -84,7 +135,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO5：MockResponse
 	private static Mock mockDemo5() {
 		return new CatchRequest().eval(request -> {
 			return request.uri().contains("/sms/replenishment/transfer/listTransferByPage");
