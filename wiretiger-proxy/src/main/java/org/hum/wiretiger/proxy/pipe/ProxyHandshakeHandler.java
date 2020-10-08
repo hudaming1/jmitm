@@ -15,7 +15,6 @@ import org.hum.wiretiger.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -27,7 +26,6 @@ import io.netty.util.AttributeKey;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Sharable
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
 	private MockHandler mockHandler;

@@ -37,11 +37,13 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		return null;
 	}
 
-	protected BackPipe initBackpipe(InetAddress InetAddress, boolean isHttps) {
-		BackPipe newBackpipe = new BackPipe(InetAddress.getHost(), InetAddress.getPort(), isHttps);
+	protected BackPipe initBackpipe(InetAddress InetAddress) {
+		BackPipe newBackpipe = initBackpipe0(InetAddress);
 		backMap.put(String.format(BACK_PIPE_KEY, InetAddress.getHost(), InetAddress.getPort()), newBackpipe);
 		return newBackpipe;
-	}
+	} 
+	
+	protected abstract BackPipe initBackpipe0(InetAddress InetAddress);
 	
 	protected BackPipe select(String host, int port) {
 		return backMap.get(String.format(BACK_PIPE_KEY, host, port));

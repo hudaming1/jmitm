@@ -25,7 +25,7 @@ public class HttpsPipe extends AbstractFullPipe {
 
 		currentBack = super.select(InetAddress.getHost(), InetAddress.getPort());
 		if (currentBack == null) {
-			currentBack = initBackpipe(InetAddress, true);
+			currentBack = initBackpipe(InetAddress);
 		}
 
 		if (!currentBack.isActive()) {
@@ -57,5 +57,10 @@ public class HttpsPipe extends AbstractFullPipe {
 				fullPipeHandler.serverHandshakeSucc(wtContext);
 			}).sync();
 		}
+	}
+
+	@Override
+	protected BackPipe initBackpipe0(InetAddress InetAddress) {
+		return new BackPipe(InetAddress.getHost(), InetAddress.getPort(), true);
 	}
 }
