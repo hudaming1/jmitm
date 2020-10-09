@@ -46,7 +46,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, fullPipeHandler));
-        
         fullPipeHandler.clientConnect(wtContext);
     }
 
@@ -95,6 +94,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(FullRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
+    		log.info("[" + wtContext.getId() + "] flush connectline");
     	} else {
 
     		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), AbstractFullPipe.class) == null) {

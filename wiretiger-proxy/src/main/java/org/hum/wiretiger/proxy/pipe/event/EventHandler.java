@@ -56,7 +56,7 @@ public class EventHandler {
 	private WiretigerPipe convert(WtPipeContext context) {
 		WiretigerPipe pipeVo = new WiretigerPipe();
 		InetSocketAddress source = (InetSocketAddress) context.getClientChannel().remoteAddress();
-		pipeVo.setSourceHost(source.getHostName());
+		pipeVo.setSourceHost(source.getHostString());
 		pipeVo.setSourcePort(source.getPort());
 		pipeVo.setProtocol(context.getProtocol());
 		pipeVo.setPipeId(context.getId() + "");

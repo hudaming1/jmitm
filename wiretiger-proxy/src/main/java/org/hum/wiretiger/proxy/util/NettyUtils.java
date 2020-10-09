@@ -41,7 +41,7 @@ public class NettyUtils {
 	
 	public static InetAddress toHostAndPort(Channel channel) {
 		InetSocketAddress address = (InetSocketAddress) channel.remoteAddress();
-		return new InetAddress(address.getHostName(), address.getPort());
+		return new InetAddress(address.getHostString(), address.getPort());
 	}
 	
 	public static ChannelHandler findChannelHandler(Channel channel, Class<?> findType) {
