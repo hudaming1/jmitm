@@ -8,7 +8,7 @@ import org.hum.wiretiger.proxy.mock.Mock;
 import lombok.Data;
 
 @Data
-public class WtCoreConfig {
+public class WiretigerCoreConfig {
 
 	// 监听端口
 	private int port;

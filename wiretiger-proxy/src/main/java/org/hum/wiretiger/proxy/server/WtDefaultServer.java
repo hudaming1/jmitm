@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
-import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
@@ -30,13 +30,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WtDefaultServer implements WtServer {
 	
-	private WtCoreConfig config;
+	private WiretigerCoreConfig config;
 	
 	private List<EventListener> listeners;
 	
 	private MockHandler mockHandler;
 
-	public WtDefaultServer(WtCoreConfig config) {
+	public WtDefaultServer(WiretigerCoreConfig config) {
 		this.config = config;
 	}
 

@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.hum.wiretiger.console.common.listener.Console4WsListener;
-import org.hum.wiretiger.proxy.mock.Mock;
+import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
-import org.hum.wiretiger.proxy.server.WtServerBuilder;
-import org.hum.wiretiger.starter.config.WtConfig;
+import org.hum.wiretiger.proxy.mock.Mock;
+import org.hum.wiretiger.starter.config.WiretigerBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,13 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 public class WiretigerServerRun {
 	
 	public static void main(String[] args) throws Exception {
-		WtConfig config = new WtConfig();
-		config.setProxyPort(52007);
-		config.setConsoleHttpPort(8080);
-		config.setConsoleWsPort(52996);
-		config.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
+		WiretigerBuilder wtBuilder = new WiretigerBuilder();
+		wtBuilder.proxyPort(52007);
+		wtBuilder.consoleHttpPort(8080);
+		wtBuilder.consoleWsPort(52996);
+		wtBuilder.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
+		wtBuilder.addEventListener(new Console4WsListener());
+		wtBuilder.webRoot(ConsoleServer.class.getResource("/webroot").getFile());
+		wtBuilder.webXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
-		WtServerBuilder.init(config.getWtCoreConfig()).addEventListener(new Console4WsListener()).build().start();
+		wtBuilder.build().start();
 	}
 
 	// DEMO4：拦截所有响应，对响应打标记

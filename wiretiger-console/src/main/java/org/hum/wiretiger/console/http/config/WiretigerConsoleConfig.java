@@ -3,7 +3,7 @@ package org.hum.wiretiger.console.http.config;
 import lombok.Data;
 
 @Data
-public class WtConsoleConfig {
+public class WiretigerConsoleConfig {
 
 	private int httpPort;
 	private int webSocketPort;

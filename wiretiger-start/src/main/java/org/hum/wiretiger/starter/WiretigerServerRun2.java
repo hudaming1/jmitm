@@ -5,9 +5,9 @@ import java.io.FileInputStream;
 
 import org.hum.wiretiger.console.common.listener.Console4WsListener;
 import org.hum.wiretiger.console.http.ConsoleServer;
-import org.hum.wiretiger.console.http.config.WtConsoleConfig;
+import org.hum.wiretiger.console.http.config.WiretigerConsoleConfig;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
-import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
@@ -23,7 +23,7 @@ public class WiretigerServerRun2 {
 			@Override
 			public void run() {
 				// config
-				WtCoreConfig config = new WtCoreConfig();
+				WiretigerCoreConfig config = new WiretigerCoreConfig();
 				config.setPort(52007);
 				config.setThreads(Runtime.getRuntime().availableProcessors());
 				config.setDebug(false);
@@ -52,11 +52,11 @@ public class WiretigerServerRun2 {
 			@Override
 			public void run() {
 				try {
-					WtConsoleConfig consoleConfig = new WtConsoleConfig();
+					WiretigerConsoleConfig consoleConfig = new WiretigerConsoleConfig();
 					consoleConfig.setHttpPort(8080);
 					consoleConfig.setWebRoot(ConsoleServer.class.getResource("/webroot").getFile());
 					consoleConfig.setWebXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
-					ConsoleServer.startJetty(consoleConfig);
+//					ConsoleServer.startJetty(consoleConfig);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

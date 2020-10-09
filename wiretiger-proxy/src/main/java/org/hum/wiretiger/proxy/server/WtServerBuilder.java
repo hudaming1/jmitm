@@ -3,17 +3,17 @@ package org.hum.wiretiger.proxy.server;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hum.wiretiger.proxy.config.WtCoreConfig;
+import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 
 public class WtServerBuilder {
 	
-	private WtCoreConfig config;
+	private WiretigerCoreConfig config;
 	
 	private List<EventListener> listeners;
 
-	public static WtServerBuilder init(WtCoreConfig config) {
+	public static WtServerBuilder init(WiretigerCoreConfig config) {
 		WtServerBuilder serverBuilder = new WtServerBuilder();
 		serverBuilder.config = config;
 		serverBuilder.listeners = new ArrayList<>();
