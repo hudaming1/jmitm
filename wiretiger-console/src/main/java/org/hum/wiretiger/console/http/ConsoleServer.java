@@ -15,7 +15,6 @@ public class ConsoleServer {
 
 	public void startJetty() throws Exception {
 		server.start();
-		server.join();
 	}
 
 	public static void stopJetty() throws Exception {

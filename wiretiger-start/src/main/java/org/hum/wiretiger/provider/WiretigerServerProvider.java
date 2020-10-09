@@ -10,6 +10,10 @@ import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.server.WtDefaultServer;
 
+import io.netty.channel.ChannelFuture;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class WiretigerServerProvider {
 	
 	private WtDefaultServer proxyServer;
@@ -30,30 +34,18 @@ public class WiretigerServerProvider {
 		this.webSocketServer = new WebSocketServer(consoleConfig.getWebSocketPort());
 	}
 
-	public void start() {
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				proxyServer.start();				
-			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					consoleServer.startJetty();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}			
-			}
-		}).start();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				webSocketServer.start();			
-			}
-		}).start();
-		
+	public void start() throws InterruptedException {
+		ChannelFuture proxyStartFuture = proxyServer.start();
+		try {
+			consoleServer.startJetty();
+		} catch (Exception e) {
+			log.error("console-server start error", e);
+		}
+		ChannelFuture wsStartFuture = webSocketServer.start();
+		proxyStartFuture.sync();
+		log.info("proxy server started, listening port:" + proxyServer.getListeningPort());
+		wsStartFuture.sync();
+		log.info("console-ws_server started, listening port:" + webSocketServer.getPort());
 	}
 
 }

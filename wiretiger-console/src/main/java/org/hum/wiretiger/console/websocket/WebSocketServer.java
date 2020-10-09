@@ -1,16 +1,14 @@
 package org.hum.wiretiger.console.websocket;
 
-import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.console.websocket.handler.BusinessServerHandler;
 import org.hum.wiretiger.console.websocket.handler.WebSocketDecoder;
 import org.hum.wiretiger.console.websocket.handler.WebSocketEncoder;
 import org.hum.wiretiger.proxy.util.NettyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
@@ -25,7 +23,6 @@ import io.netty.handler.timeout.IdleStateHandler;
  */
 public class WebSocketServer {
 
-	private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class);
 	private volatile boolean isStart = false;
 	private EventLoopGroup bossGroup;
 	private EventLoopGroup workerGroup;
@@ -34,9 +31,6 @@ public class WebSocketServer {
 
 	public WebSocketServer(int port) {
 		this.port = port;
-	}
-
-	public void init() {
 		this.bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("ws-boss-thread"));
 		this.workerGroup = NettyUtils.initEventLoopGroup(4, new NamedThreadFactory("ws-worker-thread"));
 		this.bootstrap = new ServerBootstrap();
@@ -55,19 +49,15 @@ public class WebSocketServer {
 		});
 	}
 
-	public synchronized void start() {
+	public synchronized ChannelFuture start() {
 		if (isStart) {
-			return;
+			throw new IllegalStateException("websocket-server has been started.");
 		}
 		isStart = true;
-		try {
-			if (bootstrap == null) {
-				init();
-			}
-			bootstrap.bind(this.port).sync();
-			logger.info("netty server listen on port : " + port);
-		} catch (Exception ce) {
-			throw new WiretigerException("server start occured exception!", ce);
-		}
+		return bootstrap.bind(this.port);
+	}
+
+	public int getPort() {
+		return port;
 	}
 }

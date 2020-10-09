@@ -15,7 +15,7 @@ import org.hum.wiretiger.proxy.session.SessionManagerHandler;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -41,7 +41,7 @@ public class WtDefaultServer implements WtServer {
 	}
 
 	@Override
-	public void start() {
+	public ChannelFuture start() {
 		EventHandler eventHandler = new EventHandler();
 		
 		// regist event
@@ -71,22 +71,17 @@ public class WtDefaultServer implements WtServer {
 				}
 			});
 
-			Channel ch = bootStrap.bind(config.getPort()).sync().channel();
-			log.info("wire_tiger server started on port:" + config.getPort());
-
-			ch.closeFuture().sync();
+			return bootStrap.bind(config.getPort());
 		} catch (Exception e) {
 			log.error("start occur error, config=" + config, e);
 			throw new WiretigerException("WtDefaultServer start failed.", e);
-		} finally {
-			bossGroup.shutdownGracefully();
-			masterThreadPool.shutdownGracefully();
 		}
 	}
 	
 	@Override
 	public void onClose(Object hook) {
-		
+//		bossGroup.shutdownGracefully();
+//		masterThreadPool.shutdownGracefully();
 	}
 
 	public void setListeners(List<EventListener> listeners) {
@@ -97,4 +92,7 @@ public class WtDefaultServer implements WtServer {
 		this.mockHandler = mockHandler;
 	}
 	
+	public int getListeningPort() {
+		return config.getPort();
+	}
 }
