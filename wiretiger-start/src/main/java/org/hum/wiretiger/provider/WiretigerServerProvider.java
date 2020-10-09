@@ -1,4 +1,4 @@
-package org.hum.wiretiger.starter;
+package org.hum.wiretiger.provider;
 
 import java.util.List;
 

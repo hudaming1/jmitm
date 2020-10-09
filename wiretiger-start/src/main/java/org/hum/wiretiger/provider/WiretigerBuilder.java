@@ -1,4 +1,4 @@
-package org.hum.wiretiger.starter.config;
+package org.hum.wiretiger.provider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,7 +7,6 @@ import org.hum.wiretiger.console.http.config.WiretigerConsoleConfig;
 import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.Mock;
-import org.hum.wiretiger.starter.WiretigerServerProvider;
 
 public class WiretigerBuilder {
 

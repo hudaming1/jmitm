@@ -1,14 +1,14 @@
-package org.hum.wiretiger.starter;
+package org.hum.wiretiger.main;
 
 import java.io.File;
 import java.io.FileInputStream;
 
 import org.hum.wiretiger.console.common.listener.Console4WsListener;
 import org.hum.wiretiger.console.http.ConsoleServer;
+import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
 import org.hum.wiretiger.proxy.mock.Mock;
-import org.hum.wiretiger.starter.config.WiretigerBuilder;
 
 import lombok.extern.slf4j.Slf4j;
 
