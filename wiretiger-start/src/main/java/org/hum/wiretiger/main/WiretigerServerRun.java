@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 
 import org.hum.wiretiger.console.common.listener.Console4WsListener;
-import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
@@ -22,8 +21,8 @@ public class WiretigerServerRun {
 		wtBuilder.consoleWsPort(52996);
 		wtBuilder.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
 		wtBuilder.addEventListener(new Console4WsListener());
-		wtBuilder.webRoot(ConsoleServer.class.getResource("/webroot").getFile());
-		wtBuilder.webXmlPath(ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile());
+		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
+		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
@@ -41,17 +40,21 @@ public class WiretigerServerRun {
 	// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
-			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && request.uri().contains("dong_30a61f45c8d4634ca14da8829046271f"); 
+			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && (
+					request.uri().contains("dong_30a61f45c8d4634ca14da8829046271f") || 
+					request.uri().contains("logo_web")
+			);
 		}).rebuildResponse(response -> {
 			try {
 				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource("/mock/google.png").getFile()));
 				byte[] bytes = new byte[fileInputStream.available()];
 				fileInputStream.read(bytes);
 				fileInputStream.close();
-				log.info("mock google logo=" + response);
+				log.info("mock google logo");
 				response.headers().add("wiretiger_mock", "mock google_logo");
 				response.content().clear();
 				response.content().writeBytes(bytes);
+				response.headers().set("Content-Type", "image/gif");
 				response.headers().set("Content-Length", bytes.length);
 			}catch (Exception e) {
 				e.printStackTrace();

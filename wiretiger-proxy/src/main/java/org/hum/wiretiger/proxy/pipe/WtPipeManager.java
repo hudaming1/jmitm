@@ -38,15 +38,11 @@ public class WtPipeManager {
 	}
 
 	public WtPipeContext create(Channel clientChannel) {
-		System.out.println("1");
 		if (pipes4ClientChannel.containsKey(clientChannel)) {
 			log.error(clientChannel + "has exists, id=" + pipes4ClientChannel.get(clientChannel).getId());
 			throw new WiretigerException(clientChannel + " has exists");
 		}
-		System.out.println("2");
 		InetAddress inetAddr = NettyUtils.toHostAndPort(clientChannel);
-		System.out.println("3");
-		
 		WtPipeContext context = new WtPipeContext(counter.getAndIncrement(), clientChannel);
 		context.setName(clientChannel.remoteAddress().toString());
         context.setSource(inetAddr.getHost(), inetAddr.getPort());
