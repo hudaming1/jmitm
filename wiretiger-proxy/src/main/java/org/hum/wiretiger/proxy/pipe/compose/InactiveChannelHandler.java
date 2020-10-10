@@ -1,7 +1,7 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.compose;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
+import org.hum.wiretiger.proxy.pipe.chain.AbstractPipeInvokeChain;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 
@@ -12,10 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
 	
-	private FullPipeHandler fullPipeHandler;
+	private AbstractPipeInvokeChain fullPipeHandler;
 	private WtPipeContext wtContext;
 	
-	public InactiveChannelHandler(WtPipeContext wtContext, FullPipeHandler fullPipeHandler) {
+	public InactiveChannelHandler(WtPipeContext wtContext, AbstractPipeInvokeChain fullPipeHandler) {
 		this.wtContext = wtContext;
 		this.fullPipeHandler = fullPipeHandler;
 	}

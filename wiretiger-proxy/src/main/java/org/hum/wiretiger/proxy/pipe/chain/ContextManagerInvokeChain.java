@@ -8,9 +8,9 @@ import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 
-public class FullPipeContextManagerHandler extends FullPipeHandler {
+public class ContextManagerInvokeChain extends AbstractPipeInvokeChain {
 
-	public FullPipeContextManagerHandler(FullPipeHandler next) {
+	public ContextManagerInvokeChain(AbstractPipeInvokeChain next) {
 		super(next);
 	}
 

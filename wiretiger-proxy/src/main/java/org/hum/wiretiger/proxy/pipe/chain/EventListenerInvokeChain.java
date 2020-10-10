@@ -7,11 +7,11 @@ import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 
-public class FullPipeEventHandler extends FullPipeHandler {
+public class EventListenerInvokeChain extends AbstractPipeInvokeChain {
 	
 	private EventHandler eventHandler;
 
-	public FullPipeEventHandler(FullPipeHandler next, EventHandler eventHandler) {
+	public EventListenerInvokeChain(AbstractPipeInvokeChain next, EventHandler eventHandler) {
 		super(next);
 		this.eventHandler = eventHandler;
 	}

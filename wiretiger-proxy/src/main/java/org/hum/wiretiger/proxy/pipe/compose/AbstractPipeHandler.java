@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe;
+package org.hum.wiretiger.proxy.pipe.compose;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

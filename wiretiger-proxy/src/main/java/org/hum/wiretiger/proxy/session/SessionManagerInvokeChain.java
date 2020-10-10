@@ -3,7 +3,7 @@ package org.hum.wiretiger.proxy.session;
 import java.util.Stack;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
+import org.hum.wiretiger.proxy.pipe.chain.AbstractPipeInvokeChain;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
@@ -12,13 +12,13 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SessionManagerHandler extends FullPipeHandler {
+public class SessionManagerInvokeChain extends AbstractPipeInvokeChain {
 	/**
 	 * 保存了当前HTTP连接，没有等待响应的请求
 	 */
 	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 
-	public SessionManagerHandler(FullPipeHandler next) {
+	public SessionManagerInvokeChain(AbstractPipeInvokeChain next) {
 		super(next);
 	}
 

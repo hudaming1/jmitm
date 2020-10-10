@@ -7,12 +7,12 @@ import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
 import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
-import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
-import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
-import org.hum.wiretiger.proxy.pipe.chain.FullPipeContextManagerHandler;
-import org.hum.wiretiger.proxy.pipe.chain.FullPipeEventHandler;
+import org.hum.wiretiger.proxy.pipe.chain.ContextManagerInvokeChain;
+import org.hum.wiretiger.proxy.pipe.chain.EventListenerInvokeChain;
+import org.hum.wiretiger.proxy.pipe.compose.FullRequestDecoder;
+import org.hum.wiretiger.proxy.pipe.compose.ProxyHandshakeHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.session.SessionManagerHandler;
+import org.hum.wiretiger.proxy.session.SessionManagerInvokeChain;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -61,12 +61,12 @@ public class WtDefaultServer implements WtServer {
 				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
 			// singleton
-			FullPipeEventHandler pipeEventHandler = new FullPipeEventHandler(null, eventHandler);
+			EventListenerInvokeChain pipeEventHandler = new EventListenerInvokeChain(null, eventHandler);
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
 					// SessionManagerHandler和FullPipeContextManagerHandler需要保证每一个连接独享
-					FullPipeContextManagerHandler fullPipeContextManagerHandler = new FullPipeContextManagerHandler(new SessionManagerHandler(pipeEventHandler));
+					ContextManagerInvokeChain fullPipeContextManagerHandler = new ContextManagerInvokeChain(new SessionManagerInvokeChain(pipeEventHandler));
 					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(fullPipeContextManagerHandler, mockHandler);
 					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}
