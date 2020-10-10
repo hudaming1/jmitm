@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe.compose;
+package org.hum.wiretiger.proxy.pipe.core;
 
 import java.util.Stack;
 
