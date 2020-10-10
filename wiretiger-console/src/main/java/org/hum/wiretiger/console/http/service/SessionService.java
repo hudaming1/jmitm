@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.console.common.WtSession;
 import org.hum.wiretiger.console.common.WtSessionManager;
 import org.hum.wiretiger.console.common.codec.IContentCodec;
 import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
@@ -14,7 +15,6 @@ import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionDetailVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListQueryVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
-import org.hum.wiretiger.proxy.session.bean.WtSession;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
 import io.netty.handler.codec.http.HttpHeaders;

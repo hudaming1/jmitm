@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.hum.wiretiger.proxy.session.bean.WtSession;
-
 public class WtSessionManager {
 
 	private List<WtSession> RequestList = new CopyOnWriteArrayList<>();

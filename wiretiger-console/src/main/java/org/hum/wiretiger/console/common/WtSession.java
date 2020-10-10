@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.session.bean;
+package org.hum.wiretiger.console.common;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

@@ -1,12 +1,12 @@
 package org.hum.wiretiger.console.websocket.service;
 
+import org.hum.wiretiger.console.common.WtSession;
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.console.websocket.ConsoleManager;
 import org.hum.wiretiger.console.websocket.bean.WsServerMessage;
 import org.hum.wiretiger.console.websocket.enumtype.MessageTypeEnum;
 import org.hum.wiretiger.proxy.facade.WtPipeContext;
-import org.hum.wiretiger.proxy.session.bean.WtSession;
 
 public class WsSessionService {
 

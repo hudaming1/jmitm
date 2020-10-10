@@ -14,67 +14,83 @@ public class DefaultPipeInvokeChain extends PipeInvokeChain {
 	}
 
 	@Override
-	protected void clientConnect0(WtPipeContext ctx) {
+	protected boolean clientConnect0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void clientParsed0(WtPipeContext ctx) {
+	protected boolean clientParsed0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void clientRead0(WtPipeContext ctx, FullHttpRequest request) {
+	protected boolean clientRead0(WtPipeContext ctx, FullHttpRequest request) {
+		return true;
 	}
 
 	@Override
-	protected void serverConnect0(WtPipeContext ctx, InetAddress InetAddress) {
+	protected boolean serverConnect0(WtPipeContext ctx, InetAddress InetAddress) {
+		return true;
 	}
 
 	@Override
-	protected void serverHandshakeSucc0(WtPipeContext ctx) {
+	protected boolean serverHandshakeSucc0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void serverFlush0(WtPipeContext ctx, FullHttpRequest request) {
+	protected boolean serverFlush0(WtPipeContext ctx, FullHttpRequest request) {
+		return true;
 	}
 
 	@Override
-	protected void serverRead0(WtPipeContext ctx, FullHttpResponse response) {
+	protected boolean serverRead0(WtPipeContext ctx, FullHttpResponse response) {
+		return true;
 	}
 
 	@Override
-	protected void clientFlush0(WtPipeContext ctx, FullHttpResponse response) {
+	protected boolean clientFlush0(WtPipeContext ctx, FullHttpResponse response) {
+		return true;
 	}
 
 	@Override
-	protected void clientClose0(WtPipeContext ctx) {
+	protected boolean clientClose0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void serverClose0(WtPipeContext ctx) {
+	protected boolean serverClose0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void clientError0(WtPipeContext ctx, Throwable cause) {
+	protected boolean clientError0(WtPipeContext ctx, Throwable cause) {
+		return true;
 	}
 
 	@Override
-	protected void serverError0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverError0(WtPipeContext ctx, Throwable cause) {
+		return true;
 	}
 
 	@Override
-	protected void clientHandshakeSucc0(WtPipeContext ctx) {
+	protected boolean clientHandshakeSucc0(WtPipeContext ctx) {
+		return true;
 	}
 
 	@Override
-	protected void clientHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+	protected boolean clientHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+		return true;
 	}
 
 	@Override
-	protected void serverConnectFailed0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverConnectFailed0(WtPipeContext ctx, Throwable cause) {
+		return true;
 	}
 
 	@Override
-	protected void serverHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+		return true;
 	}
 
 }

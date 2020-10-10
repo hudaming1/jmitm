@@ -1,10 +1,10 @@
 package org.hum.wiretiger.console.http.helper;
 
+import org.hum.wiretiger.console.common.WtSession;
 import org.hum.wiretiger.console.http.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
-import org.hum.wiretiger.proxy.session.bean.WtSession;
 
 public class ConsoleHelper {
 
