@@ -2,7 +2,7 @@ package org.hum.wiretiger.proxy.pipe.core;
 
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.AbstractPipeInvokeChain;
+import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpsPipeHandler extends StandardPipeHandler {
 
-	public HttpsPipeHandler(FrontPipe front, AbstractPipeInvokeChain fullPipeHandler, WtPipeContext wtContext,
+	public HttpsPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, WtPipeContext wtContext,
 			MockHandler mockHandler) {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}

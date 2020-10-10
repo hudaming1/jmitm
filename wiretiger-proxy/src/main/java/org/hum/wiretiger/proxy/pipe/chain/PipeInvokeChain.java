@@ -10,11 +10,11 @@ import io.netty.handler.codec.http.FullHttpResponse;
  * TODO 将所有abstract增加返回值，根据返回值判断是否需要调用下一个节点
  * @author hudaming
  */
-public abstract class AbstractPipeInvokeChain {
+public abstract class PipeInvokeChain {
 	
-	private AbstractPipeInvokeChain next;
+	private PipeInvokeChain next;
 	
-	public AbstractPipeInvokeChain(AbstractPipeInvokeChain next) {
+	public PipeInvokeChain(PipeInvokeChain next) {
 		this.next = next;
 	}
 

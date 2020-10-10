@@ -4,7 +4,7 @@ import java.util.Stack;
 
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.AbstractPipeInvokeChain;
+import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 
@@ -25,12 +25,12 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	
 	protected MockHandler mockHandler;
-	protected AbstractPipeInvokeChain fullPipeHandler;
+	protected PipeInvokeChain fullPipeHandler;
 	// 当前保持的服务端连接
 	protected BackPipe currentBack;
 	protected Stack<FullHttpRequest> mockRequestStack = new Stack<>();
 
-	public StandardPipeHandler(FrontPipe front, AbstractPipeInvokeChain fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
+	public StandardPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
 		// init
 		super(wtContext);
 		this.mockHandler = mockHandler;
