@@ -1,18 +1,13 @@
 package org.hum.wiretiger.proxy.server;
 
-import java.util.List;
-
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.common.util.NamedThreadFactory;
 import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
-import org.hum.wiretiger.proxy.facade.event.EventListener;
+import org.hum.wiretiger.proxy.facade.InvokeChainInit;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.chain.ContextManagerInvokeChain;
-import org.hum.wiretiger.proxy.pipe.chain.EventListenerInvokeChain;
 import org.hum.wiretiger.proxy.pipe.core.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.core.ProxyHandshakeHandler;
-import org.hum.wiretiger.proxy.pipe.event.EventHandler;
-import org.hum.wiretiger.proxy.session.SessionManagerInvokeChain;
 import org.hum.wiretiger.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -33,9 +28,9 @@ public class WtDefaultServer implements WtServer {
 	
 	private WiretigerCoreConfig config;
 	
-	private List<EventListener> listeners;
-	
 	private MockHandler mockHandler;
+	
+	private InvokeChainInit invokeChainInit;
 
 	public WtDefaultServer(WiretigerCoreConfig config) {
 		this.config = config;
@@ -43,13 +38,6 @@ public class WtDefaultServer implements WtServer {
 
 	@Override
 	public ChannelFuture start() {
-		EventHandler eventHandler = new EventHandler();
-		
-		// regist event
-		if (listeners != null && !listeners.isEmpty()) {
-			eventHandler.addAll(listeners);
-		}
-		
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
@@ -61,13 +49,12 @@ public class WtDefaultServer implements WtServer {
 				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
 			// singleton
-			EventListenerInvokeChain pipeEventHandler = new EventListenerInvokeChain(null, eventHandler);
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					// SessionManagerHandler和FullPipeContextManagerHandler需要保证每一个连接独享
-					ContextManagerInvokeChain fullPipeContextManagerHandler = new ContextManagerInvokeChain(new SessionManagerInvokeChain(pipeEventHandler));
-					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(fullPipeContextManagerHandler, mockHandler);
+					// ContextManagerInvokeChain需要保证每一个连接独享
+					ContextManagerInvokeChain cmInvokeChain = new ContextManagerInvokeChain(invokeChainInit.init());
+					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(cmInvokeChain, mockHandler);
 					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}
 			});
@@ -79,14 +66,14 @@ public class WtDefaultServer implements WtServer {
 		}
 	}
 	
+	public void setInvokeChainInit(InvokeChainInit invokeChainInit) {
+		this.invokeChainInit = invokeChainInit;
+	}
+
 	@Override
 	public void onClose(Object hook) {
 //		bossGroup.shutdownGracefully();
 //		masterThreadPool.shutdownGracefully();
-	}
-
-	public void setListeners(List<EventListener> listeners) {
-		this.listeners = listeners;
 	}
 
 	public void setMockHandler(MockHandler mockHandler) {

@@ -1,18 +1,13 @@
 package org.hum.wiretiger.provider;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hum.wiretiger.console.http.config.WiretigerConsoleConfig;
 import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
-import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.Mock;
 
 public class WiretigerBuilder {
 
 	private WiretigerCoreConfig coreConfig = new WiretigerCoreConfig();
 	private WiretigerConsoleConfig consoleConfig = new WiretigerConsoleConfig();
-	private List<EventListener> listeners = new ArrayList<>();
 	
 	public void addMock(Mock... mocks) {
 		if (mocks == null || mocks.length == 0) {
@@ -51,13 +46,8 @@ public class WiretigerBuilder {
 		return coreConfig;
 	}
 	
-	public WiretigerBuilder addEventListener(EventListener listener) {
-		this.listeners.add(listener);
-		return this;
-	}
-	
 	public WiretigerServerProvider build() {
-		return new WiretigerServerProvider(coreConfig, consoleConfig, listeners);
+		return new WiretigerServerProvider(coreConfig, consoleConfig);
 	}
 
 	/** console config **/

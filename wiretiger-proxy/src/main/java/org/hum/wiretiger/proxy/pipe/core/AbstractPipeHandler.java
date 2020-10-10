@@ -3,7 +3,7 @@ package org.hum.wiretiger.proxy.pipe.core;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;

@@ -3,9 +3,9 @@ package org.hum.wiretiger.proxy.pipe.core;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.mock.MockHandler;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;

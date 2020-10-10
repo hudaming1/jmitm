@@ -1,12 +1,11 @@
 package org.hum.wiretiger.provider;
 
-import java.util.List;
-
+import org.hum.wiretiger.console.common.chain.PipeManagerInvokeChain;
+import org.hum.wiretiger.console.common.chain.SessionManagerInvokeChain;
 import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.console.http.config.WiretigerConsoleConfig;
 import org.hum.wiretiger.console.websocket.WebSocketServer;
 import org.hum.wiretiger.proxy.config.WiretigerCoreConfig;
-import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.server.WtDefaultServer;
 
@@ -20,12 +19,15 @@ public class WiretigerServerProvider {
 	private ConsoleServer consoleServer;
 	private WebSocketServer webSocketServer;
 	
-	public WiretigerServerProvider(WiretigerCoreConfig coreConfig, WiretigerConsoleConfig consoleConfig, List<EventListener> listeners) {
+	public WiretigerServerProvider(WiretigerCoreConfig coreConfig, WiretigerConsoleConfig consoleConfig) {
 		super();
+		PipeManagerInvokeChain pipeManagerInvokeChain = new PipeManagerInvokeChain(null);
 		// proxy-server
 		this.proxyServer = new WtDefaultServer(coreConfig);
-		this.proxyServer.setListeners(listeners);
 		this.proxyServer.setMockHandler(new MockHandler(coreConfig.getMockList()));
+		this.proxyServer.setInvokeChainInit(()-> {
+			return new SessionManagerInvokeChain(pipeManagerInvokeChain);
+		});
 		
 		// console HTTP-server
 		this.consoleServer = new ConsoleServer(consoleConfig);

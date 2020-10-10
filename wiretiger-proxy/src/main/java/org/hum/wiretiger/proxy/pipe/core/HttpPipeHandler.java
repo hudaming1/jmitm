@@ -1,8 +1,8 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
+import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.mock.MockHandler;
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 

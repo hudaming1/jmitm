@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.session;
+package org.hum.wiretiger.console.common;
 
 import java.util.Collections;
 import java.util.List;

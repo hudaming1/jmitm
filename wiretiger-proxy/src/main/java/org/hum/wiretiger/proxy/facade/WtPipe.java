@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.pipe.bean;
+package org.hum.wiretiger.proxy.facade;
 
 import java.lang.ref.SoftReference;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hum.wiretiger.proxy.pipe.bean.WtPipeEvent;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 

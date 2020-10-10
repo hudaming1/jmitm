@@ -1,9 +1,10 @@
-package org.hum.wiretiger.proxy.session;
+package org.hum.wiretiger.console.common.chain;
 
 import java.util.Stack;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
+import org.hum.wiretiger.console.common.WtSessionManager;
+import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.DefaultPipeInvokeChain;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
 
@@ -14,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	/**
-	 * 保存了当前HTTP连接，没有等待响应的请求
+	 * 保存了当前HTTP连接，正在等待响应的请求
 	 */
 	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 

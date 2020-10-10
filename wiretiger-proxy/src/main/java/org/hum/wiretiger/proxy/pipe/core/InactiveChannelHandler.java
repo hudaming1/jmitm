@@ -1,7 +1,7 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
-import org.hum.wiretiger.proxy.pipe.chain.PipeInvokeChain;
+import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 

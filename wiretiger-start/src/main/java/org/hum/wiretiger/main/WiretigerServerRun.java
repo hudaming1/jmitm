@@ -3,7 +3,6 @@ package org.hum.wiretiger.main;
 import java.io.File;
 import java.io.FileInputStream;
 
-import org.hum.wiretiger.console.common.listener.Console4WsListener;
 import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
@@ -20,7 +19,6 @@ public class WiretigerServerRun {
 		wtBuilder.consoleHttpPort(8080);
 		wtBuilder.consoleWsPort(52996);
 		wtBuilder.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
-		wtBuilder.addEventListener(new Console4WsListener());
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		

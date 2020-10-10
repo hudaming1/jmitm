@@ -1,6 +1,5 @@
-package org.hum.wiretiger.proxy.pipe.chain;
+package org.hum.wiretiger.proxy.facade;
 
-import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;

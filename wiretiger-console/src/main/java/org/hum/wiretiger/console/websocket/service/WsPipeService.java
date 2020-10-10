@@ -5,13 +5,13 @@ import org.hum.wiretiger.console.http.vo.WiretigerPipeListVO;
 import org.hum.wiretiger.console.websocket.ConsoleManager;
 import org.hum.wiretiger.console.websocket.bean.WsServerMessage;
 import org.hum.wiretiger.console.websocket.enumtype.MessageTypeEnum;
-import org.hum.wiretiger.proxy.facade.event.WiretigerPipe;
+import org.hum.wiretiger.proxy.facade.WtPipeContext;
 
 public class WsPipeService {
 
 	private static final ConsoleManager CM = ConsoleManager.get();
 	
-	public void sendConnectMsg(WiretigerPipe pipeHolder) {
+	public void sendConnectMsg(WtPipeContext pipeHolder) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeConnect);
 			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipeHolder));
@@ -19,7 +19,7 @@ public class WsPipeService {
 		});
 	}
 
-	public void sendStatusChangeMsg(WiretigerPipe pipe) {
+	public void sendStatusChangeMsg(WtPipeContext pipe) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeUpdate);
 			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
@@ -27,7 +27,7 @@ public class WsPipeService {
 		});
 	}
 
-	public void sendDisConnectMsg(WiretigerPipe pipe) {
+	public void sendDisConnectMsg(WtPipeContext pipe) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeDisconnect);
 			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
