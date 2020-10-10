@@ -65,9 +65,8 @@ public class WtDefaultServer implements WtServer {
 			bootStrap.childHandler(new ChannelInitializer<SocketChannel>() {
 				@Override
 				public void initChannel(SocketChannel ch) {
-					// sessionManagerHandler需要保证每一个连接独享
-					SessionManagerHandler sessionManagerHandler = new SessionManagerHandler(pipeEventHandler);
-					FullPipeContextManagerHandler fullPipeContextManagerHandler = new FullPipeContextManagerHandler(sessionManagerHandler);
+					// SessionManagerHandler和FullPipeContextManagerHandler需要保证每一个连接独享
+					FullPipeContextManagerHandler fullPipeContextManagerHandler = new FullPipeContextManagerHandler(new SessionManagerHandler(pipeEventHandler));
 					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(fullPipeContextManagerHandler, mockHandler);
 					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}

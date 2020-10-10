@@ -10,9 +10,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class HttpPipe extends AbstractFullPipe {
+public class HttpPipeHandler extends StandardPipeHandler {
 
-	public HttpPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext,
+	public HttpPipeHandler(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext,
 			MockHandler mockHandler) {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}

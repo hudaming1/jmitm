@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.pipe;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
@@ -26,6 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpRequest> {
 
+	private static final AtomicInteger counter = new AtomicInteger(1);
 	private MockHandler mockHandler;
 	private FullPipeHandler fullPipeHandler;
 	private final int _1K = 1024;
@@ -41,7 +44,11 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         // [HTTP] 1.建立front连接
-        WtPipeContext wtContext = WtPipeManager.get().create(ctx.channel());
+		InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
+		// init context
+		WtPipeContext wtContext = new WtPipeContext(counter.getAndIncrement(), ctx.channel());
+		wtContext.setName(inetAddr.toString());
+        wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
         ctx.pipeline().addLast(new InactiveChannelHandler(wtContext, fullPipeHandler));
         fullPipeHandler.clientConnect(wtContext);
@@ -75,7 +82,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
 	    				new HttpObjectAggregator(Integer.MAX_VALUE),
 	    				new FullRequestDecoder());
-	    		client2ProxyCtx.pipeline().addLast(new HttpsPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
+	    		client2ProxyCtx.pipeline().addLast(new HttpsPipeHandler(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
 	    		fullPipeHandler.clientHandshakeSucc(wtContext);
 			});
@@ -89,8 +96,8 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
     	} else {
 
-    		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), AbstractFullPipe.class) == null) {
-    			client2ProxyCtx.pipeline().addLast(new HttpPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
+    		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), HttpPipeHandler.class) == null) {
+    			client2ProxyCtx.pipeline().addLast(new HttpPipeHandler(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
     			client2ProxyCtx.pipeline().remove(this);
     		}
     		

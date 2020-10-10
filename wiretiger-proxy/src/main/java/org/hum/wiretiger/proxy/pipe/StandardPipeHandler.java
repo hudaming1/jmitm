@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Sharable
-public abstract class AbstractFullPipe extends AbstractPipeHandler {
+public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	
 	protected MockHandler mockHandler;
 	protected FullPipeHandler fullPipeHandler;
@@ -30,7 +30,7 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	protected BackPipe currentBack;
 	protected Stack<FullHttpRequest> mockRequestStack = new Stack<>();
 
-	public AbstractFullPipe(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
+	public StandardPipeHandler(FrontPipe front, FullPipeHandler fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
 		// init
 		super(wtContext);
 		this.mockHandler = mockHandler;
