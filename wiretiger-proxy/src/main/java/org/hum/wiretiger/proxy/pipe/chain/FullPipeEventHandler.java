@@ -2,6 +2,7 @@ package org.hum.wiretiger.proxy.pipe.chain;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -21,11 +22,6 @@ public class FullPipeEventHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void clientDisconnect0(WtPipeContext ctx) {
-		eventHandler.fireDisconnectEvent(ctx);
-	}
-
-	@Override
 	protected void clientParsed0(WtPipeContext ctx) {
 		eventHandler.fireChangeEvent(ctx);
 	}
@@ -36,7 +32,7 @@ public class FullPipeEventHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void serverConnect0(WtPipeContext ctx) {
+	protected void serverConnect0(WtPipeContext ctx, InetAddress inetAddress) {
 		eventHandler.fireConnectEvent(ctx);
 	}
 
@@ -81,18 +77,23 @@ public class FullPipeEventHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void clientHandshakeFail0(WtPipeContext ctx) {
+	protected void clientHandshakeFail0(WtPipeContext ctx, Throwable cause) {
 		eventHandler.fireChangeEvent(ctx);		
 	}
 
 	@Override
-	protected void serverConnectFailed0(WtPipeContext ctx) {
+	protected void serverConnectFailed0(WtPipeContext ctx, Throwable cause) {
 		eventHandler.fireChangeEvent(ctx);		
 	}
 
 	@Override
-	protected void serverHandshakeFail0(WtPipeContext ctx) {
+	protected void serverHandshakeFail0(WtPipeContext ctx, Throwable cause) {
 		eventHandler.fireChangeEvent(ctx);		
+	}
+
+	@Override
+	protected void serverFlush0(WtPipeContext ctx, FullHttpRequest request) {
+		eventHandler.fireChangeEvent(ctx);
 	}
 
 }

@@ -25,9 +25,7 @@ public class WtPipeContext {
 	
 	public WtPipeContext(int id, Channel clientChannel) {
 		pipe.setId(id);
-		pipe.addStatus(PipeStatus.Init);
 		pipe.setSourceCtx(clientChannel);
-		addEvent(PipeEventType.Init, "连接初始化");
 	}
 	
 	public void setName(String name) {

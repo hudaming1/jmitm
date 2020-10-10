@@ -3,8 +3,6 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
@@ -20,27 +18,23 @@ public class HttpPipe extends AbstractFullPipe {
 	}
 
 	protected void connect(FullHttpRequest request) throws InterruptedException {
-		InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, false);
+		InetAddress inetAddress = HttpMessageUtil.parse2InetAddress(request, false);
 		wtContext.appendRequest(request);
 
-		currentBack = super.select(InetAddress.getHost(), InetAddress.getPort());
+		currentBack = super.select(inetAddress.getHost(), inetAddress.getPort());
 		if (currentBack == null) {
-			currentBack = initBackpipe(InetAddress);
+			currentBack = initBackpipe(inetAddress);
 		}
 		if (!currentBack.isActive()) {
 			currentBack.connect().addListener(f -> {
 				if (!f.isSuccess()) {
 					log.error("[" + wtContext.getId() + "] server connect error. cause={}", f.cause().getMessage());
-					wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
-					wtContext.recordStatus(PipeStatus.Error);
-					fullPipeHandler.serverConnect(wtContext);
+					fullPipeHandler.serverConnectFailed(wtContext, f.cause());
 					close();
 					return;
 				}
 				wtContext.registServer(currentBack.getChannel());
-				wtContext.recordStatus(PipeStatus.Connected);
-				fullPipeHandler.serverConnectFailed(wtContext);
-				wtContext.addEvent(PipeEventType.ServerConnected, "与服务端" + InetAddress + "建立连接完成");
+				fullPipeHandler.serverConnect(wtContext, inetAddress);
 				currentBack.getChannel().pipeline().addLast(this);
 			}).sync();
 		}

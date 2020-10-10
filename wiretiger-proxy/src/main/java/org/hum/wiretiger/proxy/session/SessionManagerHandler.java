@@ -5,6 +5,7 @@ import java.util.Stack;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.session.bean.WtSession;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -26,10 +27,6 @@ public class SessionManagerHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void clientDisconnect0(WtPipeContext ctx) {
-	}
-
-	@Override
 	protected void clientParsed0(WtPipeContext ctx) {
 	}
 
@@ -39,7 +36,7 @@ public class SessionManagerHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void serverConnect0(WtPipeContext ctx) {
+	protected void serverConnect0(WtPipeContext ctx, InetAddress inetAddress) {
 	}
 
 	@Override
@@ -91,15 +88,19 @@ public class SessionManagerHandler extends FullPipeHandler {
 	}
 
 	@Override
-	protected void clientHandshakeFail0(WtPipeContext ctx) {
+	protected void clientHandshakeFail0(WtPipeContext ctx, Throwable cause) {
 	}
 
 	@Override
-	protected void serverConnectFailed0(WtPipeContext ctx) {
+	protected void serverConnectFailed0(WtPipeContext ctx, Throwable cause) {
 	}
 
 	@Override
-	protected void serverHandshakeFail0(WtPipeContext ctx) {
+	protected void serverHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+	}
+
+	@Override
+	protected void serverFlush0(WtPipeContext ctx, FullHttpRequest request) {
 	}
 
 }

@@ -5,8 +5,6 @@ import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
@@ -59,10 +57,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		wtContext.setTarget(InetAddress.getHost(), InetAddress.getPort());
 		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
-		// TODO Context Wrapper 将status和event都放到一个handler中
-		wtContext.recordStatus(PipeStatus.Parsed);
-		wtContext.addEvent(PipeEventType.Parsed, "解析连接协(" + wtContext.getProtocol() + ")");
-		
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
@@ -70,6 +64,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
+					fullPipeHandler.clientHandshakeFail(wtContext, future.cause());
 					client2ProxyCtx.close();
 					log.error("[" + wtContext.getId() + "] handshake failure, cause=" + future.cause().getMessage());
 					return ;
@@ -82,6 +77,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 	    				new FullRequestDecoder());
 	    		client2ProxyCtx.pipeline().addLast(new HttpsPipe(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
 	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
+	    		fullPipeHandler.clientHandshakeSucc(wtContext);
 			});
 			client2ProxyCtx.pipeline().addLast(sslHandler);
 			

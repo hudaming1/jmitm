@@ -44,11 +44,8 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
-		wtContext.recordStatus(PipeStatus.Read);
 		if (msg instanceof FullHttpRequest) {
 			FullHttpRequest request = (FullHttpRequest) msg;
-			
-			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，DefaultHttpRequest");
 			
 			if (request.decoderResult().isFailure()) {
 				log.error("[" + wtContext.getId() + "] decode failure, cause=" + request.decoderResult().cause().getMessage());
@@ -64,8 +61,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 			fullPipeHandler.clientRead(wtContext, request);
 
 			connect(request);
-		} else if (msg instanceof LastHttpContent) {
-			wtContext.addEvent(PipeEventType.Read, "读取客户端请求，LastHttpContent");
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
@@ -88,7 +83,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 			}
 			
 			wtContext.appendResponse(resp);
-			wtContext.addEvent(PipeEventType.Received, "读取服务端请求，字节数\"" + resp.content().readableBytes() + "\"bytes");
 			
 			fullPipeHandler.serverRead(wtContext, resp);
 		} else if (msg instanceof LastHttpContent) { 
@@ -98,14 +92,11 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		
-		wtContext.recordStatus(PipeStatus.Received);
 		wtContext.getClientChannel().writeAndFlush(msg);
 	}
 
 	@Override
 	public void channelWrite4Client(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-		wtContext.recordStatus(PipeStatus.Flushed);
-		wtContext.addEvent(PipeEventType.Flushed, "已将服务端响应转发给客户端");
 		if (msg instanceof FullHttpResponse) {
 			fullPipeHandler.clientFlush(wtContext, (FullHttpResponse) msg);
 		}
@@ -114,8 +105,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	@Override
 	public void channelWrite4Server(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
 		// [HTTP] 5.ChannelHandler拦截写事件
-		wtContext.recordStatus(PipeStatus.Forward);
-		wtContext.addEvent(PipeEventType.Forward, "已将客户端请求转发给服务端");
 		if (msg instanceof FullHttpRequest) {
 			fullPipeHandler.serverFlush(wtContext, (FullHttpRequest) msg);
 		}
@@ -130,8 +119,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 				}
 			}
 		}
-		wtContext.recordStatus(PipeStatus.Closed);
-		wtContext.addEvent(PipeEventType.ClientClosed, "客户端已经断开连接");
 		fullPipeHandler.clientClose(wtContext);
 	}
 
@@ -141,16 +128,12 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 			wtContext.getClientChannel().close();
 		}
 		removeBackpipe(getBackChannel(ctx.channel()));
-		wtContext.recordStatus(PipeStatus.Closed);
-		wtContext.addEvent(PipeEventType.ServerClosed, "服务端已经断开连接");
 		fullPipeHandler.serverClose(wtContext);
 	}
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
-		wtContext.recordStatus(PipeStatus.Error);
-		wtContext.addEvent(PipeEventType.Error, "客户端异常：" + cause.getMessage());
 		fullPipeHandler.clientError(wtContext, cause);
 		close();
 	}
@@ -158,8 +141,6 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
-		wtContext.recordStatus(PipeStatus.Error);
-		wtContext.addEvent(PipeEventType.Error, "服务端异常：" + cause.getMessage());
 		fullPipeHandler.serverError(wtContext, cause);
 		close();
 	}

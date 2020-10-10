@@ -3,8 +3,6 @@ package org.hum.wiretiger.proxy.pipe;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeHandler;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeEventType;
-import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
@@ -32,27 +30,20 @@ public class HttpsPipe extends AbstractFullPipe {
 			currentBack.connect().addListener(f -> {
 				if (!f.isSuccess()) {
 					log.error("[" + wtContext.getId() + "] server connect error. cause={}", f.cause().getMessage());
-					wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
-					wtContext.recordStatus(PipeStatus.Error);
-					fullPipeHandler.serverConnectFailed(wtContext);
+					fullPipeHandler.serverConnectFailed(wtContext, f.cause());
 					close();
 					return;
 				}
 				wtContext.registServer(currentBack.getChannel());
-				wtContext.recordStatus(PipeStatus.Connected);
-				fullPipeHandler.serverConnect(wtContext);
-				wtContext.addEvent(PipeEventType.ServerConnected, "与服务端" + InetAddress + "建立连接完成");
+				fullPipeHandler.serverConnect(wtContext, InetAddress);
 			}).sync();
 			currentBack.handshakeFuture().addListener(tls -> {
 				if (!tls.isSuccess()) {
 					log.error("[" + wtContext.getId() + "] server tls error, cause={}", tls.cause().getMessage());
-					wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
-					wtContext.recordStatus(PipeStatus.Error);
-					fullPipeHandler.serverHandshakeFail(wtContext);
+					fullPipeHandler.serverHandshakeFail(wtContext, tls.cause());
 					close();
 					return;
 				}
-				wtContext.addEvent(PipeEventType.ServerTlsFinish, "与服务端" + InetAddress + "握手完成");
 				currentBack.getChannel().pipeline().addLast(this);
 				fullPipeHandler.serverHandshakeSucc(wtContext);
 			}).sync();

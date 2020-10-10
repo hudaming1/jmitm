@@ -1,6 +1,7 @@
 package org.hum.wiretiger.proxy.pipe.chain;
 
 import org.hum.wiretiger.proxy.pipe.bean.WtPipeContext;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -27,15 +28,6 @@ public abstract class FullPipeHandler {
 
 	protected abstract void clientConnect0(WtPipeContext ctx);
 
-	public void clientDisconnect(WtPipeContext ctx) {
-		clientDisconnect0(ctx);
-		if (next != null) {
-			this.next.clientDisconnect(ctx);
-		}
-	}
-	
-	protected abstract void clientDisconnect0(WtPipeContext ctx);
-
 	public void clientParsed(WtPipeContext ctx) {
 		clientParsed0(ctx);
 		if (next != null) {
@@ -54,14 +46,14 @@ public abstract class FullPipeHandler {
 	
 	protected abstract void clientRead0(WtPipeContext ctx, FullHttpRequest request) ;
 	
-	public void serverConnect(WtPipeContext ctx) {
-		serverConnect0(ctx);
+	public void serverConnect(WtPipeContext ctx, InetAddress InetAddress) {
+		serverConnect0(ctx, InetAddress);
 		if (next != null) {
-			this.next.serverConnect(ctx);
+			this.next.serverConnect(ctx, InetAddress);
 		}
 	}
 	
-	protected abstract void serverConnect0(WtPipeContext ctx);
+	protected abstract void serverConnect0(WtPipeContext ctx, InetAddress InetAddress);
 	
 	public void serverHandshakeSucc(WtPipeContext ctx) {
 		serverHandshakeSucc0(ctx);
@@ -73,13 +65,13 @@ public abstract class FullPipeHandler {
 	protected abstract void serverHandshakeSucc0(WtPipeContext ctx);
 	
 	public void serverFlush(WtPipeContext ctx, FullHttpRequest request) {
-
+		serverFlush0(ctx, request);
 		if (next != null) {
 			this.next.serverFlush(ctx, request);
 		}
 	}
 	
-	protected abstract void serverRead0(WtPipeContext ctx, FullHttpResponse response) ;
+	protected abstract void serverFlush0(WtPipeContext ctx, FullHttpRequest request);
 	
 	public void serverRead(WtPipeContext ctx, FullHttpResponse response) {
 		serverRead0(ctx, response);
@@ -88,7 +80,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	protected abstract void clientFlush0(WtPipeContext ctx, FullHttpResponse response) ;
+	protected abstract void serverRead0(WtPipeContext ctx, FullHttpResponse response) ;
 	
 	public void clientFlush(WtPipeContext ctx, FullHttpResponse response) {
 		clientFlush0(ctx, response);
@@ -96,8 +88,7 @@ public abstract class FullPipeHandler {
 			this.next.clientFlush(ctx, response);
 		}
 	}
-	
-	protected abstract void clientClose0(WtPipeContext ctx) ;
+	protected abstract void clientFlush0(WtPipeContext ctx, FullHttpResponse response) ;
 	
 	public void clientClose(WtPipeContext ctx) {
 		clientClose0(ctx);
@@ -105,8 +96,7 @@ public abstract class FullPipeHandler {
 			this.next.clientClose(ctx);
 		}
 	}
-	
-	protected abstract void serverClose0(WtPipeContext ctx) ;
+	protected abstract void clientClose0(WtPipeContext ctx) ;
 	
 	public void serverClose(WtPipeContext ctx) {
 		serverClose0(ctx);
@@ -114,8 +104,7 @@ public abstract class FullPipeHandler {
 			this.next.serverClose(ctx);
 		}
 	}
-	
-	protected abstract void clientError0(WtPipeContext ctx, Throwable cause);
+	protected abstract void serverClose0(WtPipeContext ctx) ;
 	
 	public void clientError(WtPipeContext ctx, Throwable cause) {
 		clientError0(ctx, cause);
@@ -124,7 +113,8 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	protected abstract void serverError0(WtPipeContext ctx, Throwable cause) ;
+	protected abstract void clientError0(WtPipeContext ctx, Throwable cause);
+	
 	
 	public void serverError(WtPipeContext ctx, Throwable cause) {
 		serverError0(ctx, cause);
@@ -133,7 +123,7 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	protected abstract void clientHandshakeSucc0(WtPipeContext ctx) ;
+	protected abstract void serverError0(WtPipeContext ctx, Throwable cause) ;
 
 	public void clientHandshakeSucc(WtPipeContext ctx) {
 		clientHandshakeSucc0(ctx);
@@ -142,31 +132,32 @@ public abstract class FullPipeHandler {
 		}
 	}
 	
-	protected abstract void clientHandshakeFail0(WtPipeContext ctx) ;
+	protected abstract void clientHandshakeSucc0(WtPipeContext ctx) ;
 	
-	public void clientHandshakeFail(WtPipeContext ctx) {
-		clientHandshakeFail0(ctx);
+	public void clientHandshakeFail(WtPipeContext ctx, Throwable cause) {
+		clientHandshakeFail0(ctx, cause);
 		if (next != null) {
-			this.next.clientHandshakeFail(ctx);
+			this.next.clientHandshakeFail(ctx, cause);
 		}
 	}
 	
-	protected abstract void serverConnectFailed0(WtPipeContext ctx);
+	protected abstract void clientHandshakeFail0(WtPipeContext ctx, Throwable cause) ;
 	
-	public void serverConnectFailed(WtPipeContext ctx) {
-		serverConnectFailed0(ctx);
+	public void serverConnectFailed(WtPipeContext ctx, Throwable cause) {
+		serverConnectFailed0(ctx, cause);
 		if (next != null) {
-			this.next.serverConnectFailed(ctx);
+			this.next.serverConnectFailed(ctx, cause);
 		}
 	}
 	
-	protected abstract void serverHandshakeFail0(WtPipeContext ctx) ;
+	protected abstract void serverConnectFailed0(WtPipeContext ctx, Throwable cause);
 	
-	public void serverHandshakeFail(WtPipeContext ctx) {
-		serverHandshakeFail0(ctx);
+	public void serverHandshakeFail(WtPipeContext ctx, Throwable cause) {
+		serverHandshakeFail0(ctx, cause);
 		if (next != null) {
-			this.next.serverHandshakeFail(ctx);
+			this.next.serverHandshakeFail(ctx, cause);
 		}
 	}
 	
+	protected abstract void serverHandshakeFail0(WtPipeContext ctx, Throwable cause) ;
 }
