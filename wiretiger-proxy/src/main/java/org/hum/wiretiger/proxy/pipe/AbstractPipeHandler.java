@@ -55,7 +55,6 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 	
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-    	log.info("[" + wtContext.getId() + "]back connect, channel=" + ctx.channel());
     	if (getBackChannel(ctx.channel()) != null) {
     		channelActive4Server(ctx);
     	} else if (ctx.channel() == wtContext.getClientChannel()) {

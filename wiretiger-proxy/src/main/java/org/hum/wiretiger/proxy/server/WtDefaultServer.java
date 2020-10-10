@@ -9,6 +9,7 @@ import org.hum.wiretiger.proxy.facade.event.EventListener;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.FullRequestDecoder;
 import org.hum.wiretiger.proxy.pipe.ProxyHandshakeHandler;
+import org.hum.wiretiger.proxy.pipe.chain.FullPipeContextManagerHandler;
 import org.hum.wiretiger.proxy.pipe.chain.FullPipeEventHandler;
 import org.hum.wiretiger.proxy.pipe.event.EventHandler;
 import org.hum.wiretiger.proxy.session.SessionManagerHandler;
@@ -66,7 +67,8 @@ public class WtDefaultServer implements WtServer {
 				public void initChannel(SocketChannel ch) {
 					// sessionManagerHandler需要保证每一个连接独享
 					SessionManagerHandler sessionManagerHandler = new SessionManagerHandler(pipeEventHandler);
-					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(sessionManagerHandler, mockHandler);
+					FullPipeContextManagerHandler fullPipeContextManagerHandler = new FullPipeContextManagerHandler(sessionManagerHandler);
+					ProxyHandshakeHandler httpProxyHandshakeHandler = new ProxyHandshakeHandler(fullPipeContextManagerHandler, mockHandler);
 					ch.pipeline().addLast(new HttpResponseEncoder(), new HttpRequestDecoder() , new FullRequestDecoder(), httpProxyHandshakeHandler);
 				}
 			});

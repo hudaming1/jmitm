@@ -33,7 +33,7 @@ public class FullPipeEventHandler extends FullPipeHandler {
 
 	@Override
 	protected void serverConnect0(WtPipeContext ctx, InetAddress inetAddress) {
-		eventHandler.fireConnectEvent(ctx);
+		eventHandler.fireChangeEvent(ctx);
 	}
 
 	@Override
