@@ -41,7 +41,7 @@ public class WiretigerServerRun {
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && (
-					request.uri().contains("dong_30a61f45c8d4634ca14da8829046271f") || 
+					request.uri().contains("PCdoodle_dce011f4f164006d915e4e122012c428") || 
 					request.uri().contains("logo_web")
 			);
 		}).rebuildResponse(response -> {

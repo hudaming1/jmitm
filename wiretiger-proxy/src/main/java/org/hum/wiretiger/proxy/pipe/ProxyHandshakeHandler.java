@@ -66,15 +66,12 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		log.info("[" + wtContext.getId() + "] HTTPS CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
     		// SSL
     		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
-    		log.info("[" + wtContext.getId() + "] create ssl_handler");
 			sslHandler.handshakeFuture().addListener(future -> {
 				if (!future.isSuccess()) {
-					// java.nio.channels.ClosedChannelException时,message is null?
 					client2ProxyCtx.close();
-					log.error("[" + wtContext.getId() + "] handshake failure", future.cause());
+					log.error("[" + wtContext.getId() + "] handshake failure, cause=" + future.cause().getMessage());
 					return ;
 				}
 				// 握手成功
@@ -94,7 +91,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			client2ProxyCtx.pipeline().remove(FullRequestDecoder.class);
 			client2ProxyCtx.pipeline().remove(this);
 			client2ProxyCtx.writeAndFlush(Unpooled.wrappedBuffer(HttpConstant.ConnectedLine.getBytes()));
-    		log.info("[" + wtContext.getId() + "] flush connectline");
     	} else {
 
     		if (NettyUtils.findChannelHandler(client2ProxyCtx.channel(), AbstractFullPipe.class) == null) {
@@ -108,8 +104,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
     		}
     		
     		// [HTTP] 2.建立back端连接
-    		log.info("[" + wtContext.getId() + "] HTTP CONNECT " + InetAddress.getHost() + ":" + InetAddress.getPort());
-    		
     		client2ProxyCtx.fireChannelRead(request);
     	}
 	}

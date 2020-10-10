@@ -31,7 +31,7 @@ public class HttpsPipe extends AbstractFullPipe {
 		if (!currentBack.isActive()) {
 			currentBack.connect().addListener(f -> {
 				if (!f.isSuccess()) {
-					log.error("[" + wtContext.getId() + "] server connect error.", f.cause());
+					log.error("[" + wtContext.getId() + "] server connect error. cause={}", f.cause().getMessage());
 					wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
 					wtContext.recordStatus(PipeStatus.Error);
 					fullPipeHandler.serverConnectFailed(wtContext);
@@ -45,7 +45,7 @@ public class HttpsPipe extends AbstractFullPipe {
 			}).sync();
 			currentBack.handshakeFuture().addListener(tls -> {
 				if (!tls.isSuccess()) {
-					log.error("[" + wtContext.getId() + "] server tls error", tls.cause());
+					log.error("[" + wtContext.getId() + "] server tls error, cause={}", tls.cause().getMessage());
 					wtContext.addEvent(PipeEventType.Error, "[X]与服务端" + InetAddress + "建立连接失败");
 					wtContext.recordStatus(PipeStatus.Error);
 					fullPipeHandler.serverHandshakeFail(wtContext);

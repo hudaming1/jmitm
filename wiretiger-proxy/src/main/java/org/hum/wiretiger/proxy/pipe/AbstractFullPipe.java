@@ -148,7 +148,7 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("front exception, pipeId=" + wtContext.getId(), cause);
+		log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "客户端异常：" + cause.getMessage());
 		fullPipeHandler.clientError(wtContext, cause);
@@ -157,7 +157,7 @@ public abstract class AbstractFullPipe extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("back exception, pipeId=" + wtContext.getId(), cause);
+		log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
 		wtContext.recordStatus(PipeStatus.Error);
 		wtContext.addEvent(PipeEventType.Error, "服务端异常：" + cause.getMessage());
 		fullPipeHandler.serverError(wtContext, cause);
