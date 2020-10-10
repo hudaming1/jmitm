@@ -11,26 +11,26 @@ public class WsPipeService {
 
 	private static final ConsoleManager CM = ConsoleManager.get();
 	
-	public void sendConnectMsg(WtPipeContext pipeHolder) {
+	public void sendConnectMsg(WtPipeContext ctx) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeConnect);
-			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipeHolder));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(ctx));
 			channel.writeAndFlush(msg);
 		});
 	}
 
-	public void sendStatusChangeMsg(WtPipeContext pipe) {
+	public void sendStatusChangeMsg(WtPipeContext ctx) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeUpdate);
-			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(ctx));
 			channel.writeAndFlush(msg);
 		});
 	}
 
-	public void sendDisConnectMsg(WtPipeContext pipe) {
+	public void sendDisConnectMsg(WtPipeContext ctx) {
 		CM.getAll().forEach(channel -> {
 			WsServerMessage<WiretigerPipeListVO> msg = new WsServerMessage<>(MessageTypeEnum.PipeDisconnect);
-			msg.setData(ConsoleHelper.parse2WtPipeListVO(pipe));
+			msg.setData(ConsoleHelper.parse2WtPipeListVO(ctx));
 			channel.writeAndFlush(msg);
 		});
 	}
