@@ -26,6 +26,7 @@
 ##功能优化
 【P1】Console没有探活，页面刷新后连接没有断开
 【P1】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
+【P0】设定服务端只能保留N条请求，并做成可配置
 
 【P3】Request支持分页
 【P3】修改Session创建时机，不要等到Response完成后才创建Session
@@ -33,7 +34,6 @@
 【P3】配置闲置连接最长5分钟
 【P3】PIPE删除Request和Response，只显示汇总信息
 【P3】开启debug模式（log4j和nettyhandler）
-【P3】设定服务端只能保留N条请求，并做成可配置
 【P3】clear按钮做成菜单
 【P3】显示当前存活连接数
 【P3】控制台增加断开连接的按钮

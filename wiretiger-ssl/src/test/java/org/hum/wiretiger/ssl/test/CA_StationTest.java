@@ -1,7 +1,6 @@
 package org.hum.wiretiger.ssl.test;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
 import org.hum.wiretiger.ssl.CA_Station;
 

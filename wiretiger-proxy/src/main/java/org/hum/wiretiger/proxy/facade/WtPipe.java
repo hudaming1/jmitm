@@ -16,7 +16,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Getter;
 
 @Getter
-public class WtPipe {
+class WtPipe {
 	
 	// pipeId
 	private Long id;
@@ -37,11 +37,11 @@ public class WtPipe {
 	// protocol
 	private Protocol protocol;
 	
-	public void addEvent(WtPipeEvent event) {
+	void addEvent(WtPipeEvent event) {
 		this.events.add(event);
 	}
 	
-	public void addStatus(PipeStatus status) {
+	void addStatus(PipeStatus status) {
 		this.statusMap.put(System.currentTimeMillis(), status);
 	}
 
@@ -77,11 +77,11 @@ public class WtPipe {
 		this.name = name;
 	}
 
-	public List<FullHttpRequest> getRequestList() {
+	List<FullHttpRequest> getRequestList() {
 		return this.requestList.get();
 	}
 
-	public List<FullHttpResponse> getResponseList() {
+	List<FullHttpResponse> getResponseList() {
 		return this.responseList.get();
 	}
 }

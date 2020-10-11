@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Queue;
+import java.util.Stack;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
@@ -22,10 +24,14 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 
 	private static ConcurrentHashMap<Channel, WtPipeContext> pipes4ClientChannel = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Long, WtPipeContext> pipes4Id = new ConcurrentHashMap<>();
+	// TODO 用线程安全队列
+	private static Stack<Long> queueStack = new Stack<Long>();
 	private WsPipeService wsPipeService = new WsPipeService();
+	private int queueSize;
 
-	public PipeManagerInvokeChain(PipeInvokeChain next) {
+	public PipeManagerInvokeChain(PipeInvokeChain next, int queueSize) {
 		super(next);
+		this.queueSize = queueSize;
 	}
 
 	@Override
@@ -34,8 +40,15 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 			log.error(ctx.getClientChannel() + "has exists, id=" + pipes4ClientChannel.get(ctx.getClientChannel()).getId());
 			throw new WiretigerException(ctx.getClientChannel() + " has exists");
 		}
+		if (queueStack.size() > queueSize) {
+			Long removeId = queueStack.pop();
+			WtPipeContext removeCtx = pipes4Id.get(removeId);
+			pipes4Id.remove(removeId);
+			pipes4ClientChannel.remove(removeCtx.getClientChannel());
+		}
 		pipes4Id.put(ctx.getId(), ctx);
 		pipes4ClientChannel.put(ctx.getClientChannel(), ctx);
+		queueStack.push(ctx.getId());
 		wsPipeService.sendConnectMsg(ctx);
 		return true;
 	}

@@ -19,7 +19,7 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	 * 保存了当前HTTP连接，正在等待响应的请求
 	 */
 	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
-	private WsSessionService wsSessionService = new WsSessionService();
+	private static WsSessionService wsSessionService = new WsSessionService();
 
 	public SessionManagerInvokeChain(PipeInvokeChain next) {
 		super(next);

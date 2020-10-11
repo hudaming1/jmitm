@@ -18,14 +18,23 @@ public class WiretigerServerRun {
 		wtBuilder.proxyPort(52007);
 		wtBuilder.consoleHttpPort(8080);
 		wtBuilder.consoleWsPort(52996);
-		wtBuilder.addMock(mockDemo1(), mockDemo2(), mockDemo3(), mockDemo4(), mockDemo5());
+		wtBuilder.addMock(
+				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
+				mockDemo1(), 
+				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
+				mockDemo2(), 
+				// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
+				mockDemo3(), 
+				// DEMO4：拦截所有响应，对响应打标记
+				mockDemo4(), 
+				// DEMO5：根据Request，重新Mock Response
+				mockDemo5());
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
 
-	// DEMO4：拦截所有响应，对响应打标记
 	private static Mock mockDemo4() {
 		return new CatchResponse().eval(response -> {
 			return true;
@@ -35,7 +44,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && (
@@ -61,7 +69,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
 	private static Mock mockDemo2() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
@@ -77,7 +84,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 	private static Mock mockDemo1() {
 		// 将wiretiger.com重定向到localhost:8080
 		return new CatchRequest().eval(request -> {
@@ -88,7 +94,6 @@ public class WiretigerServerRun {
 		}).mock();
 	}
 
-	// DEMO5：MockResponse
 	private static Mock mockDemo5() {
 		return new CatchRequest().eval(request -> {
 			return request.uri().contains("/sms/replenishment/transfer/listTransferByPage");
@@ -102,5 +107,4 @@ public class WiretigerServerRun {
 			return response;
 		}).mock();
 	}
-
 }
