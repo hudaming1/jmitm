@@ -1,9 +1,13 @@
 package org.hum.wiretiger.console.common.chain;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.Stack;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.hum.wiretiger.common.util.SyncLinkedHashMap;
 import org.hum.wiretiger.console.common.WtSession;
-import org.hum.wiretiger.console.common.WtSessionManager;
 import org.hum.wiretiger.console.websocket.service.WsSessionService;
 import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
 import org.hum.wiretiger.proxy.facade.WtPipeContext;
@@ -20,9 +24,18 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	 */
 	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
 	private static WsSessionService wsSessionService = new WsSessionService();
+	private static Map<Long, WtSession> RequestIndex4Id;
+	private static final AtomicBoolean RequestIndex4Id_INIT_FLAG = new AtomicBoolean();
 
-	public SessionManagerInvokeChain(PipeInvokeChain next) {
+	public SessionManagerInvokeChain(PipeInvokeChain next, int sessionHistory) {
 		super(next);
+		initRequsetMap(sessionHistory);
+	}
+	
+	private void initRequsetMap(int size) {
+		if (RequestIndex4Id_INIT_FLAG.compareAndSet(false, true)) {
+			RequestIndex4Id = new SyncLinkedHashMap<>(size);
+		}
 	}
 
 	@Override
@@ -48,8 +61,16 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 		
 		session.setResponse(response, bytes, System.currentTimeMillis());
 		// TODO 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
-		WtSessionManager.get().add(session);
+		RequestIndex4Id.put(session.getId(), session);
 		wsSessionService.sendNewSessionMsg(ctx, session);
 		return true;
+	}
+	
+	public static Collection<WtSession> getAll() {
+		return Collections.unmodifiableCollection(RequestIndex4Id.values());
+	}
+	
+	public static WtSession getById(long id) {
+		return RequestIndex4Id.get(id);
 	}
 }

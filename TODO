@@ -22,11 +22,11 @@
 【OK】【M9W4】手机连接不行啊，只能发起连接，连Read事件都触发不了
 【OK】【M9W4】start-module需要重构，封装成可配置化
 【OK】HTTP和HTTPS的Handler要拆开 
+【OK】设定服务端只能保留N条请求，并做成可配置
 
 ##功能优化
 【P1】Console没有探活，页面刷新后连接没有断开
 【P1】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
-【P0】设定服务端只能保留N条请求，并做成可配置
 
 【P3】Request支持分页
 【P3】修改Session创建时机，不要等到Response完成后才创建Session

@@ -8,7 +8,7 @@ import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
 import org.hum.wiretiger.console.common.WtSession;
-import org.hum.wiretiger.console.common.WtSessionManager;
+import org.hum.wiretiger.console.common.chain.SessionManagerInvokeChain;
 import org.hum.wiretiger.console.common.codec.IContentCodec;
 import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
@@ -21,11 +21,9 @@ import io.netty.handler.codec.http.HttpHeaders;
 
 public class SessionService {
 	
-	private WtSessionManager sessionManagerLite = WtSessionManager.get();
-
 	public List<WiretigerSessionListVO> list(WiretigerSessionListQueryVO query) {
 		List<WiretigerSessionListVO> sessionList = new ArrayList<>();
-		sessionManagerLite.getAll().forEach(session -> {
+		SessionManagerInvokeChain.getAll().forEach(session -> {
 			if (!isMatch(query, session)) {
 				return ;
 			}
@@ -47,7 +45,7 @@ public class SessionService {
 	
 	public WiretigerSessionDetailVO getById(Long id) throws IOException {
 		WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
-		WtSession simpleSession = sessionManagerLite.getById(id);
+		WtSession simpleSession = SessionManagerInvokeChain.getById(id);
 		detailVo.setRequest(convert2RequestString(simpleSession));
 		detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
 		detailVo.setPipeId(simpleSession.getPipeId());

@@ -21,12 +21,12 @@ public class WiretigerServerProvider {
 	
 	public WiretigerServerProvider(WiretigerCoreConfig coreConfig, WiretigerConsoleConfig consoleConfig) {
 		super();
-		PipeManagerInvokeChain pipeManagerInvokeChain = new PipeManagerInvokeChain(null);
+		PipeManagerInvokeChain pipeManagerInvokeChain = new PipeManagerInvokeChain(null, consoleConfig.getPipeHistory());
 		// proxy-server
 		this.proxyServer = new WtDefaultServer(coreConfig);
 		this.proxyServer.setMockHandler(new MockHandler(coreConfig.getMockList()));
 		this.proxyServer.setInvokeChainInit(()-> {
-			return new SessionManagerInvokeChain(pipeManagerInvokeChain);
+			return new SessionManagerInvokeChain(pipeManagerInvokeChain, consoleConfig.getSessionHistory());
 		});
 		
 		// console HTTP-server
