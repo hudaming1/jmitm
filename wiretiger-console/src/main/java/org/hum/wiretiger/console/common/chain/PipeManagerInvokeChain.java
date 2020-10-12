@@ -3,10 +3,13 @@ package org.hum.wiretiger.console.common.chain;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.Stack;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.hum.wiretiger.common.exception.WiretigerException;
 import org.hum.wiretiger.console.websocket.service.WsPipeService;
@@ -24,14 +27,12 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 
 	private static ConcurrentHashMap<Channel, WtPipeContext> pipes4ClientChannel = new ConcurrentHashMap<>();
 	private static ConcurrentHashMap<Long, WtPipeContext> pipes4Id = new ConcurrentHashMap<>();
-	// TODO 用线程安全队列
-	private static Stack<Long> queueStack = new Stack<Long>();
+	private ArrayBlockingQueue<Long> pipeQueue = null;
 	private WsPipeService wsPipeService = new WsPipeService();
-	private int queueSize;
 
 	public PipeManagerInvokeChain(PipeInvokeChain next, int queueSize) {
 		super(next);
-		this.queueSize = queueSize;
+		pipeQueue = new ArrayBlockingQueue<Long>(queueSize);
 	}
 
 	@Override
@@ -40,17 +41,27 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 			log.error(ctx.getClientChannel() + "has exists, id=" + pipes4ClientChannel.get(ctx.getClientChannel()).getId());
 			throw new WiretigerException(ctx.getClientChannel() + " has exists");
 		}
-		if (queueStack.size() > queueSize) {
-			Long removeId = queueStack.pop();
-			WtPipeContext removeCtx = pipes4Id.get(removeId);
-			pipes4Id.remove(removeId);
-			pipes4ClientChannel.remove(removeCtx.getClientChannel());
-		}
+//		if (pipeQueue.size() > queueSize) {
+//			Long removeId = pipeQueue.pop();
+//			WtPipeContext removeCtx = pipes4Id.get(removeId);
+//			pipes4Id.remove(removeId);
+//			pipes4ClientChannel.remove(removeCtx.getClientChannel());
+//		}
 		pipes4Id.put(ctx.getId(), ctx);
 		pipes4ClientChannel.put(ctx.getClientChannel(), ctx);
-		queueStack.push(ctx.getId());
+//		pipeQueue.push(ctx.getId());
 		wsPipeService.sendConnectMsg(ctx);
 		return true;
+	}
+	
+	public static void main(String[] args) {
+		ArrayBlockingQueue<Integer> pipeQueue = new ArrayBlockingQueue<Integer>(10);
+		for (int i = 0 ;i < 100 ;i ++) {
+			System.out.println(i + "-" + pipeQueue.offer(i) + "-" + pipeQueue.remainingCapacity());
+		}
+		System.out.println(pipeQueue);
+		// TODO 考虑用LinkedHashMap存还是用ArrayBlockingQueue
+		LinkedHashMap<String, Object> map = new LinkedHashMap<String, Object>();
 	}
 
 	public static WtPipeContext getById(Long id) {
