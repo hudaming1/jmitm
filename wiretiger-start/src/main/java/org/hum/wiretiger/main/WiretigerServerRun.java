@@ -21,9 +21,9 @@ public class WiretigerServerRun {
 		wtBuilder.addMock(
 				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				mockDemo1(), 
-				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo变成了360So
-				mockDemo2(), 
-				// DEMO3：修改百度活动页的Logo，读取本地GoogleLogo文件
+				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo重定向到360So
+//				mockDemo2(), 
+				// DEMO3：修改了百度首页的Logo，读取本地GoogleLogo文件，首页Logo变为Google
 				mockDemo3(), 
 				// DEMO4：拦截所有响应，对响应打标记
 				mockDemo4(), 
@@ -46,10 +46,8 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
-			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && (
-					request.uri().contains("PCdoodle_dce011f4f164006d915e4e122012c428") || 
-					request.uri().contains("logo_web")
-			);
+			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
+					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
 		}).rebuildResponse(response -> {
 			try {
 				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource("/mock/google.png").getFile()));
