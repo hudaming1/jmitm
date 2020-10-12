@@ -16,30 +16,13 @@ public class ConsoleHelper {
 		vo.setStatus(item.getCurrentStatus().getDesc());
 		return vo;
 	}
-//
-//	public static WiretigerPipeListVO parse2WtPipeListVO(WiretigerFullPipe item) {
-//		
-//		WiretigerPipeListVO vo = new WiretigerPipeListVO();
-//		vo.setPipeId(item.getPipeId());
-//		vo.setName(item.getSourceHost() + ":" + item.getSourcePort() + "->" + item.getTargetHost() + ":" + item.getTargetPort());
-//		vo.setProtocol(item.getProtocol() == null ? Protocol.UNKNOW.getDesc() : item.getProtocol().getDesc());
-//		vo.setStatus(item.getStatus().getDesc());
-//		return vo;
-//	}
 
 	public static WiretigerSessionListVO parse2WtSessionListVO(WtSession session) {
 		WiretigerSessionListVO listVO = new WiretigerSessionListVO();
 		listVO.setSessionId(session.getId() + "");
 		listVO.setUri(session.getRequest().uri());
-		listVO.setResponseCode(session.getResponse().status().code() + "");
+		listVO.setResponseCode(session.getResponse() == null ? "PENDING..." : session.getResponse().status().code() + "");
 		return listVO;
 	}
 
-//	public static WiretigerSessionListVO parse2WtSessionListVO(WiretigerSession session) {
-//		WiretigerSessionListVO listVO = new WiretigerSessionListVO();
-//		listVO.setSessionId(session.getSessionId() + "");
-//		listVO.setUri(session.getUri());
-//		listVO.setResponseCode(session.getResponseCode());
-//		return listVO;
-//	}
 }

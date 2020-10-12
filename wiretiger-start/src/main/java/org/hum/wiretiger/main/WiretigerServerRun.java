@@ -87,6 +87,7 @@ public class WiretigerServerRun {
 		return new CatchRequest().eval(request -> {
 			return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
 		}).rebuildRequest(request -> {
+			System.out.println("111111");
 			request.headers().set("Host", "localhost:8080");
 			return request;
 		}).mock();

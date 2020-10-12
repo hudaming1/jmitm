@@ -40,7 +40,9 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 
 	@Override
 	protected boolean clientRead0(WtPipeContext ctx, FullHttpRequest request) {
-		reqStack4WattingResponse.push(new WtSession(ctx.getId(), request, System.currentTimeMillis()));
+		WtSession session = new WtSession(ctx.getId(), request, System.currentTimeMillis());
+		reqStack4WattingResponse.push(session);
+		RequestIndex4Id.put(session.getId(), session);
 		return true;
 	}
 
@@ -60,8 +62,6 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 		}
 		
 		session.setResponse(response, bytes, System.currentTimeMillis());
-		// TODO 目前是当服务端返回结果，具备构建一个完整当Session后才触发NewSession事件，后续需要将动作置前
-		RequestIndex4Id.put(session.getId(), session);
 		wsSessionService.sendNewSessionMsg(ctx, session);
 		return true;
 	}
