@@ -76,8 +76,9 @@ public class SessionService {
 		for (Entry<String, String> header : session.getRequest().headers()) {
 			request.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
-		if (session.getRequest().content() != null) {
+		if (session.getRequestBytes() != null) {
 			// TODO
+			System.out.println("ReqBody=" + new String(session.getRequestBytes()));
 		}
 		return request.toString();
 	}

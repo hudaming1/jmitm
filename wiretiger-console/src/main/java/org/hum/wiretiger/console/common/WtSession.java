@@ -16,6 +16,7 @@ public class WtSession {
 	private FullHttpRequest request;
 	private long requestTime;
 	private FullHttpResponse response;
+	private byte[] requestBytes;
 	private byte[] responseBytes;
 	private long responseTime;
 	
@@ -30,5 +31,9 @@ public class WtSession {
 		this.response = response;
 		this.responseBytes = responseBytes;
 		this.responseTime = time;
+	}
+	
+	public void setRequestBytes(byte[] bytes) {
+		this.requestBytes = bytes;
 	}
 }

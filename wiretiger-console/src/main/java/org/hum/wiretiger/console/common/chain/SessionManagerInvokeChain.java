@@ -41,6 +41,12 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	@Override
 	protected boolean clientRead0(WtPipeContext ctx, FullHttpRequest request) {
 		WtSession session = new WtSession(ctx.getId(), request, System.currentTimeMillis());
+		byte[] bytes = null;
+		if (request.content().readableBytes() > 0) {
+			bytes = new byte[request.content().readableBytes()];
+			request.content().duplicate().readBytes(bytes);
+		}
+		session.setRequestBytes(bytes);
 		reqStack4WattingResponse.push(session);
 		RequestIndex4Id.put(session.getId(), session);
 		return true;
