@@ -8,3 +8,4 @@
 将浏览器挂好代理后，可以通过Java代码方式对所有HTTP/HTTPS请求和响应进行拦截并重写。
 
 例如：我就将浏览器访问百度首页的Logo换成了Google
+![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
