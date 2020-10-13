@@ -46,7 +46,9 @@ public class SessionService {
 	public WiretigerSessionDetailVO getById(Long id) throws IOException {
 		WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 		WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-		detailVo.setRequest(convert2RequestString(simpleSession));
+		detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession));
+		detailVo.setRequestBody4Source(Arrays.toString(convert2RequestBody(simpleSession)));
+		detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
 		detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
 		detailVo.setPipeId(simpleSession.getPipeId());
 		
@@ -71,16 +73,19 @@ public class SessionService {
 		return detailVo;
 	}
 	
-	private String convert2RequestString(WtSession session) {
+	private String convert2RequestHeaderAndLine(WtSession session) {
 		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(HttpConstant.HTML_NEWLINE);
 		for (Entry<String, String> header : session.getRequest().headers()) {
 			request.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
-		if (session.getRequestBytes() != null) {
-			// TODO
-			System.out.println("ReqBody=" + new String(session.getRequestBytes()));
-		}
 		return request.toString();
+	}
+	
+	private byte[] convert2RequestBody(WtSession session) {
+		if (session.getRequestBytes() == null) {
+			return null;
+		}
+		return session.getRequestBytes();
 	}
 	
 	private String convert2RepsonseHeader(WtSession session) {

@@ -13,7 +13,9 @@
 				$.get("/session/get?id=" + row.sessionId, function(resp) {
 					// load data
 					var jsonObj = eval("(" + resp + ")");
-					$("#SESN_STAGE").find("#requestPannel").html(jsonObj.request);
+					$("#SESN_STAGE").find("#requestHeaderPannel").html(jsonObj.requestHeader);
+					$("#SESN_STAGE").find("#requestPannel4Detail").find("#source").html(jsonObj.requestBody4Source);
+					$("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").html(jsonObj.requestBody4Parsed);
 					$("#SESN_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
 					$("#SESN_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
 					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
@@ -210,7 +212,13 @@
 			<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
 				<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 					<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
-						<div id="requestPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+						<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+						</div>
+						<div id="requestPannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;padding:5px 5px 50px 5px;">
+							<div id="source" title="Source" data-options="fit:true, border:false">
+							</div>
+							<div id="parsed" title="Parsed" data-options="fit:true, border:false">
+							</div>
 						</div>
 					</div>
 					<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >

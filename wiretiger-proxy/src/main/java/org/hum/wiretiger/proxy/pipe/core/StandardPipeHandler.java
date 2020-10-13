@@ -79,7 +79,11 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			
 			// do mock response..
 			if (mockHandler != null) {
-				mockHandler.mock(mockRequestStack.pop(), resp);
+				if (mockRequestStack.size() > 0) {
+					mockHandler.mock(mockRequestStack.pop(), resp);
+				} else {
+					log.error("mockRequestStack is empty...");
+				}
 			}
 			
 			wtContext.appendResponse(resp);
@@ -133,14 +137,14 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+		log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
 		fullPipeHandler.clientError(wtContext, cause);
 		close();
 	}
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+		log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
 		fullPipeHandler.serverError(wtContext, cause);
 		close();
 	}
