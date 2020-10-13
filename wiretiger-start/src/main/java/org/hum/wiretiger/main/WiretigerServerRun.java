@@ -2,12 +2,18 @@ package org.hum.wiretiger.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
+import org.hum.wiretiger.console.common.codec.IContentCodec;
+import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
 import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
 import org.hum.wiretiger.proxy.mock.Mock;
+import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -28,11 +34,37 @@ public class WiretigerServerRun {
 				// DEMO4：拦截所有响应，对响应打标记
 				mockDemo4(), 
 				// DEMO5：根据Request，重新Mock Response
-				mockDemo5());
+				mockDemo5(),
+				// DEMO6：对百度首页注入一段JS代码
+				mockDemo6()
+				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
+	}
+
+	private static Mock mockDemo6() {
+		return new CatchRequest().eval(request -> {
+			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && "/".equals(request.uri());
+		}).rebuildResponse(response -> {
+			// 注入的JS代码
+			String json = "<script type='text/javascript'>alert('Wiretiger say hello');</script>";
+			byte[] readBytes = HttpMessageUtil.readBytes(response.content());
+			// 因为响应头是gzip进行压缩，因此无法直接将ASCII串追加到内容末尾，需要先将原响应报文解压，在将JS追加到末尾
+			IContentCodec contentCodec = CodecFactory.create("gzip");
+			String outBody = "";
+			try {
+				byte[] decompress = contentCodec.decompress(readBytes);
+				outBody = new String(decompress) + json;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			// 解压后为了省事，就不再进行压缩
+			response.content().retain().clear().writeBytes(outBody.getBytes());
+			response.headers().remove("Content-Encoding").set("Content-Length", outBody.getBytes().length);
+			return response;
+		}).mock();
 	}
 
 	private static Mock mockDemo4() {

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.DefaultHttpRequest;
 import io.netty.handler.codec.http.FullHttpMessage;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -152,6 +153,12 @@ public class HttpMessageUtil {
 		} else {
 			return HttpConstant.DEFAULT_HTTP_PORT;
 		}
+	}
+	
+	public static byte[] readBytes(ByteBuf byteBuf) {
+		byte[] bytes = new byte[byteBuf.readableBytes()];
+		byteBuf.duplicate().readBytes(bytes);
+		return bytes;
 	}
 	
 	public static boolean isHttpsRequest(HttpRequest request) {

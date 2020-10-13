@@ -24,10 +24,10 @@
 【OK】HTTP和HTTPS的Handler要拆开 
 【OK】设定服务端只能保留N条请求，并做成可配置
 【OK】Session创建时机置前
+【OK】POST请求，有问题？还要多试试，时好时坏，需要详细定位问题原因(FullRequestDecoder的问题，只对LastHttpContent处理，没有对HttpContent做解析)
 
 ##功能优化
 【P1】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
-【P1】POST请求，有问题？还要多试试，时好时坏，需要详细定位问题原因
 
 【P2】Console没有探活，页面刷新后连接没有断开
 【P3】Request支持分页
