@@ -2,6 +2,7 @@ package org.hum.wiretiger.main;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.hum.wiretiger.console.common.codec.IContentCodec;
@@ -12,8 +13,6 @@ import org.hum.wiretiger.proxy.mock.CatchResponse;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,7 +34,7 @@ public class WiretigerServerRun {
 				mockDemo4(), 
 				// DEMO5：根据Request，重新Mock Response
 				mockDemo5(),
-				// DEMO6：对百度首页注入一段JS代码
+				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
 				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
@@ -81,22 +80,25 @@ public class WiretigerServerRun {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
 		}).rebuildResponse(response -> {
-			try {
-				FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource("/mock/google.png").getFile()));
-				byte[] bytes = new byte[fileInputStream.available()];
-				fileInputStream.read(bytes);
-				fileInputStream.close();
-				log.info("mock google logo");
-				response.headers().add("wiretiger_mock", "mock google_logo");
-				response.content().clear();
-				response.content().writeBytes(bytes);
-				response.headers().set("Content-Type", "image/gif");
-				response.headers().set("Content-Length", bytes.length);
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
+			byte[] googleLogo = readFile("/mock/google.png");
+			response.content().clear().writeBytes(googleLogo);
+			response.headers().set("Content-Type", "image/gif")
+							  .set("Content-Length", googleLogo.length);
 			return response;
 		}).mock();
+	}
+	
+	private static byte[] readFile(String file) {
+		try {
+			FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource(file).getFile()));
+			byte[] bytes = new byte[fileInputStream.available()];
+			fileInputStream.read(bytes);
+			fileInputStream.close();
+			return bytes;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	private static Mock mockDemo2() {
