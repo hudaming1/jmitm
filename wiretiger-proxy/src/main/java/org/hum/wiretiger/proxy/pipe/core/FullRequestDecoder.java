@@ -13,25 +13,23 @@ public class FullRequestDecoder extends ChannelInboundHandlerAdapter {
 
 	private HttpRequest request;
 	// 大部分Request都没有Body
-	private ByteBuf content = Unpooled.buffer(0);
+	private ByteBuf content;
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     	if (msg instanceof HttpRequest) {
 			this.request = (HttpRequest) msg;
-			System.out.println("init:" + content.refCnt());
+			content = Unpooled.buffer(0).retain();
 		}
     	if (msg instanceof HttpContent) {
     		HttpContent body = (HttpContent) msg;
     		if (body.content().readableBytes() > 0) {
-    			System.out.println("write:" + content.refCnt());
     			content.writeBytes(body.content().duplicate());
     		}
     	} 
     	if (msg instanceof LastHttpContent) {
 			LastHttpContent requestBody = (LastHttpContent) msg;
 			DefaultFullHttpRequest fullRequest = new DefaultFullHttpRequest(request.protocolVersion(), request.method(), request.uri(), content, request.headers(), requestBody.trailingHeaders());
-			System.out.println(content.refCnt() + "-" + requestBody.refCnt());
 			ctx.fireChannelRead(fullRequest);
 		} 
     }
