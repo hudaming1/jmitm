@@ -30,24 +30,35 @@ public class WiretigerServerProvider {
 		});
 		
 		// console HTTP-server
-		this.consoleServer = new ConsoleServer(consoleConfig);
+		if (consoleConfig.getHttpPort() != null) {
+			this.consoleServer = new ConsoleServer(consoleConfig);
+		}
 		
 		// console WebSocket-server
-		this.webSocketServer = new WebSocketServer(consoleConfig.getWebSocketPort());
+		if (consoleConfig.getWebSocketPort() != null) {
+			this.webSocketServer = new WebSocketServer(consoleConfig.getWebSocketPort());
+		}
 	}
 
 	public void start() throws InterruptedException {
 		ChannelFuture proxyStartFuture = proxyServer.start();
-		try {
-			consoleServer.startJetty();
-		} catch (Exception e) {
-			log.error("console-server start error", e);
+		if (consoleServer != null) {
+			try {
+				consoleServer.startJetty();
+			} catch (Exception e) {
+				log.error("console-server start error", e);
+			}
 		}
-		ChannelFuture wsStartFuture = webSocketServer.start();
+		ChannelFuture wsStartFuture = null;
+		if (webSocketServer != null) {
+			wsStartFuture = webSocketServer.start();
+		}
 		proxyStartFuture.sync();
 		log.info("proxy server started, listening port:" + proxyServer.getListeningPort());
-		wsStartFuture.sync();
-		log.info("console-ws_server started, listening port:" + webSocketServer.getPort());
+		if (wsStartFuture != null) {
+			wsStartFuture.sync();
+			log.info("console-ws_server started, listening port:" + webSocketServer.getPort());
+		}
 	}
 
 }

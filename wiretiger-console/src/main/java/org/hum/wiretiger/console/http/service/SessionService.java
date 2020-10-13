@@ -18,7 +18,9 @@ import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
 import io.netty.handler.codec.http.HttpHeaders;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SessionService {
 	
 	public List<WiretigerSessionListVO> list(WiretigerSessionListQueryVO query) {
@@ -43,34 +45,41 @@ public class SessionService {
 		return false;
 	}
 	
-	public WiretigerSessionDetailVO getById(Long id) throws IOException {
-		WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
-		WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-		detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession));
-		detailVo.setRequestBody4Source(Arrays.toString(convert2RequestBody(simpleSession)));
-		detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
-		detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
-		detailVo.setPipeId(simpleSession.getPipeId());
-		
-		if (simpleSession.getResponseBytes() != null && simpleSession.getResponseBytes().length > 0) {
-			HttpHeaders headers = simpleSession.getResponse().headers();
-			byte[] respBytes = simpleSession.getResponseBytes();
-			// 是否需要解压
-			if (headers.contains(HttpConstant.ContentEncoding)) {
-				respBytes = decompress(respBytes, headers.get(HttpConstant.ContentEncoding));
+	public WiretigerSessionDetailVO getById(Long id) {
+		try {
+			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
+			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
+			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession));
+			if (simpleSession.getRequestBytes() != null) {
+				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
+				detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
 			}
-			detailVo.setResponseBody4Source(Arrays.toString(respBytes));
-			// 是否可解析
-			if (HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentType))) {
-				detailVo.setResponseBody4Parsed(HttpMessageUtil.unescape(new String(respBytes)));
+			detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
+			detailVo.setPipeId(simpleSession.getPipeId());
+			
+			if (simpleSession.getResponseBytes() != null && simpleSession.getResponseBytes().length > 0) {
+				HttpHeaders headers = simpleSession.getResponse().headers();
+				byte[] respBytes = simpleSession.getResponseBytes();
+				// 是否需要解压
+				if (headers.contains(HttpConstant.ContentEncoding)) {
+					respBytes = decompress(respBytes, headers.get(HttpConstant.ContentEncoding));
+				}
+				detailVo.setResponseBody4Source(Arrays.toString(respBytes));
+				// 是否可解析
+				if (HttpMessageUtil.isSupportParseString(headers.get(HttpConstant.ContentType))) {
+					detailVo.setResponseBody4Parsed(HttpMessageUtil.unescape(new String(respBytes)));
+				} else {
+					detailVo.setResponseBody4Parsed("unsupport parsed type:" + headers.get(HttpConstant.ContentType));
+				}
 			} else {
-				detailVo.setResponseBody4Parsed("unsupport parsed type:" + headers.get(HttpConstant.ContentType));
+				detailVo.setResponseBody4Source("No Response..");
+				detailVo.setResponseBody4Parsed("No Response..");
 			}
-		} else {
-			detailVo.setResponseBody4Source("No Response..");
-			detailVo.setResponseBody4Parsed("No Response..");
+			return detailVo;
+		} catch (Throwable ce) {
+			log.error("getById.error, id={}", id, ce);
+			return null;
 		}
-		return detailVo;
 	}
 	
 	private String convert2RequestHeaderAndLine(WtSession session) {
@@ -79,13 +88,6 @@ public class SessionService {
 			request.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
 		return request.toString();
-	}
-	
-	private byte[] convert2RequestBody(WtSession session) {
-		if (session.getRequestBytes() == null) {
-			return null;
-		}
-		return session.getRequestBytes();
 	}
 	
 	private String convert2RepsonseHeader(WtSession session) {

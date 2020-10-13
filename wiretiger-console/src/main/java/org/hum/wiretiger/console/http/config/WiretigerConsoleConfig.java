@@ -5,8 +5,8 @@ import lombok.Data;
 @Data
 public class WiretigerConsoleConfig {
 
-	private int httpPort;
-	private int webSocketPort;
+	private Integer httpPort;
+	private Integer webSocketPort;
 	private String webRoot;
 	private String webXmlPath;
 	// 默认保存"所有"连接信息
