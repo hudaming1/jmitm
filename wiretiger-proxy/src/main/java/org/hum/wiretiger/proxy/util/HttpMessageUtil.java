@@ -20,7 +20,7 @@ public class HttpMessageUtil {
 	
 	private static final String[] SUPPORT_PARSED_STRING = new String[] {
 		"application/javascript", "text/css", "text/html", "application/x-javascript", "text/plain", "application/xml",
-		"application/xhtml", "text/javascript"
+		"application/xhtml", "text/javascript", "application/json"
 	};
 
     public static StringBuilder appendRequest(StringBuilder buf, DefaultHttpRequest req) {
