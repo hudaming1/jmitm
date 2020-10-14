@@ -37,7 +37,9 @@ public class WiretigerServerRun {
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6(),
 				// DEMO7：
-				mockDemo7()
+				mockDemo7(),
+				// DEMO8
+				mockDemo8()
 				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
@@ -47,6 +49,9 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo6() {
 		return new CatchRequest().eval(request -> {
+			if (request.headers() == null || request.headers().get("Host") == null) {
+				return false;
+			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && "/".equals(request.uri());
 		}).rebuildResponse(response -> {
 			// 注入的JS代码
@@ -79,6 +84,9 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
+			if (request.headers() == null || request.headers().get("Host") == null) {
+				return false;
+			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
 		}).rebuildResponse(response -> {
@@ -105,6 +113,9 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo2() {
 		return new CatchRequest().eval(request -> {
+			if (request.headers() == null || request.headers().get("Host") == null) {
+				return false;
+			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
 		}).rebuildRequest(request -> {
@@ -121,6 +132,9 @@ public class WiretigerServerRun {
 	private static Mock mockDemo1() {
 		// 将wiretiger.com重定向到localhost:8080
 		return new CatchRequest().eval(request -> {
+			if (request.headers() == null || request.headers().get("Host") == null) {
+				return false;
+			}
 			return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
 		}).rebuildRequest(request -> {
 			request.headers().set("Host", "localhost:8080");
@@ -147,6 +161,22 @@ public class WiretigerServerRun {
 			request.headers().set("HOST", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/staticCheck/listByPage");
+			System.out.println("redirect to localhost:8888");
+			return request;
+		}).rebuildResponse(response -> {
+			response.headers().set("Access-Control-Allow-Credentials", true);
+			response.headers().set("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockDemo8() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/internal/returnGoods/getStockNumByMaterialId") && request.method() == HttpMethod.GET;
+		}).rebuildRequest(request-> {
+			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("X-User-Id", "3101");
+			request.setUri(request.uri().replace("/sms/internal/returnGoods/getStockNumByMaterialId", "/migrate/sms/internal/returnGoods/getStockNumByMaterialId"));
 			System.out.println("redirect to localhost:8888");
 			return request;
 		}).rebuildResponse(response -> {

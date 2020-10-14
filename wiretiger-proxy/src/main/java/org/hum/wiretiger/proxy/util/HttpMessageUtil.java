@@ -16,7 +16,9 @@ import io.netty.handler.codec.http.HttpResponse;
 import io.netty.util.internal.StringUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class HttpMessageUtil {
 	
 	private static final String[] SUPPORT_PARSED_STRING = new String[] {
@@ -138,6 +140,10 @@ public class HttpMessageUtil {
     }
     
     public static InetAddress parse2InetAddress(HttpRequest request, boolean isHttps) {
+    	if (request.headers().get(HttpConstant.Host) == null) {
+    		log.error("parse2InetAddress.error, nofound header 'host', request=" + request);
+    		return null;
+    	}
 		// read host and port from http-request
 		String[] hostAndPort = request.headers().get(HttpConstant.Host).split(":");
 		String host = hostAndPort[0];

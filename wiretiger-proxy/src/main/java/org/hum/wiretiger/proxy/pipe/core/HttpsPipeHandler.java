@@ -19,6 +19,9 @@ public class HttpsPipeHandler extends StandardPipeHandler {
 
 	protected void connect(FullHttpRequest request) throws InterruptedException {
 		InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, true);
+		if (InetAddress == null) {
+			close();
+		}
 		wtContext.appendRequest(request);
 
 		currentBack = super.select(InetAddress.getHost(), InetAddress.getPort());

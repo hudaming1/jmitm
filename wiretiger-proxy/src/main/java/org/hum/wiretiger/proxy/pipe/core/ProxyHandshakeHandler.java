@@ -59,6 +59,9 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		
 		// read host and port from http-request
 		InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, true);
+		if (InetAddress == null) {
+			client2ProxyCtx.close();
+		}
 		
 		// wrap pipeholder
 		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
