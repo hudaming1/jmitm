@@ -61,6 +61,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, true);
 		if (InetAddress == null) {
 			client2ProxyCtx.close();
+			return ;
 		}
 		
 		// wrap pipeholder

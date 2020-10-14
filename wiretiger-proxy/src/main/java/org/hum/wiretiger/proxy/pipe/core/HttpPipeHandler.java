@@ -21,6 +21,7 @@ public class HttpPipeHandler extends StandardPipeHandler {
 		InetAddress inetAddress = HttpMessageUtil.parse2InetAddress(request, false);
 		if (inetAddress == null) {
 			close();
+			return ;
 		}
 		
 		wtContext.appendRequest(request);
