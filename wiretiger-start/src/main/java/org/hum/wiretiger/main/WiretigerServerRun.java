@@ -21,8 +21,8 @@ public class WiretigerServerRun {
 	public static void main(String[] args) throws Exception {
 		WiretigerBuilder wtBuilder = new WiretigerBuilder();
 		wtBuilder.proxyPort(52007);
-		wtBuilder.consoleHttpPort(8080);
-		wtBuilder.consoleWsPort(52996);
+		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
+		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
 				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				mockDemo1(), 
@@ -35,7 +35,9 @@ public class WiretigerServerRun {
 				// DEMO5：根据Request，重新Mock Response
 				// mockDemo5(),
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
-				mockDemo6()
+				mockDemo6(),
+				// DEMO7：
+				mockDemo7()
 				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
@@ -134,6 +136,22 @@ public class WiretigerServerRun {
 			response.content().retain().clear().writeBytes(json.getBytes());
 			response.headers().remove("Content-Encoding");
 			response.headers().set("Content-Length", json.getBytes().length);
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockDemo7() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/internal/staticCheck/listByPage") && request.method() == HttpMethod.POST;
+		}).rebuildRequest(request-> {
+			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("X-User-Id", "3101");
+			request.setUri("/migrate/sms/internal/staticCheck/listByPage");
+			System.out.println("redirect to localhost:8888");
+			return request;
+		}).rebuildResponse(response -> {
+			response.headers().set("Access-Control-Allow-Credentials", true);
+			response.headers().set("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
 			return response;
 		}).mock();
 	}

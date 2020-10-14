@@ -22,24 +22,27 @@ public class WiretigerBuilder {
 		return coreConfig.getPort();
 	}
 
-	public void proxyPort(int port) {
+	public WiretigerBuilder proxyPort(int port) {
 		coreConfig.setPort(port);
+		return this;
 	}
 	
 	public int threads() {
 		return coreConfig.getThreads();
 	}
 
-	public void threads(int threads) {
+	public WiretigerBuilder threads(int threads) {
 		coreConfig.setThreads(threads);
+		return this;
 	}
 
 	public boolean debug() {
 		return coreConfig.isDebug();
 	}
 
-	public void debug(boolean isDebug) {
+	public WiretigerBuilder debug(boolean isDebug) {
 		coreConfig.setDebug(isDebug);
+		return this;
 	}
 	
 	public WiretigerCoreConfig getWtCoreConfig() {
@@ -56,20 +59,23 @@ public class WiretigerBuilder {
 		return consoleConfig.getHttpPort();
 	}
 
-	public void consoleHttpPort(int port) {
+	public WiretigerBuilder consoleHttpPort(int port) {
 		consoleConfig.setHttpPort(port);
+		return this;
 	}
 
-	public void webRoot(String webRoot) {
+	public WiretigerBuilder webRoot(String webRoot) {
 		consoleConfig.setWebRoot(webRoot);
+		return this;
 	}
 	
 	public String webRoot() {
 		return consoleConfig.getWebRoot();
 	}
 	
-	public void webXmlPath(String webXmlPath) {
+	public WiretigerBuilder webXmlPath(String webXmlPath) {
 		consoleConfig.setWebXmlPath(webXmlPath);
+		return this;
 	}
 	
 	public String webXmlPath() {
@@ -80,7 +86,18 @@ public class WiretigerBuilder {
 		return consoleConfig.getWebSocketPort();
 	}
 
-	public void consoleWsPort(int port) {
+	public WiretigerBuilder consoleWsPort(int port) {
 		consoleConfig.setWebSocketPort(port);
+		return this;
+	}
+	
+	public WiretigerBuilder pipeHistory(int count) {
+		consoleConfig.setPipeHistory(count);
+		return this;
+	}
+
+	public WiretigerBuilder sessionHistory(int count) {
+		consoleConfig.setSessionHistory(count);
+		return this;
 	}
 }
