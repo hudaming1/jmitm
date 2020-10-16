@@ -11,6 +11,7 @@ import org.hum.wiretiger.proxy.pipe.enumtype.PipeStatus;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -137,14 +138,22 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+		if (cause instanceof ConnectTimeoutException) {
+			log.warn("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+		} else {
+			log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+		}
 		fullPipeHandler.clientError(wtContext, cause);
 		close();
 	}
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+		if (cause instanceof ConnectTimeoutException) {
+			log.warn("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+		} else {
+			log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+		}
 		fullPipeHandler.serverError(wtContext, cause);
 		close();
 	}

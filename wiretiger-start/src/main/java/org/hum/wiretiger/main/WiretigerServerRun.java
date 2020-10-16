@@ -39,7 +39,9 @@ public class WiretigerServerRun {
 				// DEMO7：
 				mockDemo7(),
 				// DEMO8
-				mockDemo8()
+				mockDemo8(),
+				// DEMO9
+				mockDemo9()
 				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
@@ -90,6 +92,7 @@ public class WiretigerServerRun {
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
 		}).rebuildResponse(response -> {
+			System.out.println("mock google logo");
 			byte[] googleLogo = readFile("/mock/google.png");
 			response.content().clear().writeBytes(googleLogo);
 			response.headers().set("Content-Type", "image/gif")
@@ -165,7 +168,7 @@ public class WiretigerServerRun {
 			return request;
 		}).rebuildResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
-			response.headers().set("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
+			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;
 		}).mock();
 	}
@@ -181,7 +184,23 @@ public class WiretigerServerRun {
 			return request;
 		}).rebuildResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
-			response.headers().set("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
+			response.headers().set("Access-Control-Allow-Origin", "*");
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockDemo9() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/internal/stockTransfer/shelveMaterials") && request.method() == HttpMethod.POST;
+		}).rebuildRequest(request-> {
+			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("X-User-Id", "3101");
+			request.setUri("/migrate/sms/internal/stockTransfer/shelveMaterials");
+			System.out.println("redirect to localhost:8888/shelveMaterials");
+			return request;
+		}).rebuildResponse(response -> {
+			response.headers().set("Access-Control-Allow-Credentials", true);
+			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;
 		}).mock();
 	}
