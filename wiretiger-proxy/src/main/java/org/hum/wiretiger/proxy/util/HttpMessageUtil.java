@@ -171,6 +171,17 @@ public class HttpMessageUtil {
 		return HttpConstant.HTTPS_HANDSHAKE_METHOD.equalsIgnoreCase(request.method().name());
 	}
 
+	public static String parse2RelativeURI(String uri) {
+		if (uri.startsWith("http://")) {
+			return uri.replaceAll("http://.*?/", "/");
+		} else if (uri.startsWith("https://")) {
+			return uri.replaceAll("https://.*?/", "/");
+		} else if (!uri.contains("/")) {
+			return "/"; // HTTPS的Connect请求，URI是域名+端口，因此解析出URI为“/”
+		}
+		return uri;
+	}
+
     private HttpMessageUtil() { }
     
     @Getter

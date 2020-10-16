@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
+import org.hum.wiretiger.proxy.util.HttpMessageUtil;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,6 +21,8 @@ public class FullRequestDecoder extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     	if (msg instanceof HttpRequest) {
 			this.request = (HttpRequest) msg;
+			// 将URI改为相对路径（全路径URI个别服务器无法解析提示404）
+			this.request.setUri(HttpMessageUtil.parse2RelativeURI(this.request.uri()));
 			content = Unpooled.buffer(0).retain();
 		}
     	if (msg instanceof HttpContent) {

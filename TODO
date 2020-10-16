@@ -25,6 +25,7 @@
 【OK】设定服务端只能保留N条请求，并做成可配置
 【OK】Session创建时机置前
 【OK】POST请求，有问题？还要多试试，时好时坏，需要详细定位问题原因(FullRequestDecoder的问题，只对LastHttpContent处理，没有对HttpContent做解析)
+【OK】发现所有请求在经过Netty HttpRequestDecoder后，URI都会发生变化：从/xxxx变成http://{host}:{port}:/xxx，导致部分Server不识别，从而造成404
 
 ##功能优化
 【P1】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
@@ -42,7 +43,6 @@
 【P3】控制台增加断开连接的按钮
 
 ##BUG
-【P0】发现所有请求在经过Netty HttpRequestDecoder后，URI都会发生变化：从/xxxx变成http://{host}:{port}:/xxx，导致部分Server不识别，从而造成404
 
 ##技术优化
 【P1】后面用netty替换掉jetty吧，http和ws走一个端口
