@@ -4,8 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.EventLoop;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestEncoder;
@@ -20,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BackPipe {
 
-	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
 	private static SslContext SsslContext;
 	private String host;
 	private int port;
@@ -37,20 +35,20 @@ public class BackPipe {
 		}
 	}
 
-	public BackPipe(String host, int port, boolean isHttps) {
+	public BackPipe(EventLoop eventLoop, String host, int port, boolean isHttps) {
 		this.host = host;
 		this.port = port;
 		if (isHttps) {
-			initHttpsBackPipe(host, port);
+			initHttpsBackPipe(eventLoop, host, port);
 		} else {
-			initHttpBackPipe(host, port);
+			initHttpBackPipe(eventLoop, host, port);
 		}
 	}
 	
-	private void initHttpsBackPipe(String host, int port) {
+	private void initHttpsBackPipe(EventLoop eventLoop, String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
-		bootStrap.group(eventLoopGroup);
+		bootStrap.group(eventLoop);
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
@@ -62,10 +60,10 @@ public class BackPipe {
 		});
 	}
 	
-	private void initHttpBackPipe(String host, int port) {
+	private void initHttpBackPipe(EventLoop eventLoop, String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
-		bootStrap.group(eventLoopGroup);
+		bootStrap.group(eventLoop);
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {

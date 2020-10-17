@@ -23,6 +23,7 @@ public class WiretigerServerRun {
 		wtBuilder.proxyPort(52007);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
+		wtBuilder.threads(Runtime.getRuntime().availableProcessors() * 10);
 		wtBuilder.addMock(
 				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				mockDemo1(), 
@@ -56,6 +57,7 @@ public class WiretigerServerRun {
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && "/".equals(request.uri());
 		}).rebuildResponse(response -> {
+			System.out.println("asdfljasdlfkja");
 			// 注入的JS代码
 			String json = "<script type='text/javascript'>alert('Wiretiger say hello');</script>";
 			byte[] readBytes = HttpMessageUtil.readBytes(response.content());

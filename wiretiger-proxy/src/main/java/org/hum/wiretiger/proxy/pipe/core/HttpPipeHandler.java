@@ -1,11 +1,15 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
 import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 
+import io.netty.channel.EventLoop;
 import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +21,8 @@ public class HttpPipeHandler extends StandardPipeHandler {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}
 
-	protected void connect(FullHttpRequest request) throws InterruptedException {
+	@Override
+	protected void connect(EventLoop eventLoop, FullHttpRequest request) throws InterruptedException {
 		InetAddress inetAddress = HttpMessageUtil.parse2InetAddress(request, false);
 		if (inetAddress == null) {
 			close();
@@ -28,11 +33,13 @@ public class HttpPipeHandler extends StandardPipeHandler {
 
 		currentBack = super.select(inetAddress.getHost(), inetAddress.getPort());
 		if (currentBack == null) {
-			currentBack = initBackpipe(inetAddress);
+			currentBack = initBackpipe(eventLoop, inetAddress);
 		}
 		if (!currentBack.isActive()) {
+			Lock lock = new ReentrantLock();
 			currentBack.connect().addListener(f -> {
 				if (!f.isSuccess()) {
+					lock.unlock();
 					log.error("[" + wtContext.getId() + "] server connect error. cause={}", f.cause().getMessage());
 					fullPipeHandler.serverConnectFailed(wtContext, f.cause());
 					close();
@@ -41,12 +48,14 @@ public class HttpPipeHandler extends StandardPipeHandler {
 				wtContext.registServer(currentBack.getChannel());
 				fullPipeHandler.serverConnect(wtContext, inetAddress);
 				currentBack.getChannel().pipeline().addLast(this);
-			}).sync();
+				lock.unlock();
+			});
+			lock.lock();
 		}
 	}
 
 	@Override
-	protected BackPipe initBackpipe0(InetAddress InetAddress) {
-		return new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+	protected BackPipe initBackpipe0(EventLoop eventLoop, InetAddress InetAddress) {
+		return new BackPipe(eventLoop, InetAddress.getHost(), InetAddress.getPort(), false);
 	}
 }

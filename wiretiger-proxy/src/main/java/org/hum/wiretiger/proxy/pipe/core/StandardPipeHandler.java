@@ -12,6 +12,7 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.EventLoop;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -43,6 +44,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	public void channelActive4Server(ChannelHandlerContext ctx) throws Exception {
 	}
 
+	// acceptorThread -> IOThread
 	@Override
 	public void channelRead4Client(ChannelHandlerContext clientCtx, Object msg) throws Exception {
 		if (msg instanceof FullHttpRequest) {
@@ -61,14 +63,14 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			
 			fullPipeHandler.clientRead(wtContext, request);
 
-			connect(request);
+			connect(clientCtx.channel().eventLoop(), request);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		currentBack.getChannel().writeAndFlush(msg);
 	}
 	
-	protected abstract void connect(FullHttpRequest request) throws InterruptedException;
+	protected abstract void connect(EventLoop eventLoop, FullHttpRequest request) throws InterruptedException;
 
 	/**
 	 * 读取到对端服务器请求
