@@ -28,8 +28,11 @@
 【OK】发现所有请求在经过Netty HttpRequestDecoder后，URI都会发生变化：从/xxxx变成http://{host}:{port}:/xxx，导致部分Server不识别，从而造成404
 
 ##功能优化
-【P1】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
+【P0】“too many open files bug”需要优先解决
+【P1】对飞书的在线办公支持不佳，经常是转圈待保存状态
 【P1】对UI界面进行优化：增加搜索维度、弱化Pipe界面，强化Session管理
+【P2】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
+【P2】优化线程模型
 
 【P2】Console没有探活，页面刷新后连接没有断开
 【P3】Request支持分页

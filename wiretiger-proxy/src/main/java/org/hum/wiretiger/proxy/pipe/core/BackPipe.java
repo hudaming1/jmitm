@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
@@ -19,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BackPipe {
 
+	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors() * 5);
 	private static SslContext SsslContext;
 	private String host;
 	private int port;
@@ -48,7 +50,7 @@ public class BackPipe {
 	private void initHttpsBackPipe(String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
-		bootStrap.group(new NioEventLoopGroup(1));
+		bootStrap.group(eventLoopGroup);
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
@@ -63,7 +65,7 @@ public class BackPipe {
 	private void initHttpBackPipe(String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
-		bootStrap.group(new NioEventLoopGroup(1));
+		bootStrap.group(eventLoopGroup);
 		bootStrap.handler(new ChannelInitializer<Channel>() {
 			@Override
 			protected void initChannel(Channel proxy2ServerChannel) throws Exception {
