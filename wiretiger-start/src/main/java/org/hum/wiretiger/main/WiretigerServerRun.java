@@ -20,7 +20,7 @@ public class WiretigerServerRun {
 	
 	public static void main(String[] args) throws Exception {
 		WiretigerBuilder wtBuilder = new WiretigerBuilder();
-		wtBuilder.proxyPort(52007);
+		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
@@ -36,12 +36,10 @@ public class WiretigerServerRun {
 				// mockDemo5(),
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6(),
-				// DEMO7：
 				mockDemo7(),
-				// DEMO8
 				mockDemo8(),
-				// DEMO9
-				mockDemo9()
+				mockDemo9(),
+				mockDemo10()
 				);
 		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
@@ -197,6 +195,22 @@ public class WiretigerServerRun {
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/stockTransfer/shelveMaterials");
 			System.out.println("redirect to localhost:8888/shelveMaterials");
+			return request;
+		}).rebuildResponse(response -> {
+			response.headers().set("Access-Control-Allow-Credentials", true);
+			response.headers().set("Access-Control-Allow-Origin", "*");
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockDemo10() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/internal/stockTransfer/unshelveByArea") && request.method() == HttpMethod.POST;
+		}).rebuildRequest(request-> {
+			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("X-User-Id", "3101");
+			request.setUri("/migrate/sms/internal/stockTransfer/unshelveByArea");
+			System.out.println("redirect to localhost:8888/unshelveByArea");
 			return request;
 		}).rebuildResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);

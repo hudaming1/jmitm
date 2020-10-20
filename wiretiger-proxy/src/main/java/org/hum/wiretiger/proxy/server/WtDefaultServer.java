@@ -26,14 +26,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WtDefaultServer implements WtServer {
 	
-	private WiretigerCoreConfig config;
+	public static WiretigerCoreConfig config;
 	
 	private MockHandler mockHandler;
 	
 	private InvokeChainInit invokeChainInit;
 
 	public WtDefaultServer(WiretigerCoreConfig config) {
-		this.config = config;
+		WtDefaultServer.config = config;
 	}
 
 	@Override
