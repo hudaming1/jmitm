@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
+import org.hum.wiretiger.proxy.server.WtDefaultServer;
+
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -20,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BackPipe {
 
-	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(Runtime.getRuntime().availableProcessors());
+	private static EventLoopGroup eventLoopGroup = null;
 	private static SslContext SsslContext;
 	private String host;
 	private int port;
@@ -32,6 +34,8 @@ public class BackPipe {
 		try {
 			SsslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 			log.info("init ssl_context success...");
+			int backPipeThreadCount = WtDefaultServer.config.getThreads() / 2;
+			eventLoopGroup = new NioEventLoopGroup(backPipeThreadCount);
 		} catch (Exception ce) {
 			log.error("init ssl_context failed", ce);
 		}

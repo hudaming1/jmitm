@@ -13,7 +13,7 @@ public class WiretigerCoreConfig {
 	// 监听端口
 	private int port;
 	// 线程池
-	private int threads = Runtime.getRuntime().availableProcessors();
+	private int threads = Runtime.getRuntime().availableProcessors() * 2;
 	//
 	private boolean isDebug;
 	//

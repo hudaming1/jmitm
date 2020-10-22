@@ -26,21 +26,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WtDefaultServer implements WtServer {
 	
-	private WiretigerCoreConfig config;
+	public static WiretigerCoreConfig config;
 	
 	private MockHandler mockHandler;
 	
 	private InvokeChainInit invokeChainInit;
 
 	public WtDefaultServer(WiretigerCoreConfig config) {
-		this.config = config;
+		WtDefaultServer.config = config;
 	}
 
 	@Override
 	public ChannelFuture start() {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
-		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(config.getThreads(), new NamedThreadFactory("wt-worker-thread"));
+		int frontPipeThreadPoolCount = config.getThreads() / 2;
+		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(frontPipeThreadPoolCount, new NamedThreadFactory("wt-worker-thread"));
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
