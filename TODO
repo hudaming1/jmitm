@@ -31,7 +31,6 @@
 ##功能优化
 【P1】对UI界面进行优化：增加搜索维度、弱化Pipe界面，强化Session管理
 【P1】显示当前存活连接数(避免一共就16个线程，阻塞15个，就留也一个可用线程，在UI需要查到)
-【P0】思考是否需要重构线程模型，IO线程和转发线程是否可以共用，是否需要拆出不同的线程池？
 【P2】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
 【P2】优化线程模型
 【P1】need support more types, find type=class io.netty.buffer.PooledUnsafeDirectByteBuf到底是什么鬼，目测不影响使用，但不知道这部分内容是什么？
