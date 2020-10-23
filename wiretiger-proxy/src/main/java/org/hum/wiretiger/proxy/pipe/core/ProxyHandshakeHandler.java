@@ -72,7 +72,6 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		
     		if (WtDefaultServer.config.isParseHttps()) {
         		// SSL
         		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));

@@ -59,9 +59,33 @@ public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 	}
 
     @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    	this.wtContext.recordStatus(PipeStatus.Error);
+		this.wtContext.addEvent(PipeEventType.Error, "客户端发生错误,原因:" + cause.getMessage());
+		if (ctx.channel().isActive()) {
+        	ctx.channel().close();
+        }
+        if (wtContext.getServerChannel().isActive()) {
+        	wtContext.getServerChannel().close();
+        }
+    }
+    
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    	this.wtContext.recordStatus(PipeStatus.Closed);
+		this.wtContext.addEvent(PipeEventType.ClientClosed, "客户端断开连接");
+		if (ctx.channel().isActive()) {
+        	ctx.channel().close();
+        }
+        if (wtContext.getServerChannel().isActive()) {
+        	wtContext.getServerChannel().close();
+        }
+    }
+
+    @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
     	this.wtContext.recordStatus(PipeStatus.Read);
-		this.wtContext.addEvent(PipeEventType.Read, "读取客户度请求");
+		this.wtContext.addEvent(PipeEventType.Read, "读取客户端请求");
 		this.wtContext.getServerChannel().writeAndFlush(msg);
     }
 }
@@ -76,8 +100,40 @@ class ServerForwrdHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-    	this.wtContext.getClientChannel().writeAndFlush(msg);
-    	this.wtContext.recordStatus(PipeStatus.Read);
-		this.wtContext.addEvent(PipeEventType.Read, "读取客户度请求");
+    	this.wtContext.recordStatus(PipeStatus.Received);
+    	this.wtContext.addEvent(PipeEventType.Received, "读取服务端响应");
+    	this.wtContext.getClientChannel().writeAndFlush(msg).addListener(f -> {
+    		if (f.isSuccess()) {
+    	    	this.wtContext.recordStatus(PipeStatus.Flushed);
+    	    	this.wtContext.addEvent(PipeEventType.Flushed, "将服务端响应输出到客户端");
+    		} else {
+    			this.wtContext.recordStatus(PipeStatus.Error);
+    			this.wtContext.addEvent(PipeEventType.Error, "将服务端响应输出到客户端失败, 原因:" + f.cause().getMessage());
+    		}
+    	});
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    	this.wtContext.recordStatus(PipeStatus.Error);
+		this.wtContext.addEvent(PipeEventType.Error, "服务端发生错误,原因:" + cause.getMessage());
+        if (ctx.channel().isActive()) {
+        	ctx.channel().close();
+        }
+        if (wtContext.getClientChannel().isActive()) {
+        	wtContext.getClientChannel().close();
+        }
+    }
+    
+    @Override
+    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    	this.wtContext.recordStatus(PipeStatus.Closed);
+		this.wtContext.addEvent(PipeEventType.ServerClosed, "服务端断开连接");
+		if (ctx.channel().isActive()) {
+        	ctx.channel().close();
+        }
+        if (wtContext.getClientChannel().isActive()) {
+        	wtContext.getClientChannel().close();
+        }
     }
 }
