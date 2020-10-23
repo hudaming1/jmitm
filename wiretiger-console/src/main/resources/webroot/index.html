@@ -86,11 +86,22 @@
 				cmenu = $('<div/>').appendTo('body');
 				cmenu.menu({
 					onClick: function(item){
-						$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+						if (item.id == "btn2") {
+							$.post("/session/clear", function(resp) {
+								$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+							});
+						} else {
+							$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+						}
 					}
 				});
 				cmenu.menu('appendItem', {
-					text: "Clear All"
+					id: 'btn1',
+					text: "Clear Browser Records"
+				});
+				cmenu.menu('appendItem', {
+					id: 'btn2',
+					text: "Clear Server Records"
 				});
 			}
 		</script>

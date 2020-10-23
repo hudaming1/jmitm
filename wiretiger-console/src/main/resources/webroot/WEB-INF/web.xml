@@ -48,6 +48,15 @@
 		<servlet-name>certDownloadServlet</servlet-name>
 		<url-pattern>/cert/download</url-pattern>
 	</servlet-mapping>
+	<!-- clear all -->
+	<servlet>
+		<servlet-name>SessionClearServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionClearServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionClearServlet</servlet-name>
+		<url-pattern>/session/clear</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 

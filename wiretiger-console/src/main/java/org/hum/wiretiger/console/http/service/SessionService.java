@@ -39,6 +39,12 @@ public class SessionService {
 		return sessionList;
 	}
 	
+	public boolean clearAll() {
+		SessionManagerInvokeChain.clearAll();
+		log.info("session clear");
+		return true;
+	}
+	
 	private void changeCondition(WiretigerSessionListQueryVO newCondition) {
 		QUERY.setHost(newCondition.getHost());
 		QUERY.setKeyword(newCondition.getKeyword());

@@ -79,6 +79,13 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 		return Collections.unmodifiableCollection(RequestIndex4Id.values());
 	}
 	
+	public static void clearAll() {
+		if (RequestIndex4Id == null || RequestIndex4Id.isEmpty()) {
+			return ;
+		}
+		RequestIndex4Id.clear();
+	}
+	
 	public static WtSession getById(long id) {
 		return RequestIndex4Id.get(id);
 	}
