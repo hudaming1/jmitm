@@ -46,7 +46,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>certDownloadServlet</servlet-name>
-		<url-pattern>/cert/download</url-pattern>
+		<url-pattern>/c/d</url-pattern>
 	</servlet-mapping>
 	<!-- clear all -->
 	<servlet>
