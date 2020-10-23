@@ -23,7 +23,8 @@ public class WiretigerCoreConfig {
 	private List<Mock> mockList = new ArrayList<Mock>();
 	/**
 	 * 是否对HTTPS协议进行解析（解析的前提是需要客户端安装WiretigerCA）
-	 * 如果客户端不希望Wiretiger对客户端引入CA，即可以将该值设为false，
+	 * 如果客户端不希望Wiretiger对客户端引入CA，即可以将该值设为false（虽然浏览器
+	 * 或OS支持对HTTP和HTTPS区别进行配置，但现实情况是部分移动端在代理时对两个协议作为一个整体对待，因此考虑加入该参数针对这种场景做兼容），
 	 * 这样Wiretiger只拦截HTTP的请求和响应，对HTTPS请求和响不做解析，直接放行处理
 	 */
 	private boolean isParseHttps = true;

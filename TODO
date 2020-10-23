@@ -26,10 +26,11 @@
 【OK】Session创建时机置前
 【OK】POST请求，有问题？还要多试试，时好时坏，需要详细定位问题原因(FullRequestDecoder的问题，只对LastHttpContent处理，没有对HttpContent做解析)
 【OK】发现所有请求在经过Netty HttpRequestDecoder后，URI都会发生变化：从/xxxx变成http://{host}:{port}:/xxx，导致部分Server不识别，从而造成404
-【P0】“too many open files bug”需要优先解决
+【OK】“too many open files bug”需要优先解决
+【OK】对拦截协议进行配置化，例如只想对HTTP协议进行拦截、解析、重制，对HTTPS协议直接放行透传（这样就避免了客户端不用认证RootCA）
 
 ##功能优化
-【P1】对拦截协议进行配置化，例如只想对HTTP协议进行拦截、解析、重制，对HTTPS协议直接放行透传（这样就避免了客户端不用认证RootCA）
+【P2】SimpleForwardPipeHandler对InvokeChain支持不好，两者目前没有打通，因为新的Forward对协议不做解析，因此InvokeChain无法支持
 【P1】对UI界面进行优化：增加搜索维度、弱化Pipe界面，强化Session管理
 【P1】显示当前存活连接数(避免一共就16个线程，阻塞15个，就留也一个可用线程，在UI需要查到)
 【P2】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
