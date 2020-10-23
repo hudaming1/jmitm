@@ -17,6 +17,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * 只做单纯的转发操作，对数据内容不做任何解析处理
+ * @author hudaming
+ */
 @Slf4j
 public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 	

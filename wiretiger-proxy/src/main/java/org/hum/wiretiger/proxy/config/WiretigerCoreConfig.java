@@ -19,7 +19,7 @@ public class WiretigerCoreConfig {
 	//
 	private List<Mock> mockList = new ArrayList<Mock>();
 	//
-	private boolean isParseHttps = false;
+	private boolean isParseHttps = true;
 	
 	public void addMock(Mock mock) {
 		// TODO check mock is complete
