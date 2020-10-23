@@ -17,6 +17,10 @@ public class WiretigerBuilder {
 			this.coreConfig.addMock(mock);
 		}
 	}
+	
+	public void parseHttps(boolean val) {
+		coreConfig.setParseHttps(val);
+	}
 
 	public int proxyPort() {
 		return coreConfig.getPort();

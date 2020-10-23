@@ -73,6 +73,9 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	}
 	
 	public static Collection<WtSession> getAll() {
+		if (RequestIndex4Id == null || RequestIndex4Id.values() == null) {
+			return Collections.emptyList();
+		}
 		return Collections.unmodifiableCollection(RequestIndex4Id.values());
 	}
 	

@@ -8,6 +8,7 @@ import org.hum.wiretiger.proxy.facade.WtPipeContext;
 import org.hum.wiretiger.proxy.mock.MockHandler;
 import org.hum.wiretiger.proxy.pipe.constant.Constant;
 import org.hum.wiretiger.proxy.pipe.enumtype.Protocol;
+import org.hum.wiretiger.proxy.server.WtDefaultServer;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil.InetAddress;
 import org.hum.wiretiger.proxy.util.NettyUtils;
@@ -71,26 +72,30 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		// SSL
-    		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
-			sslHandler.handshakeFuture().addListener(future -> {
-				if (!future.isSuccess()) {
-					fullPipeHandler.clientHandshakeFail(wtContext, future.cause());
-					client2ProxyCtx.close();
-					log.error("[" + wtContext.getId() + "] handshake failure, cause=" + future.cause().getMessage());
-					return ;
-				}
-				// 握手成功
-	    		client2ProxyCtx.pipeline().addLast(
-	    				new HttpResponseEncoder(), 
-	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
-	    				new HttpObjectAggregator(Integer.MAX_VALUE),
-	    				new FullRequestDecoder());
-	    		client2ProxyCtx.pipeline().addLast(new HttpsPipeHandler(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
-	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
-	    		fullPipeHandler.clientHandshakeSucc(wtContext);
-			});
-			client2ProxyCtx.pipeline().addLast(sslHandler);
+    		if (WtDefaultServer.config.isParseHttps()) {
+        		// SSL
+        		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
+    			sslHandler.handshakeFuture().addListener(sslHandshakeResult -> {
+    				if (!sslHandshakeResult.isSuccess()) {
+    					fullPipeHandler.clientHandshakeFail(wtContext, sslHandshakeResult.cause());
+    					client2ProxyCtx.close();
+    					log.error("[" + wtContext.getId() + "] handshake failure, cause=" + sslHandshakeResult.cause().getMessage());
+    					return ;
+    				}
+    				// SSL握手成功
+    	    		client2ProxyCtx.pipeline().addLast(
+    	    				new HttpResponseEncoder(), 
+    	    				new HttpRequestDecoder(RequestLineMaxLen, RequestHeaderMaxLen, RequestChunkedMaxLen), 
+    	    				new HttpObjectAggregator(Integer.MAX_VALUE),
+    	    				new FullRequestDecoder());
+    	    		client2ProxyCtx.pipeline().addLast(new HttpsPipeHandler(new FrontPipe(client2ProxyCtx.channel()), fullPipeHandler, wtContext, mockHandler));
+    	    		client2ProxyCtx.pipeline().remove(InactiveChannelHandler.class);
+    	    		fullPipeHandler.clientHandshakeSucc(wtContext);
+    			});
+    			client2ProxyCtx.pipeline().addLast(sslHandler);
+    		} else {
+    			client2ProxyCtx.pipeline().addLast(new SimpleForwardPipeHandler(wtContext));
+    		}
 			
 			// 在TLS握手前，先不要掺杂HTTP编解码器，等TLS握手完成后，统一添加HTTP编解码部分
 			client2ProxyCtx.pipeline().remove(HttpRequestDecoder.class);
