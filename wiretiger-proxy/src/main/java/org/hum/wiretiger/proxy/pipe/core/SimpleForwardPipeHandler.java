@@ -11,6 +11,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -58,6 +59,10 @@ public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 				}
 			}).sync();
 		} catch (Exception e) {
+			if (e instanceof ConnectTimeoutException) {
+				log.warn("connect target" + wtContext.getTargetHost() + ":" + wtContext.getTargetPort() + " failed");
+				return ;
+			}
 			log.error("connect target" + wtContext.getTargetHost() + ":" + wtContext.getTargetPort() + " failed", e);
 		}
 	}

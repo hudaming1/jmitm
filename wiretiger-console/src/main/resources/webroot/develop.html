@@ -142,13 +142,43 @@
 		    	});
 		    }
 			
+		    function clickSessionSearchBtn() {
+		    	$("#SESN_STAGE").find("#dgMain").datagrid("load", {
+		    		keyword : $("#SESN_STAGE").find("#sessionKeyword").val(),
+		    		host : $("#SESN_STAGE").find("#hostKeyword").val()
+		    	});
+		    }
+		    
+		    function dataGridContextMenu(e, index, row) {
+		    	e.preventDefault();
+		    	if (!cmenu){
+					createColumnMenu();
+				}
+				cmenu.menu('show', {
+					left:e.pageX,
+					top:e.pageY
+				});
+		    }
+			
+			var cmenu;
+			function createColumnMenu(){
+				cmenu = $('<div/>').appendTo('body');
+				cmenu.menu({
+					onClick: function(item){
+						$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+					}
+				});
+				cmenu.menu('appendItem', {
+					text: "Clear All"
+				});
+			}
 		</script>
 	</head>
 	<body class="easyui-tabs" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60">
 		<!-- SESSION -->
 		<div title="SESN" data-options="fit:true, border:false" class="easyui-layout" id="SESN_STAGE">
 			<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
-				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#sessionDgTb', onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#sessionDgTb', onRowContextMenu:dataGridContextMenu, onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
 					<thead>
 						<tr>
 							<th data-options="field:'sessionId', width: 55, align: 'center'">ID</th>
