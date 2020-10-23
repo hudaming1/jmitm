@@ -20,10 +20,10 @@ public class WiretigerServerRun {
 	
 	public static void main(String[] args) throws Exception {
 		WiretigerBuilder wtBuilder = new WiretigerBuilder();
-		wtBuilder.parseHttps(false);
+		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
-		wtBuilder.pipeHistory(10).sessionHistory(200);
+//		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
 				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				mockDemo1(), 

@@ -23,10 +23,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionService {
 	
+	private final static WiretigerSessionListQueryVO QUERY = new WiretigerSessionListQueryVO();
+	
 	public List<WiretigerSessionListVO> list(WiretigerSessionListQueryVO query) {
+		// HTTP和Websocket共用一个Query
+		changeCondition(query);
+		
 		List<WiretigerSessionListVO> sessionList = new ArrayList<>();
 		SessionManagerInvokeChain.getAll().forEach(session -> {
-			if (!isMatch(query, session)) {
+			if (!isMatch(session)) {
 				return ;
 			}
 			sessionList.add(ConsoleHelper.parse2WtSessionListVO(session));
@@ -34,15 +39,34 @@ public class SessionService {
 		return sessionList;
 	}
 	
-	private boolean isMatch(WiretigerSessionListQueryVO condition, WtSession session) {
-		if (condition == null || condition.isEmpty()) {
-			return true;
-		} else if (condition.getPipeId() != null && condition.getPipeId().equals(session.getPipeId())) {
-			return true;
-		} else if (condition.getKeyword() != null && !condition.getKeyword().isEmpty() && session.getRequest().uri().contains(condition.getKeyword())) {
+	private void changeCondition(WiretigerSessionListQueryVO newCondition) {
+		QUERY.setHost(newCondition.getHost());
+		QUERY.setKeyword(newCondition.getKeyword());
+		QUERY.setPipeId(newCondition.getPipeId());
+	}
+	
+	public static boolean isMatch(WtSession session) {
+		if (QUERY == null || QUERY.isEmpty()) {
 			return true;
 		}
-		return false;
+		if (QUERY.getPipeId() != null && !QUERY.getPipeId().equals(session.getPipeId())) {
+			return false;
+		} 
+		if (QUERY.getKeyword() != null && !QUERY.getKeyword().isEmpty() 
+				&& !session.getRequest().uri().contains(QUERY.getKeyword())) {
+			return false;
+		}
+		if (QUERY.getHost() != null && !QUERY.getHost().isEmpty() &&
+				// 没有header直接认为不匹配
+				(session.getRequest().headers() == null || session.getRequest().headers().isEmpty()) ||
+				// header中没有Host属性，认为不匹配
+				(session.getRequest().headers() != null && !session.getRequest().headers().contains("Host")) ||
+				// header中的Host不包含keyword，认为不匹配
+				(!session.getRequest().headers().get("Host").contains(QUERY.getHost()))
+				) {
+			return false;
+		}
+		return true;
 	}
 	
 	public WiretigerSessionDetailVO getById(Long id) {
@@ -83,6 +107,9 @@ public class SessionService {
 	}
 	
 	private String convert2RequestHeaderAndLine(WtSession session) {
+		if (session == null) {
+			return "session lost";
+		}
 		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(HttpConstant.HTML_NEWLINE);
 		for (Entry<String, String> header : session.getRequest().headers()) {
 			request.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);

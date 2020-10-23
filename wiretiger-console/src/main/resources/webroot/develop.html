@@ -39,10 +39,43 @@
 		        });
 			}
 			
+			function pipeDgClickRow(index, row) {
+				$.get("/pipe/get?id=" + row.pipeId, function(resp) {
+				
+					// load data
+					var jsonObj = eval("(" + resp + ")");
+					$("#PIPE_STAGE").find("#eventsDg").datagrid("loadData", jsonObj.pipeEvent);
+					// expand east_panel
+					if($("#PIPE_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
+						$("body").layout("expand", "east");
+					}
+					
+					// resize layout
+					$("#PIPE_STAGE").find("#eastPannel").panel("doLayout");
+					$("#PIPE_STAGE").find("#tab").panel("doLayout");
+					$("#PIPE_STAGE").find("#tab-tools").panel("doLayout");
+				});
+			}
+			
 			var wssocket;
 			var consoleId = new Date().getTime();
 			
+			function clearPipeDgRows() {
+				$("#PIPE_STAGE").find("#dgMain").datagrid("loadData", []);
+			}
+			
 			$(function(){
+		        $('#filterBtn').switchbutton({
+		            checked: true,
+		            onChange: function(checked){
+		                $("#PIPE_STAGE").find("#dgMain").datagrid("load", {
+				        	active: checked
+				        });
+		            }
+		        });
+		        $("#PIPE_STAGE").find("#dgMain").datagrid("load", {
+		        	active: true
+		        });
 		        
 				if (!window.WebSocket) {
 					window.WebSocket = window.MozWebSocket;
@@ -55,7 +88,47 @@
 				
 				wssocket.onmessage = function(event) {
 					var msg = JSON.parse(event.data);
-					if (msg.type == 2001) {
+					if (msg.type == 1001) {
+						/*** NEW PIPE CONNECT ***/
+						$("#PIPE_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
+						// $("#PIPE_STAGE").find("#dgMain").datagrid("scrollTo", $("#PIPE_STAGE").find("#dgMain").datagrid("getRows"));
+					} else if (msg.type == 1003) {
+						/*** PIPE STATUS CHANGE ***/
+						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
+						var idx = -1;
+						for (var i = 0; i < rows.length; i ++) {
+							if (msg.data.pipeId == rows[i].pipeId) {
+								idx = i;
+								break;
+							}
+						}
+						if (idx >= 0 && msg.data.status != "Closed") {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("updateRow", {
+								index: idx, 
+								row : msg.data
+							});
+						} else if (idx < 0) {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
+						}
+					} else if (msg.type == 1002) {
+						/*** PIPE DISCONNECT ***/
+						var rows = $("#PIPE_STAGE").find("#dgMain").datagrid("getData").rows;
+						var idx = -1;
+						for (var i = 0; i < rows.length; i ++) {
+							if (msg.data.pipeId == rows[i].pipeId) {
+								idx = i;
+								break;
+							}
+						}
+						if (idx >= 0 && $("#PIPE_STAGE").find("#filterBtn").switchbutton("options").checked) {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("deleteRow", idx);
+						} else {
+							$("#PIPE_STAGE").find("#dgMain").datagrid("updateRow", {
+								index: idx, 
+								row : msg.data
+							});
+						}
+					} else if (msg.type == 2001) {
 						/*** SESSION CONNECT ***/
 						$("#SESN_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
 					}
@@ -86,8 +159,9 @@
 				</table>
 				<div id="sessionDgTb" style="padding:5px;height:auto">
 					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
+					<input class="easyui-tagbox" id="searchPipe" data-options="prompt:'Pipe Filter', onRemoveTag: reqDgReload" style="width:125px;" />
 					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
-					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
+					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search Keyword'" style="width:200px" />
 					<!-- 
 					<select class="easyui-combobox" style="width:100px;">
 					    <option value="all">*</option>
@@ -96,7 +170,6 @@
 					    <option value="jpeg/gif/png">image</option>
 					</select>-->
 					<a href="javascript:clickSessionSearchBtn();" class="easyui-linkbutton" iconCls="icon-search">Search</a>
-					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/cert/download"> Cert Download </a>
 				</div>
 			</div>
 			<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
@@ -121,6 +194,43 @@
 							</div>
 						</div>
 					</div>
+				</div>
+			</div>
+		</div>
+		<div title="PIPE" data-options="fit:true, border:false" class="easyui-layout" id="PIPE_STAGE">
+			<div id="centerLayout" data-options="region:'center'" style="padding:0px; width:40%">
+				<div id="pipeDgTb" style="padding:5px;height:auto">
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/cert/download"> Cert Download </a>
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-clear'" onclick="clearPipeDgRows();">Clear</a>
+					<input id="filterBtn" class="easyui-switchbutton" checked style="width:60px;height:20px" />
+				</div>
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, toolbar:'#pipeDgTb', onDblClickRow:pipeDgDbClickRow, onClickRow:pipeDgClickRow, border:false,striped:true,singleSelect:true,collapsible:true,url:'/pipe/list',method:'get'">
+					<thead>
+						<tr>
+							<th data-options="field:'pipeId', width:50, align: 'center'">ID</th>
+							<th data-options="field:'protocol', width:57, align: 'center'">/</th>
+							<th data-options="field:'status', width:80, align: 'center'">Status</th>
+							<th data-options="field:'name', width: '80%'">Name</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+			<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
+			    <div id="tab-tools">
+			        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true" onclick="$('body').layout('collapse', 'east');">×</a>
+			    </div>
+				<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
+			        <div title="Events" data-options="" id="eventsPannel" style="padding:5px 5px 50px 5px;">
+					    <table class="easyui-datagrid" id="eventsDg" data-options="border:false">
+					        <thead>
+					            <tr>
+					                <th data-options="field:'type',width:100, hidden:true">EventType</th>
+					                <th data-options="field:'desc',width:300">Event Desc</th>
+					                <th data-options="field:'time',width:200, align:'center'">Event Time</th>
+					            </tr>
+					        </thead>
+					    </table>
+			        </div>
 				</div>
 			</div>
 		</div>
