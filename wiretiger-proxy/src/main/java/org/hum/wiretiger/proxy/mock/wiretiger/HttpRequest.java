@@ -1,4 +1,4 @@
-package org.hum.wiretiger.proxy.mock;
+package org.hum.wiretiger.proxy.mock.wiretiger;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;

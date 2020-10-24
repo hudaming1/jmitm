@@ -9,9 +9,9 @@ import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
 import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
-import org.hum.wiretiger.proxy.mock.HttpRequest;
-import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.Mock;
+import org.hum.wiretiger.proxy.mock.wiretiger.HttpRequest;
+import org.hum.wiretiger.proxy.mock.wiretiger.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
 import io.netty.handler.codec.http.HttpMethod;
@@ -60,19 +60,19 @@ public class WiretigerServerRun {
 				}
 				return request.host().contains("so.com");
 			}
-		}).rebuildRequest(req -> {
+		}).rebuildNettyRequest(req -> {
 			req.headers().set("Host", "www.baidu.com");
 			return req;
 		}).mock();
 	}
 
 	private static Mock mockDemo6() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && "/".equals(request.uri());
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			// 注入的JS代码
 			String json = "<script type='text/javascript'>alert('Wiretiger say hello');</script>";
 			byte[] readBytes = HttpMessageUtil.readBytes(response.content());
@@ -93,22 +93,22 @@ public class WiretigerServerRun {
 	}
 
 	private static Mock mockDemo4() {
-		return new CatchResponse().eval(response -> {
+		return new CatchResponse().evalNettyResponse(response -> {
 			return true;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("signby", "hudaming");
 			return response;
 		}).mock();
 	}
 
 	private static Mock mockDemo3() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			System.out.println("mock google logo");
 			byte[] googleLogo = readFile("/mock/google.png");
 			response.content().clear().writeBytes(googleLogo);
@@ -132,18 +132,18 @@ public class WiretigerServerRun {
 	}
 
 	private static Mock mockDemo2() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
-		}).rebuildRequest(request -> {
+		}).rebuildNettyRequest(request -> {
 			log.info("hit baidu_logo");
 			request.headers().set("Host", "p.ssl.qhimg.com:443");
 			request.setUri("/t012cdb572f41b93733.png");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().add("wiretiger_mock", "redirect to 360_search");
 			return response;
 		}).mock();
@@ -151,21 +151,21 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo1() {
 		// 将wiretiger.com重定向到localhost:8080
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
-		}).rebuildRequest(request -> {
+		}).rebuildNettyRequest(request -> {
 			request.headers().set("Host", "localhost:8080");
 			return request;
 		}).mock();
 	}
 
 	private static Mock mockDemo5() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/staticCheck/listByPage") && request.method() == HttpMethod.POST;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			String json = "{\"code\":200,\"message\":\"操作成功\",\"result\":{\"total\":13102,\"list\":[{\"id\":775780,\"checkNumber\":\"PD2020101300045-N\",\"createTime\":\"2020-10-13 03:42:28\",\"effectiveTime\":\"2020-10-13 03:42:29\",\"resultCommitTime\":\"2020-10-13 03:43:14\",\"approvalCompleteTime\":\"2020-10-13 03:43:14\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775779,\"checkNumber\":\"PD2020101300044-N\",\"createTime\":\"2020-10-13 03:42:14\",\"effectiveTime\":\"2020-10-13 03:42:15\",\"resultCommitTime\":\"2020-10-13 03:42:15\",\"approvalCompleteTime\":\"2020-10-13 03:42:15\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775616,\"checkNumber\":\"PD2020101202662-N\",\"createTime\":\"2020-10-12 22:26:19\",\"effectiveTime\":\"2020-10-12 22:26:20\",\"resultCommitTime\":\"2020-10-12 22:26:44\",\"approvalCompleteTime\":\"2020-10-12 22:26:44\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775437,\"checkNumber\":\"PD2020101202328-N\",\"createTime\":\"2020-10-12 20:30:43\",\"effectiveTime\":\"2020-10-12 20:30:44\",\"resultCommitTime\":\"2020-10-12 20:30:44\",\"approvalCompleteTime\":\"2020-10-12 20:30:44\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775306,\"checkNumber\":\"PD2020101202087-N\",\"createTime\":\"2020-10-12 19:15:41\",\"effectiveTime\":\"2020-10-12 19:15:42\",\"resultCommitTime\":\"2020-10-12 19:15:42\",\"approvalCompleteTime\":\"2020-10-12 19:15:42\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775266,\"checkNumber\":\"PD2020101202032-N\",\"createTime\":\"2020-10-12 19:01:44\",\"effectiveTime\":\"2020-10-12 19:01:45\",\"resultCommitTime\":\"2020-10-12 19:01:45\",\"approvalCompleteTime\":\"2020-10-12 19:01:45\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775147,\"checkNumber\":\"PD2020101201812-N\",\"createTime\":\"2020-10-12 17:45:39\",\"effectiveTime\":\"2020-10-12 17:45:40\",\"resultCommitTime\":\"2020-10-12 17:45:40\",\"approvalCompleteTime\":\"2020-10-12 17:45:40\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775146,\"checkNumber\":\"PD2020101201811-N\",\"createTime\":\"2020-10-12 17:45:33\",\"effectiveTime\":\"2020-10-12 17:45:34\",\"resultCommitTime\":\"2020-10-12 17:45:34\",\"approvalCompleteTime\":\"2020-10-12 17:45:34\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775145,\"checkNumber\":\"PD2020101201810-N\",\"createTime\":\"2020-10-12 17:45:27\",\"effectiveTime\":\"2020-10-12 17:45:29\",\"resultCommitTime\":\"2020-10-12 17:45:29\",\"approvalCompleteTime\":\"2020-10-12 17:45:29\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null},{\"id\":775144,\"checkNumber\":\"PD2020101201809-N\",\"createTime\":\"2020-10-12 17:45:22\",\"effectiveTime\":\"2020-10-12 17:45:23\",\"resultCommitTime\":\"2020-10-12 17:45:23\",\"approvalCompleteTime\":\"2020-10-12 17:45:23\",\"checkWay\":\"明盘\",\"operator\":\"dxxwangjing\",\"checker\":\"dxxwangjing\",\"printTime\":null,\"status\":\"已审批\",\"statusEnum\":\"APPROVED\",\"items\":null,\"warehouseId\":1396,\"warehouseName\":\"北京大猩猩望京店\",\"warehouseCode\":\"MRYXBJS-DXXWANGJINGDIAN\",\"isAreaLocationOn\":null,\"areaLocationOn\":null}],\"pageNum\":1,\"pageSize\":10,\"size\":10,\"startRow\":1,\"endRow\":10,\"pages\":1311,\"prePage\":0,\"nextPage\":2,\"isFirstPage\":true,\"isLastPage\":false,\"hasPreviousPage\":false,\"hasNextPage\":true,\"navigatePages\":8,\"navigatepageNums\":[1,2,3,4,5,6,7,8],\"navigateFirstPage\":1,\"navigateLastPage\":8,\"firstPage\":1,\"lastPage\":8}}";
 			response.content().retain().clear().writeBytes(json.getBytes());
 			response.headers().remove("Content-Encoding");
@@ -175,15 +175,15 @@ public class WiretigerServerRun {
 	}
 	
 	private static Mock mockDemo7() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/staticCheck/listByPage") && request.method() == HttpMethod.POST;
-		}).rebuildRequest(request-> {
+		}).rebuildNettyRequest(request-> {
 			request.headers().set("HOST", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/staticCheck/listByPage");
 			System.out.println("redirect to localhost:8888");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
 			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;
@@ -191,15 +191,15 @@ public class WiretigerServerRun {
 	}
 	
 	private static Mock mockDemo8() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/returnGoods/getStockNumByMaterialId") && request.method() == HttpMethod.GET;
-		}).rebuildRequest(request-> {
+		}).rebuildNettyRequest(request-> {
 			request.headers().set("HOST", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri(request.uri().replace("/sms/internal/returnGoods/getStockNumByMaterialId", "/migrate/sms/internal/returnGoods/getStockNumByMaterialId"));
 			System.out.println("redirect to localhost:8888");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
 			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;
@@ -207,15 +207,15 @@ public class WiretigerServerRun {
 	}
 	
 	private static Mock mockDemo9() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/stockTransfer/shelveMaterials") && request.method() == HttpMethod.POST;
-		}).rebuildRequest(request-> {
+		}).rebuildNettyRequest(request-> {
 			request.headers().set("HOST", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/stockTransfer/shelveMaterials");
 			System.out.println("redirect to localhost:8888/shelveMaterials");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
 			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;
@@ -223,15 +223,15 @@ public class WiretigerServerRun {
 	}
 	
 	private static Mock mockDemo10() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/stockTransfer/unshelveByArea") && request.method() == HttpMethod.POST;
-		}).rebuildRequest(request-> {
+		}).rebuildNettyRequest(request-> {
 			request.headers().set("HOST", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/stockTransfer/unshelveByArea");
 			System.out.println("redirect to localhost:8888/unshelveByArea");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("Access-Control-Allow-Credentials", true);
 			response.headers().set("Access-Control-Allow-Origin", "*");
 			return response;

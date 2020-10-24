@@ -1,24 +1,29 @@
 package org.hum.wiretiger.proxy.mock;
 
+import org.hum.wiretiger.proxy.mock.netty.NettyRequestInterceptor;
+import org.hum.wiretiger.proxy.mock.netty.NettyRequestRebuilder;
+import org.hum.wiretiger.proxy.mock.netty.NettyResponseInterceptor;
+import org.hum.wiretiger.proxy.mock.netty.NettyResponseRebuild;
+
 public class RequestResponsePicture {
 
-	private RequestInterceptor requestInterceptor;
-	private ResponseInterceptor responseInterceptor;
-	private RequestRebuilder requestRebuilder;
-	private ResponseRebuild responseRebuild;
+	private NettyRequestInterceptor requestInterceptor;
+	private NettyResponseInterceptor responseInterceptor;
+	private NettyRequestRebuilder requestRebuilder;
+	private NettyResponseRebuild responseRebuild;
 
-	public RequestResponsePicture eval(RequestInterceptor requestInterceptor, ResponseInterceptor responseInterceptor) {
+	public RequestResponsePicture eval(NettyRequestInterceptor requestInterceptor, NettyResponseInterceptor responseInterceptor) {
 		this.requestInterceptor = requestInterceptor;
 		this.responseInterceptor = responseInterceptor;
 		return this;
 	}
 
-	public RequestResponsePicture rebuildRequest(RequestRebuilder requestRebuilder) {
+	public RequestResponsePicture rebuildRequest(NettyRequestRebuilder requestRebuilder) {
 		this.requestRebuilder = requestRebuilder;
 		return this;
 	}
 
-	public RequestResponsePicture rebuildResponse(ResponseRebuild responseRebuild) {
+	public RequestResponsePicture rebuildResponse(NettyResponseRebuild responseRebuild) {
 		this.responseRebuild = responseRebuild;
 		return this;
 	}

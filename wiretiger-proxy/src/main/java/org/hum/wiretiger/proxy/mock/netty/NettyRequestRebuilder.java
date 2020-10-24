@@ -1,8 +1,8 @@
-package org.hum.wiretiger.proxy.mock;
+package org.hum.wiretiger.proxy.mock.netty;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 
-public interface RequestRebuilder {
+public interface NettyRequestRebuilder {
 
 	public FullHttpRequest eval(FullHttpRequest request);
 }

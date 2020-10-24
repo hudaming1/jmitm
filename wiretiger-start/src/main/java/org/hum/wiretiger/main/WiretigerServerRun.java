@@ -12,7 +12,6 @@ import org.hum.wiretiger.proxy.mock.CatchResponse;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
-import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -45,12 +44,12 @@ public class WiretigerServerRun {
 	}
 
 	private static Mock mockDemo6() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) && "/".equals(request.uri());
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			// 注入的JS代码
 			String json = "<script type='text/javascript'>alert('Wiretiger say hello');</script>";
 			byte[] readBytes = HttpMessageUtil.readBytes(response.content());
@@ -71,22 +70,22 @@ public class WiretigerServerRun {
 	}
 
 	private static Mock mockDemo4() {
-		return new CatchResponse().eval(response -> {
+		return new CatchResponse().evalNettyResponse(response -> {
 			return true;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().set("signby", "hudaming");
 			return response;
 		}).mock();
 	}
 
 	private static Mock mockDemo3() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			System.out.println("mock google logo");
 			byte[] googleLogo = readFile("/mock/google.png");
 			response.content().clear().writeBytes(googleLogo);
@@ -110,18 +109,18 @@ public class WiretigerServerRun {
 	}
 
 	private static Mock mockDemo2() {
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "www.baidu.com".equals(request.headers().get("Host").split(":")[0]) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri())); 
-		}).rebuildRequest(request -> {
+		}).rebuildNettyRequest(request -> {
 			log.info("hit baidu_logo");
 			request.headers().set("Host", "p.ssl.qhimg.com:443");
 			request.setUri("/t012cdb572f41b93733.png");
 			return request;
-		}).rebuildResponse(response -> {
+		}).rebuildNettyResponse(response -> {
 			response.headers().add("wiretiger_mock", "redirect to 360_search");
 			return response;
 		}).mock();
@@ -129,12 +128,12 @@ public class WiretigerServerRun {
 
 	private static Mock mockDemo1() {
 		// 将wiretiger.com重定向到localhost:8080
-		return new CatchRequest().eval(request -> {
+		return new CatchRequest().evalNettyRequest(request -> {
 			if (request.headers() == null || request.headers().get("Host") == null) {
 				return false;
 			}
 			return "wiretiger.com".equals(request.headers().get("Host").split(":")[0]);
-		}).rebuildRequest(request -> {
+		}).rebuildNettyRequest(request -> {
 			request.headers().set("Host", "localhost:8080");
 			return request;
 		}).mock();

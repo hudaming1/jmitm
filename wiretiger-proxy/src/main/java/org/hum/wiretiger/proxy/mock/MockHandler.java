@@ -2,6 +2,8 @@ package org.hum.wiretiger.proxy.mock;
 
 import java.util.List;
 
+import org.hum.wiretiger.proxy.mock.netty.NettyResponseInterceptor;
+
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 
@@ -36,7 +38,7 @@ public class MockHandler {
 		
 		for (Mock mock : mockList) {
 			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false || !mock.getId().equals(request.headers().get(WT_MOCK_SIGN));
-			ResponseInterceptor responseInterceptor = mock.getResponseInterceptor();
+			NettyResponseInterceptor responseInterceptor = mock.getResponseInterceptor();
 			if (requestMiss && (responseInterceptor == null || !responseInterceptor.isHit(resp))) {
 				continue;
 			}
