@@ -18,7 +18,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WiretigerServerRun {
+public class RunTest1 {
 	
 	public static void main(String[] args) throws Exception {
 		WiretigerBuilder wtBuilder = new WiretigerBuilder();
@@ -45,8 +45,8 @@ public class WiretigerServerRun {
 				mockDemo9(),
 				mockDemo10()
 				);
-		wtBuilder.webRoot(WiretigerServerRun.class.getResource("/webroot").getFile());
-		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
+		wtBuilder.webRoot(RunTest1.class.getResource("/webroot").getFile());
+		wtBuilder.webXmlPath(RunTest1.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
@@ -120,7 +120,7 @@ public class WiretigerServerRun {
 	
 	private static byte[] readFile(String file) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(new File(WiretigerServerRun.class.getResource(file).getFile()));
+			FileInputStream fileInputStream = new FileInputStream(new File(RunTest1.class.getResource(file).getFile()));
 			byte[] bytes = new byte[fileInputStream.available()];
 			fileInputStream.read(bytes);
 			fileInputStream.close();

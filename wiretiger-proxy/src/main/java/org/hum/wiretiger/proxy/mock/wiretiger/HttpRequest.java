@@ -2,6 +2,7 @@ package org.hum.wiretiger.proxy.mock.wiretiger;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
 
 public class HttpRequest {
 	
@@ -13,16 +14,18 @@ public class HttpRequest {
 		this.fullRequest = fullRequest;
 	}
 	
-	public void uri(String uri) {
+	public HttpRequest uri(String uri) {
 		fullRequest.setUri(uri);
+		return this;
 	}
 	
 	public String uri() {
 		return fullRequest.uri();
 	}
 	
-	public void host(String host) {
+	public HttpRequest host(String host) {
 		fullRequest.headers().set(HOST, host);
+		return this;
 	}
 	
 	public String host() {
@@ -32,8 +35,9 @@ public class HttpRequest {
 		return fullRequest.headers().get(HOST);
 	}
 	
-	public void header(String header, String value) {
+	public HttpRequest header(String header, String value) {
 		fullRequest.headers().set(header, value);
+		return this;
 	}
 	
 	public String header(String header) {
@@ -41,17 +45,26 @@ public class HttpRequest {
 	}
 	
 	public byte[] body() {
-		ByteBuf requestBody = fullRequest.content();
+		ByteBuf requestBody = fullRequest.content().duplicate();
 		byte[] bytes = new byte[requestBody.readableBytes()];
 		requestBody.readBytes(bytes);
-		requestBody.resetReaderIndex();
 		return bytes;
 	}
 	
-	public void body(byte[] bytes) {
+	public HttpRequest body(byte[] bytes) {
 		ByteBuf requestBody = fullRequest.content();
 		requestBody.clear().writeBytes(bytes);
 		fullRequest.headers().set("Content-Length", bytes.length);
+		return this;
+	}
+
+	public HttpMethod method() {
+		return this.fullRequest.method();
+	}
+	
+	public HttpRequest method(HttpMethod method) {
+		this.fullRequest.setMethod(method);
+		return this;
 	}
 	
 	public FullHttpRequest toFullHttpRequest() {

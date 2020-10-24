@@ -3,11 +3,14 @@ package org.hum.wiretiger.proxy.mock;
 import org.hum.wiretiger.proxy.mock.netty.NettyRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.netty.NettyRequestRebuilder;
 import org.hum.wiretiger.proxy.mock.netty.NettyResponseRebuild;
+import org.hum.wiretiger.proxy.mock.wiretiger.HttpRequest;
 import org.hum.wiretiger.proxy.mock.wiretiger.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.wiretiger.HttpRequestRebuilder;
+import org.hum.wiretiger.proxy.mock.wiretiger.HttpResponse;
 import org.hum.wiretiger.proxy.mock.wiretiger.HttpResponseRebuild;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Data;
 
 @Data
@@ -21,7 +24,7 @@ public class CatchRequest {
 		this.requestInterceptor = new NettyRequestInterceptor() {
 			@Override
 			public boolean isHit(FullHttpRequest request) {
-				return requestInterceptor.isHit(request);
+				return requestInterceptor.isHit(new HttpRequest(request));
 			}
 		};
 		return this;
@@ -33,7 +36,12 @@ public class CatchRequest {
 	}
 
 	public CatchRequest rebuildRequest(HttpRequestRebuilder requestRebuilder) {
-		this.requestRebuilder = requestRebuilder;
+		this.requestRebuilder = new NettyRequestRebuilder() {
+			@Override
+			public final FullHttpRequest eval(FullHttpRequest request) {
+				return requestRebuilder.eval(new HttpRequest(request)).toFullHttpRequest();
+			}
+		};
 		return this;
 	}
 
@@ -43,7 +51,12 @@ public class CatchRequest {
 	}
 
 	public CatchRequest rebuildResponse(HttpResponseRebuild responseRebuild) {
-		this.responseRebuild = responseRebuild;
+		this.responseRebuild = new NettyResponseRebuild() {
+			@Override
+			public final FullHttpResponse eval(FullHttpResponse response) {
+				return responseRebuild.eval(new HttpResponse(response)).toFullHttpResponse();
+			}
+		};
 		return this;
 	}
 
