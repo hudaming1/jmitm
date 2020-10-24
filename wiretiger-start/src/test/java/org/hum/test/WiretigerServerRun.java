@@ -9,6 +9,8 @@ import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
 import org.hum.wiretiger.provider.WiretigerBuilder;
 import org.hum.wiretiger.proxy.mock.CatchRequest;
 import org.hum.wiretiger.proxy.mock.CatchResponse;
+import org.hum.wiretiger.proxy.mock.HttpRequest;
+import org.hum.wiretiger.proxy.mock.HttpRequestInterceptor;
 import org.hum.wiretiger.proxy.mock.Mock;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
 
@@ -20,11 +22,12 @@ public class WiretigerServerRun {
 	
 	public static void main(String[] args) throws Exception {
 		WiretigerBuilder wtBuilder = new WiretigerBuilder();
-		wtBuilder.parseHttps(false);
+		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
+				mockTest(),
 				// DEMO1：将「wiretiger.com」重定向到「localhost:8080」，等效于配置host:   wiretiger.com    127.0.0.1:8080
 				mockDemo1(), 
 				// DEMO2：修改了百度首页的Logo，打开https://www.baidu.com，会发现首页Logo重定向到360So
@@ -46,6 +49,21 @@ public class WiretigerServerRun {
 		wtBuilder.webXmlPath(WiretigerServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
+	}
+	
+	private static Mock mockTest() {
+		return new CatchRequest().eval(new HttpRequestInterceptor() {
+			@Override
+			public boolean isHit(HttpRequest request) {
+				if (request.host() == null) {
+					return false;
+				}
+				return request.host().contains("so.com");
+			}
+		}).rebuildRequest(req -> {
+			req.headers().set("Host", "www.baidu.com");
+			return req;
+		}).mock();
 	}
 
 	private static Mock mockDemo6() {
