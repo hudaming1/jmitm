@@ -20,6 +20,11 @@ public class CatchRequest {
 	private NettyRequestRebuilder requestRebuilder;
 	private NettyResponseRebuild responseRebuild;
 	
+	/**
+	 * 定义拦截具有某一特征的HTTP请求
+	 * @param requestInterceptor
+	 * @return
+	 */
 	public CatchRequest eval(HttpRequestInterceptor requestInterceptor) {
 		this.requestInterceptor = new NettyRequestInterceptor() {
 			@Override
@@ -30,11 +35,21 @@ public class CatchRequest {
 		return this;
 	}
 
+	/**
+	 * 定义拦截具有某一特征的HTTP请求（基于原生NettyRequest）
+	 * @param NettyRequestInterceptor
+	 * @return
+	 */
 	public CatchRequest evalNettyRequest(NettyRequestInterceptor requestInterceptor) {
 		this.requestInterceptor = requestInterceptor;
 		return this;
 	}
 
+	/**
+	 * 重制Request
+	 * @param HttpRequestRebuilder
+	 * @return
+	 */
 	public CatchRequest rebuildRequest(HttpRequestRebuilder requestRebuilder) {
 		this.requestRebuilder = new NettyRequestRebuilder() {
 			@Override
@@ -45,11 +60,21 @@ public class CatchRequest {
 		return this;
 	}
 
+	/**
+	 * 重制Request（基于NettyRequest）
+	 * @param NettyRequestRebuilder
+	 * @return
+	 */
 	public CatchRequest rebuildNettyRequest(NettyRequestRebuilder requestRebuilder) {
 		this.requestRebuilder = requestRebuilder;
 		return this;
 	}
 
+	/**
+	 * 重制Response
+	 * @param HttpResponseRebuild
+	 * @return
+	 */
 	public CatchRequest rebuildResponse(HttpResponseRebuild responseRebuild) {
 		this.responseRebuild = new NettyResponseRebuild() {
 			@Override
@@ -60,6 +85,11 @@ public class CatchRequest {
 		return this;
 	}
 
+	/**
+	 * 重制Response（基于NettyResponse）
+	 * @param NettyResponseRebuild
+	 * @return
+	 */
 	public CatchRequest rebuildNettyResponse(NettyResponseRebuild responseRebuild) {
 		this.responseRebuild = responseRebuild;
 		return this;

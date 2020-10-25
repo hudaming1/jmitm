@@ -12,7 +12,12 @@ public class CatchResponse {
 	
 	private NettyResponseInterceptor responseInterceptor;
 	private NettyResponseRebuild responseRebuild;
-	
+
+	/**
+	 * 拦截具有某一特征的Response
+	 * @param responseInterceptor
+	 * @return
+	 */
 	public CatchResponse eval(HttpResponseInterceptor responseInterceptor) {
 		this.responseInterceptor = new NettyResponseInterceptor() {
 			@Override
@@ -23,11 +28,21 @@ public class CatchResponse {
 		return this;
 	}
 
+	/**
+	 * 拦截具有某一特征的Response(基于NettyResponse)
+	 * @param responseInterceptor
+	 * @return
+	 */
 	public CatchResponse evalNettyResponse(NettyResponseInterceptor responseInterceptor) {
 		this.responseInterceptor = responseInterceptor;
 		return this;
 	}
 
+	/**
+	 * 重制Response
+	 * @param HttpResponseRebuild
+	 * @return
+	 */
 	public CatchResponse rebuildResponse(HttpResponseRebuild responseRebuild) {
 		this.responseRebuild = new NettyResponseRebuild() {
 			@Override
@@ -38,6 +53,11 @@ public class CatchResponse {
 		return this;
 	}
 
+	/**
+	 * 重制Response（基于NettyResponse）
+	 * @param NettyResponseRebuild
+	 * @return
+	 */
 	public CatchResponse rebuildNettyResponse(NettyResponseRebuild responseRebuild) {
 		this.responseRebuild = responseRebuild;
 		return this;
