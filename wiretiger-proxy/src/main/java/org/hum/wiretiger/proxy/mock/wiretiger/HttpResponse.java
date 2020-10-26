@@ -1,5 +1,7 @@
 package org.hum.wiretiger.proxy.mock.wiretiger;
 
+import org.hum.wiretiger.common.constant.HttpConstant;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -40,7 +42,8 @@ public class HttpResponse {
 	public HttpResponse body(byte[] bytes) {
 		ByteBuf requestBody = fullResponse.content();
 		requestBody.clear().writeBytes(bytes);
-		fullResponse.headers().set("Content-Length", bytes.length);
+		// 修改body，自动帮忙计算content-length
+		fullResponse.headers().set(HttpConstant.ContentLength, bytes.length);
 		return this;
 	}
 

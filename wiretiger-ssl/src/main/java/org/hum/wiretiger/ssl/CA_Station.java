@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.FutureTask;
 
+import org.hum.wiretiger.ssl.common.SSLException;
+
 import lombok.extern.slf4j.Slf4j;
 
 /**

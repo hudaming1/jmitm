@@ -1,12 +1,12 @@
 package org.hum.wiretiger.proxy.mock.wiretiger;
 
+import org.hum.wiretiger.common.constant.HttpConstant;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpMethod;
 
 public class HttpRequest {
-	
-	private static final String HOST = "Host";
 
 	private FullHttpRequest fullRequest;
 	
@@ -24,7 +24,7 @@ public class HttpRequest {
 	}
 	
 	public HttpRequest host(String host) {
-		fullRequest.headers().set(HOST, host);
+		fullRequest.headers().set(HttpConstant.HOST, host);
 		return this;
 	}
 	
@@ -32,7 +32,7 @@ public class HttpRequest {
 		if (fullRequest.headers() == null || fullRequest.headers().isEmpty()) {
 			return null;
 		}
-		return fullRequest.headers().get(HOST);
+		return fullRequest.headers().get(HttpConstant.HOST);
 	}
 	
 	public HttpRequest header(String header, String value) {
@@ -54,7 +54,8 @@ public class HttpRequest {
 	public HttpRequest body(byte[] bytes) {
 		ByteBuf requestBody = fullRequest.content();
 		requestBody.clear().writeBytes(bytes);
-		fullRequest.headers().set("Content-Length", bytes.length);
+		// 修改body，自动帮忙计算content-length
+		fullRequest.headers().set(HttpConstant.ContentLength, bytes.length);
 		return this;
 	}
 

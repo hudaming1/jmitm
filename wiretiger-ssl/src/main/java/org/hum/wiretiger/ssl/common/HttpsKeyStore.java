@@ -1,6 +1,8 @@
-package org.hum.wiretiger.ssl;
+package org.hum.wiretiger.ssl.common;
 
 import java.io.InputStream;
+
+import org.hum.wiretiger.ssl.CA_Station;
 
 import lombok.extern.slf4j.Slf4j;
 

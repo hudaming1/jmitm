@@ -1,4 +1,4 @@
-package org.hum.wiretiger.ssl;
+package org.hum.wiretiger.ssl.common;
 
 public class SSLException  extends RuntimeException {
 
