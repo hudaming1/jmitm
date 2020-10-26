@@ -36,6 +36,8 @@
 【P1】显示当前存活连接数(避免一共就16个线程，阻塞15个，就留也一个可用线程，在UI需要查到)
 【P2】优化线程模型
 【P1】need support more types, find type=class io.netty.buffer.PooledUnsafeDirectByteBuf到底是什么鬼，目测不影响使用，但不知道这部分内容是什么？
+【P1】将start模块改成facade和demo模块
+
 
 【P2】Console没有探活，页面刷新后连接没有断开
 【P3】Request支持分页
