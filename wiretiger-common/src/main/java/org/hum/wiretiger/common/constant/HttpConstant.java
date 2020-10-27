@@ -3,7 +3,7 @@ package org.hum.wiretiger.common.constant;
 public class HttpConstant {
 
 	public static final String HOST = "Host";
-	public static final String ContentLength = "Host";
+	public static final String ContentLength = "Content-Length";
 	public static final String ContentType = "Content-Type";
 	public static final String Host = "Host";
 	public static final String ContentEncoding = "Content-Encoding";

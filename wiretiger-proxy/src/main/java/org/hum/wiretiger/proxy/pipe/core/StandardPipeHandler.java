@@ -139,9 +139,9 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		if (cause instanceof ConnectTimeoutException) {
-			log.warn("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+			log.warn("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
-			log.error("front exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+			log.error("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
 		}
 		fullPipeHandler.clientError(wtContext, cause);
 		close();
@@ -150,9 +150,9 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		if (cause instanceof ConnectTimeoutException) {
-			log.warn("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage());
+			log.warn("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
-			log.error("back exception, pipeId=" + wtContext.getId() + ", cause=" + cause.getMessage(), cause);
+			log.error("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
 		}
 		fullPipeHandler.serverError(wtContext, cause);
 		close();
