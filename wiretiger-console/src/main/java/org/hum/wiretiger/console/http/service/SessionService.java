@@ -83,6 +83,9 @@ public class SessionService {
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
 				detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
+			} else {
+				detailVo.setRequestBody4Source("No Request Body");
+				detailVo.setRequestBody4Parsed("No Request Body");
 			}
 			detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
 			detailVo.setPipeId(simpleSession.getPipeId());
@@ -102,8 +105,8 @@ public class SessionService {
 					detailVo.setResponseBody4Parsed("unsupport parsed type:" + headers.get(HttpConstant.ContentType));
 				}
 			} else {
-				detailVo.setResponseBody4Source("No Response..");
-				detailVo.setResponseBody4Parsed("No Response..");
+				detailVo.setResponseBody4Source("No Response Body");
+				detailVo.setResponseBody4Parsed("No Response Body");
 			}
 			return detailVo;
 		} catch (Throwable ce) {
