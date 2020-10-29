@@ -30,6 +30,8 @@
 【OK】对拦截协议进行配置化，例如只想对HTTP协议进行拦截、解析、重制，对HTTPS协议直接放行透传（这样就避免了客户端不用认证RootCA）
 【OK】对UI界面进行优化：增加搜索维度、弱化Pipe界面，强化Session管理
 【OK】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
+【OK】修改Session创建时机，不要等到Response完成后才创建Session
+【OK】clear按钮做成菜单
 
 ##功能优化
 【P0】测试下载会不会把内存压爆
@@ -43,12 +45,9 @@
 
 【P2】Console没有探活，页面刷新后连接没有断开
 【P3】Request支持分页
-【P3】修改Session创建时机，不要等到Response完成后才创建Session
 【P3】处于Init状态5秒无状态变化的，直接Closed
 【P3】配置闲置连接最长5分钟
-【P3】PIPE删除Request和Response，只显示汇总信息
 【P3】开启debug模式（log4j和nettyhandler）
-【P3】clear按钮做成菜单
 【P3】控制台增加断开连接的按钮
 
 ##BUG
