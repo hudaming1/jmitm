@@ -43,6 +43,7 @@ proxy.add(new CatchRequest().eval(request -> {
 }).mock());
 ```
 **根据Response重制Response**
+No Case...
 
 #### Quick Start
 1.git clone https://github.com/hudaming1/wiretiger.git   
