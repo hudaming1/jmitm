@@ -12,7 +12,7 @@ Demo1:拦截百度首页Logo，读取本地GoogleLogo文件，首页Logo变为Go
 ![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
 
 Demo2:对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
-
+![](https://github.com/hudaming1/wiretiger/blob/master/Show2.png)
 
 **根据Response重制Response**
 
