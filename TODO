@@ -32,6 +32,7 @@
 【OK】简化Mock的API，可以面向Netty实现，也可以面向WiretigerApi实现
 
 ##功能优化
+【P0】测试下载会不会把内存压爆
 【P1】生成原始HTTP请求报文，生成的报文支持直接使用Telnet调用(注意如果改了RequestBody，则需要动态计算Content-Length)
 【P1】将start模块改成facade和demo模块
 【P2】显示当前存活连接数(避免一共就16个线程，阻塞15个，就留也一个可用线程，在UI需要查到)

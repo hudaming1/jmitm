@@ -27,7 +27,7 @@ public class WiretigerServerRun {
 				// DEMO3：修改了百度首页的Logo，读取本地GoogleLogo文件，首页Logo变为Google
 				mockDemo3(), 
 				// DEMO4：拦截所有响应，对响应打标记
-				mockDemo4(), 
+				mockDemo4(),
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
 				);
@@ -43,7 +43,7 @@ public class WiretigerServerRun {
 		}).rebuildResponse(response -> {
 			log.info("inject js...");
 			// 注入的JS代码
-			String json = "<script type='text/javascript'>alert('Wiretiger say hello');</script>";
+			String json = "<!--add by wiretigher--><script type='text/javascript'>alert('Wiretiger say hello');</script>";
 			String outBody = "";
 			try {
 				// 因为响应头是gzip进行压缩，因此无法直接将ASCII串追加到内容末尾，需要先将原响应报文解压，在将JS追加到末尾
