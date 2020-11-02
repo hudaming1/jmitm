@@ -46,10 +46,10 @@ proxy.add(new CatchRequest().eval(request -> {
     return response.removeHeader("Content-Encoding").body(outBody.getBytes());
 }).mock());
 ```
-**根据Response重制Response**
+**根据Response重制Response**  
 暂时No Case...
 
-#### Quick Start
+## Quick Start
 1.git clone https://github.com/hudaming1/wiretiger.git   
 2.启动 WiretigerServerRun.java （默认端口52007）   
 3.访问localhost:8080进入控制台    
