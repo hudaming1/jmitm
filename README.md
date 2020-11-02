@@ -3,7 +3,7 @@
 基于编程式网关，你可以：
 
 **根据Request重制Request**    
-Demo1:例如将「wiretiger.com」重定向到「localhost:8080」，等效于配置浏览器级别的host:   wiretiger.com    127.0.0.1:8080  
+例如将「wiretiger.com」重定向到「localhost:8080」，等效于配置浏览器级别的host:   wiretiger.com    127.0.0.1:8080  
 
 ```java
 // 将wiretiger.com重定向到localhost:8080
@@ -17,7 +17,7 @@ proxy.add(new CatchRequest().eval(request -> {
 ```
 
 **根据Request重制Response**    
-Demo1:拦截百度首页Logo，读取本地GoogleLogo文件，首页Logo变为Google
+1.拦截百度首页Logo，读取本地GoogleLogo文件，首页Logo变为Google
 ![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
 ```java
 proxy.add(new CatchRequest().eval(request -> {
@@ -30,7 +30,7 @@ proxy.add(new CatchRequest().eval(request -> {
 }).mock());
 ```
 
-Demo2:对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
+2.对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 ![](https://github.com/hudaming1/wiretiger/blob/master/Show2.png)
 ```java
 proxy.add(new CatchRequest().eval(request -> {
