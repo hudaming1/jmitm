@@ -24,7 +24,7 @@ public class HttpRequest {
 	}
 	
 	public HttpRequest host(String host) {
-		fullRequest.headers().set(HttpConstant.HOST, host);
+		fullRequest.headers().set(HttpConstant.Host, host);
 		return this;
 	}
 	
@@ -32,7 +32,7 @@ public class HttpRequest {
 		if (fullRequest.headers() == null || fullRequest.headers().isEmpty()) {
 			return null;
 		}
-		return fullRequest.headers().get(HttpConstant.HOST);
+		return fullRequest.headers().get(HttpConstant.Host);
 	}
 	
 	public HttpRequest header(String header, String value) {

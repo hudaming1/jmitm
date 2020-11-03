@@ -154,7 +154,7 @@ public class RunTest2 {
 		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/staticCheck/listByPage") && request.method() == HttpMethod.POST;
 		}).rebuildNettyRequest(request-> {
-			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("Host", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/staticCheck/listByPage");
 			System.out.println("redirect to localhost:8888");
@@ -170,7 +170,7 @@ public class RunTest2 {
 		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/returnGoods/getStockNumByMaterialId") && request.method() == HttpMethod.GET;
 		}).rebuildNettyRequest(request-> {
-			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("Host", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri(request.uri().replace("/sms/internal/returnGoods/getStockNumByMaterialId", "/migrate/sms/internal/returnGoods/getStockNumByMaterialId"));
 			System.out.println("redirect to localhost:8888");
@@ -186,7 +186,7 @@ public class RunTest2 {
 		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/stockTransfer/shelveMaterials") && request.method() == HttpMethod.POST;
 		}).rebuildNettyRequest(request-> {
-			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("Host", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/stockTransfer/shelveMaterials");
 			System.out.println("redirect to localhost:8888/shelveMaterials");
@@ -202,7 +202,7 @@ public class RunTest2 {
 		return new CatchRequest().evalNettyRequest(request -> {
 			return request.uri().contains("/sms/internal/stockTransfer/unshelveByArea") && request.method() == HttpMethod.POST;
 		}).rebuildNettyRequest(request-> {
-			request.headers().set("HOST", "localhost:8888");
+			request.headers().set("Host", "localhost:8888");
 			request.headers().set("X-User-Id", "3101");
 			request.setUri("/migrate/sms/internal/stockTransfer/unshelveByArea");
 			System.out.println("redirect to localhost:8888/unshelveByArea");
