@@ -1,5 +1,6 @@
 package org.hum.wiretiger.proxy.pipe.core;
 
+import java.net.ConnectException;
 import java.util.Stack;
 
 import org.hum.wiretiger.proxy.facade.PipeInvokeChain;
@@ -138,7 +139,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException) {
+		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException) {
 			log.warn("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
 			log.error("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
@@ -149,7 +150,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException) {
+		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException) {
 			log.warn("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
 			log.error("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
