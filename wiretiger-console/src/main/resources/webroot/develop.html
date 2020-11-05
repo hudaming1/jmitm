@@ -10,9 +10,8 @@
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
 			function sessionDgClickRow(index, row) {
-				$.get("/session/get?id=" + row.sessionId, function(resp) {
+				$.get("/session/get?id=" + row.sessionId, function(jsonObj) {
 					// load data
-					var jsonObj = eval("(" + resp + ")");
 					$("#SESN_STAGE").find("#requestHeaderPannel").html(jsonObj.requestHeader);
 					$("#SESN_STAGE").find("#requestPannel4Detail").find("#source").html(jsonObj.requestBody4Source);
 					$("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").html(jsonObj.requestBody4Parsed);
