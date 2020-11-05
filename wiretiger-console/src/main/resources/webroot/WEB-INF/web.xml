@@ -66,6 +66,15 @@
 		<servlet-name>GetHttpRequest</servlet-name>
 		<url-pattern>/session/getHttpRequest</url-pattern>
 	</servlet-mapping>
+	<!-- rebuild -->
+	<servlet>
+		<servlet-name>SessionRebuildServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionRebuildServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionRebuildServlet</servlet-name>
+		<url-pattern>/session/rebuild</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 

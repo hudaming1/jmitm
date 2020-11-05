@@ -81,8 +81,9 @@
 		    }
 			
 			var cmenu;
-			function createColumnMenu(row){
+			function createColumnMenu(){
 				cmenu = $('<div/>').appendTo('body');
+				var row = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
 				cmenu.menu({
 					onClick: function(item){
 						if (item.id == "btn2") {
@@ -128,6 +129,21 @@
 	            document.body.removeChild(textarea); //删除元素
 	            currentFocus.focus();
 	        }
+	        
+	        function rebuildRequest() {
+	        	var selectedRow = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
+	        	if (selectedRow == null) {
+	        		alert("Please select row");
+	        		return ;
+	        	}
+	        	var postData = {
+	        		"id": selectedRow.sessionId,
+	        		"body": $("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("getText")
+	        	};
+				$.post("/session/rebuild", postData, function(resp) {
+					copy(resp);
+				});
+	        }
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
@@ -167,7 +183,7 @@
 								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="fit:true, multiline: true">
 							</div>
 							<div data-options="border:false, region:'south'" class="easyui-panel">
-								<a style="float: right; margin: 5px;" class="easyui-linkbutton" data-options="">Copy Request to clipboard</a>
+								<a style="float: right; margin: 5px;" class="easyui-linkbutton" data-options="" onclick="rebuildRequest();">Rebuild Request and copy to clipboard</a>
 							</div>
 						</div>
 						<div id="source" title="Source" data-options="fit:true, border:false">
