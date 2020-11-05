@@ -21,7 +21,7 @@ public class PipeDetailServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setHeader("content-type", "text/html; charset=UTF-8");
+		resp.setHeader("Content-Type", "application/json");
 		resp.getWriter().print(JSON.toJSONString(pipeService.getById(Long.parseLong(req.getParameter("id")))));
 		resp.getWriter().flush();
 		resp.getWriter().close();

@@ -57,6 +57,15 @@
 		<servlet-name>SessionClearServlet</servlet-name>
 		<url-pattern>/session/clear</url-pattern>
 	</servlet-mapping>
+	<!-- clear all -->
+	<servlet>
+		<servlet-name>GetHttpRequest</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.CopyHttpRequestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetHttpRequest</servlet-name>
+		<url-pattern>/session/getHttpRequest</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 

@@ -75,11 +75,15 @@ public class SessionService {
 		return true;
 	}
 	
+	public WtSession getWtSessionById(Long id) {
+		return SessionManagerInvokeChain.getById(id);
+	}
+	
 	public WiretigerSessionDetailVO getById(Long id) {
 		try {
 			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession));
+			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession, HttpConstant.HTML_NEWLINE));
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
 				detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
@@ -115,18 +119,18 @@ public class SessionService {
 		}
 	}
 	
-	private String convert2RequestHeaderAndLine(WtSession session) {
+	public String convert2RequestHeaderAndLine(WtSession session, String returnLine) {
 		if (session == null) {
 			return "session lost";
 		}
-		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(HttpConstant.HTML_NEWLINE);
+		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(returnLine);
 		// 将Host永远放在第一个，方便查看
-		request.append(HttpConstant.Host + ": " + session.getRequest().headers().get(HttpConstant.Host)).append(HttpConstant.HTML_NEWLINE);
+		request.append(HttpConstant.Host + ": " + session.getRequest().headers().get(HttpConstant.Host)).append(returnLine);
 		for (Entry<String, String> header : session.getRequest().headers()) {
 			if (HttpConstant.Host.equals(header.getKey())) {
 				continue;
 			}
-			request.append(header.getKey() + ": " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
+			request.append(header.getKey() + ": " + header.getValue()).append(returnLine);
 		}
 		return request.toString();
 	}

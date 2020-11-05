@@ -73,7 +73,7 @@
 		    function dataGridContextMenu(e, index, row) {
 		    	e.preventDefault();
 		    	if (!cmenu){
-					createColumnMenu();
+					createColumnMenu(row);
 				}
 				cmenu.menu('show', {
 					left:e.pageX,
@@ -82,7 +82,7 @@
 		    }
 			
 			var cmenu;
-			function createColumnMenu(){
+			function createColumnMenu(row){
 				cmenu = $('<div/>').appendTo('body');
 				cmenu.menu({
 					onClick: function(item){
@@ -90,9 +90,14 @@
 							$.post("/session/clear", function(resp) {
 								$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
 							});
-						} else {
+						} else if (item.id == "btn1"){
 							$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
-						}
+						} else if (item.id == "btn3"){
+							$.get("/session/getHttpRequest?id=" + row.sessionId, function(resp) {
+								// load data
+								copy(resp);
+							});
+						} 
 					}
 				});
 				cmenu.menu('appendItem', {
@@ -103,7 +108,23 @@
 					id: 'btn2',
 					text: "Clear Server Records"
 				});
+				cmenu.menu('appendItem', {
+					id: 'btn3',
+					text: "Copy Request"
+				});
 			}
+			
+			function copy(text) {
+				const input = document.createElement('input');
+			    document.body.appendChild(input);
+			    input.setAttribute('value', text);
+			    input.select();
+			    if (document.execCommand('copy')) {
+			        document.execCommand('copy');
+			        console.log('复制成功');
+			    }
+			 	document.body.removeChild(input);
+			 }
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
