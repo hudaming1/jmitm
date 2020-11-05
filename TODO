@@ -37,6 +37,7 @@
 【P1】增加PostMan控制台
 【P1】控制台不要展示wiretiger.com的请求
 【P0】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
+【P0】控制台对每个链接增加请求时间，方便查看
 
 【P1】生成原始HTTP请求报文，生成的报文支持直接使用Telnet调用(注意如果改了RequestBody，则需要动态计算Content-Length)
 【P1】将start模块改成facade和demo模块

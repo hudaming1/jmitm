@@ -121,12 +121,12 @@ public class SessionService {
 		}
 		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(HttpConstant.HTML_NEWLINE);
 		// 将Host永远放在第一个，方便查看
-		request.append(HttpConstant.Host + " : " + session.getRequest().headers().get(HttpConstant.Host)).append(HttpConstant.HTML_NEWLINE);
+		request.append(HttpConstant.Host + ": " + session.getRequest().headers().get(HttpConstant.Host)).append(HttpConstant.HTML_NEWLINE);
 		for (Entry<String, String> header : session.getRequest().headers()) {
 			if (HttpConstant.Host.equals(header.getKey())) {
 				continue;
 			}
-			request.append(header.getKey() + " : " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
+			request.append(header.getKey() + ": " + header.getValue()).append(HttpConstant.HTML_NEWLINE);
 		}
 		return request.toString();
 	}
