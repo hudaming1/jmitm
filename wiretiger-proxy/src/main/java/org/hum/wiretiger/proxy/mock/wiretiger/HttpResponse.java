@@ -23,7 +23,7 @@ public class HttpResponse {
 		return this.fullResponse.status();
 	}
 	
-	public HttpResponse header(String header, String value) {
+	public HttpResponse header(String header, Object value) {
 		this.fullResponse.headers().set(header, value);
 		return this;
 	}
