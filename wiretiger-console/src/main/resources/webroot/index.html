@@ -72,6 +72,7 @@
 		    
 		    function dataGridContextMenu(e, index, row) {
 		    	e.preventDefault();
+		    	$("#SESN_STAGE").find("#dgMain").datagrid("selectRow", index);
 		    	if (!cmenu){
 					createColumnMenu(row);
 				}
@@ -125,14 +126,9 @@
 	            } else {
 	                textarea.select();
 	            }
-	            try {
-	                var flag = document.execCommand("copy"); //执行复制
-	            } catch (eo) {
-	                var flag = false;
-	            }
+	            document.execCommand("copy"); //执行复制
 	            document.body.removeChild(textarea); //删除元素
 	            currentFocus.focus();
-	            return flag;
 	        }
 		</script>
 	</head>
