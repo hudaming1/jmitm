@@ -21,7 +21,7 @@ public class CopyHttpRequestServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setHeader("Content-Type", "text/html");
+		resp.setHeader("Content-Type", "text/plain");
 		WtSession wtSession = sessionService.getWtSessionById(Long.parseLong(req.getParameter("id")));
 		String requestHeaderAndLine = sessionService.convert2RequestHeaderAndLine(wtSession, RETURN_LINE);
 		String body = wtSession.getRequestBytes() == null ? "" : new String(wtSession.getRequestBytes());

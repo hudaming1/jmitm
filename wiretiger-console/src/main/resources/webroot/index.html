@@ -114,17 +114,26 @@
 				});
 			}
 			
-			function copy(text) {
-				const input = document.createElement('input');
-			    document.body.appendChild(input);
-			    input.setAttribute('value', text);
-			    input.select();
-			    if (document.execCommand('copy')) {
-			        document.execCommand('copy');
-			        console.log('复制成功');
-			    }
-			 	document.body.removeChild(input);
-			 }
+	        function copy(text) {
+	            var textarea = document.createElement("textarea"); //创建input对象
+	            var currentFocus = document.activeElement; //当前获得焦点的元素
+	            document.body.appendChild(textarea); //添加元素
+	            textarea.value = text;
+	            textarea.focus();
+	            if (textarea.setSelectionRange) {
+	                textarea.setSelectionRange(0, textarea.value.length); //获取光标起始位置到结束位置
+	            } else {
+	                textarea.select();
+	            }
+	            try {
+	                var flag = document.execCommand("copy"); //执行复制
+	            } catch (eo) {
+	                var flag = false;
+	            }
+	            document.body.removeChild(textarea); //删除元素
+	            currentFocus.focus();
+	            return flag;
+	        }
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
