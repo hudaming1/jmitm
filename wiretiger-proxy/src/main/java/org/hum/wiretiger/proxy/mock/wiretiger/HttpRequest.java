@@ -28,6 +28,12 @@ public class HttpRequest {
 		return this;
 	}
 	
+	public HttpRequest forward(String host) {
+		fullRequest.headers().set(HttpConstant.ProxyClientIp, fullRequest.headers().get(HttpConstant.Host));
+		fullRequest.headers().set(HttpConstant.Host, host);
+		return this;
+	}
+	
 	public String host() {
 		if (fullRequest.headers() == null || fullRequest.headers().isEmpty()) {
 			return null;

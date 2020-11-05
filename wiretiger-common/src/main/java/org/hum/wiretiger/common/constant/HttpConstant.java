@@ -3,6 +3,7 @@ package org.hum.wiretiger.common.constant;
 public class HttpConstant {
 
 	public static final String Host = "Host";
+	public static final String ProxyClientIp = "Proxy-Client-IP";
 	public static final String ContentLength = "Content-Length";
 	public static final String ContentType = "Content-Type";
 	public static final String ContentEncoding = "Content-Encoding";
