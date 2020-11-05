@@ -33,10 +33,11 @@
 【OK】修改Session创建时机，不要等到Response完成后才创建Session
 【OK】clear按钮做成菜单
 【OK】增加在控制重制RequestBody功能
+【OK】控制台优化：将Session的Header和Body区域用文本域替代DIV，方便Ctrl+A全选Copy
 
 ##功能优化
-【P1】控制台优化：将Session的Header和Body区域用文本域替代DIV，方便Ctrl+A全选Copy
-【P1】增加PostMan控制台
+【P1】增加PostMan控制台（可以直接在控制台发送改动后的请求，不用借助telnet）
+【P1】Rebuild Request支持修改Header后
 【P1】控制台不要展示wiretiger.com的请求
 【P0】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
 【P0】控制台对每个链接增加请求时间，方便查看
