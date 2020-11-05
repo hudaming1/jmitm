@@ -148,7 +148,8 @@
 	</head>
 	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
 		<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
-			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit:true, border:false, toolbar:'#sessionDgTb', onRowContextMenu:dataGridContextMenu, onClickRow:sessionDgClickRow, striped:true,singleSelect:true,collapsible:true,url:'/session/list',method:'get'">
+			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
+					onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
 				<thead>
 					<tr>
 						<th data-options="field:'sessionId', width: 55, hidden: true, align: 'center'">ID</th>
@@ -175,14 +176,14 @@
 		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
-					<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px;">
+					<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px; ">
 					</div>
-					<div id="requestPannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;padding:5px 5px 50px 5px;">
-						<div title="Parsed" class="easyui-layout" data-options="fit:true, border:false">
-							<div data-options="border:false, region:'center'" class="easyui-panel">
+					<div id="requestPannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;padding:5px 5px 50px 5px; ">
+						<div title="Parsed" class="easyui-layout" data-options="fit:true, border:false" >
+							<div data-options="border:false, region:'center'" class="easyui-panel" >
 								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="fit:true, multiline: true">
 							</div>
-							<div data-options="border:false, region:'south'" class="easyui-panel">
+							<div data-options="border:false, region:'north'" class="easyui-panel">
 								<a style="float: right; margin: 5px;" class="easyui-linkbutton" data-options="" onclick="rebuildRequest();">Rebuild Request and copy to clipboard</a>
 							</div>
 						</div>
