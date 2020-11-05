@@ -34,6 +34,8 @@
 【OK】clear按钮做成菜单
 
 ##功能优化
+【P1】控制台优化：将Session的Header和Body区域用文本域替代DIV，方便Ctrl+A全选Copy
+【P1】控制台优化：Session右键菜单增加一个Item，Copy Request，可以直接telnet的字符
 【P1】增加PostMan控制台
 【P1】控制台不要展示wiretiger.com的请求
 【P0】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
