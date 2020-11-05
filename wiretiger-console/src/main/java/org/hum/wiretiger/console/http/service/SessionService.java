@@ -83,13 +83,13 @@ public class SessionService {
 		try {
 			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession, HttpConstant.HTML_NEWLINE));
+			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession, HttpConstant.RETURN_LINE));
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
 				detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
 			} else {
-				detailVo.setRequestBody4Source("No Request Body");
-				detailVo.setRequestBody4Parsed("No Request Body");
+				detailVo.setRequestBody4Source("");
+				detailVo.setRequestBody4Parsed("");
 			}
 			detailVo.setResponseHeader(convert2RepsonseHeader(simpleSession));
 			detailVo.setPipeId(simpleSession.getPipeId());

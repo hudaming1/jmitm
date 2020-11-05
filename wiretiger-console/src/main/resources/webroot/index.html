@@ -13,7 +13,7 @@
 			function sessionDgClickRow(index, row) {
 				$.get("/session/get?id=" + row.sessionId, function(jsonObj) {
 					// load data	
-					$("#SESN_STAGE").find("#requestHeaderPannel").html(jsonObj.requestHeader);
+					$("#SESN_STAGE").find("#requestHeaderPannel").find("#parsed").textbox("setText", jsonObj.requestHeader);
 					$("#SESN_STAGE").find("#requestPannel4Detail").find("#source").html(jsonObj.requestBody4Source);
 					$("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("setText", jsonObj.requestBody4Parsed);
 					$("#SESN_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
@@ -176,15 +176,18 @@
 		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
-					<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true,collapsible:false" style="height:100%;padding:5px 5px 50px 5px; ">
+					<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true, collapsible:false, height:'50%'" style="padding-bottom: 20px;">
+						<div data-options="border:false, fit: true" class="easyui-panel" >
+							<input id="parsed" class="easyui-textbox" style="border:false; padding: 10px;" data-options="fit:true, multiline: true">
+						</div>
 					</div>
-					<div id="requestPannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;padding:5px 5px 50px 5px; ">
-						<div title="Parsed" class="easyui-layout" data-options="fit:true, border:false" >
+					<div id="requestPannel4Detail" class="easyui-tabs" data-options="region:'south', border:false, split:true, collapsible:false, height:'55%'">
+						<div title="Parsed" class="easyui-layout" data-options="border:false, fit: true" >
 							<div data-options="border:false, region:'center'" class="easyui-panel" >
-								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="fit:true, multiline: true">
+								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="prompt: 'No Body...', fit:true, multiline: true">
 							</div>
-							<div data-options="border:false, region:'north'" class="easyui-panel">
-								<a style="float: right; margin: 5px;" class="easyui-linkbutton" data-options="" onclick="rebuildRequest();">Rebuild Request and copy to clipboard</a>
+							<div data-options="region:'south', border: false, height: 40" class="easyui-panel">
+								<a style="float: right; margin: 5px;" class="easyui-linkbutton" onclick="rebuildRequest();">Rebuild Request and copy to clipboard</a>
 							</div>
 						</div>
 						<div id="source" title="Source" data-options="fit:true, border:false">
