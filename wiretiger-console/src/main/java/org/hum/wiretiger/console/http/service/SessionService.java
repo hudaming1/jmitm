@@ -7,10 +7,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.console.common.WtConsoleConstant;
 import org.hum.wiretiger.console.common.WtSession;
 import org.hum.wiretiger.console.common.chain.SessionManagerInvokeChain;
 import org.hum.wiretiger.console.common.codec.IContentCodec;
 import org.hum.wiretiger.console.common.codec.impl.CodecFactory;
+import org.hum.wiretiger.console.http.ConsoleServer;
 import org.hum.wiretiger.console.http.helper.ConsoleHelper;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionDetailVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListQueryVO;
@@ -38,6 +40,13 @@ public class SessionService {
 		});
 		return sessionList;
 	}
+
+	private static boolean isShowWireTigerConsoleSession(WtSession session) {
+		if (!session.getRequest().headers().contains(WtConsoleConstant.WIRETIGER_CONSOLE_IDEN)) {
+			return true;
+		}
+		return ConsoleServer.WiretigerConsoleConfig.isShowConsoleSession();
+	}
 	
 	public boolean clearAll() {
 		SessionManagerInvokeChain.clearAll();
@@ -52,17 +61,16 @@ public class SessionService {
 	}
 	
 	public static boolean isMatch(WtSession session) {
-		if (QUERY == null || QUERY.isEmpty()) {
-			return true;
-		}
-		if (QUERY.getPipeId() != null && !QUERY.getPipeId().equals(session.getPipeId())) {
+		if (!isShowWireTigerConsoleSession(session)) {
 			return false;
-		} 
-		if (QUERY.getKeyword() != null && !QUERY.getKeyword().isEmpty() 
+		} else if (QUERY == null || QUERY.isEmpty()) {
+			return true;
+		} else if (QUERY.getPipeId() != null && !QUERY.getPipeId().equals(session.getPipeId())) {
+			return false;
+		} else if (QUERY.getKeyword() != null && !QUERY.getKeyword().isEmpty() 
 				&& !session.getRequest().uri().contains(QUERY.getKeyword())) {
 			return false;
-		}
-		if (QUERY.getHost() != null && !QUERY.getHost().isEmpty() &&
+		} else if (QUERY.getHost() != null && !QUERY.getHost().isEmpty() &&
 				// 没有header直接认为不匹配
 				(session.getRequest().headers() == null || session.getRequest().headers().isEmpty()) ||
 				// header中没有Host属性，认为不匹配
@@ -71,7 +79,7 @@ public class SessionService {
 				(!session.getRequest().headers().get("Host").contains(QUERY.getHost()))
 				) {
 			return false;
-		}
+		} 
 		return true;
 	}
 	

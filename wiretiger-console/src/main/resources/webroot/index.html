@@ -10,6 +10,12 @@
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
+			// 设置wiretiger控制台全局请求，不在控制台中展示（一定要放在最上面，放到$(function)里，会无法拦截html里优先渲染完成的组件）
+			$.ajaxSetup({
+				global: true,
+			  	headers: {"_wiretiger_console": true}
+			});
+				
 			function sessionDgClickRow(index, row) {
 				$.get("/session/get?id=" + row.sessionId, function(jsonObj) {
 					// load data	
@@ -43,6 +49,7 @@
 			var consoleId = new Date().getTime();
 			
 			$(function(){
+				
 				if (!window.WebSocket) {
 					window.WebSocket = window.MozWebSocket;
 				}

@@ -7,8 +7,10 @@ import org.hum.wiretiger.console.http.config.WiretigerConsoleConfig;
 public class ConsoleServer {
 
 	private static Server server;
+	public static WiretigerConsoleConfig WiretigerConsoleConfig;
 	
 	public ConsoleServer(WiretigerConsoleConfig config) {
+		WiretigerConsoleConfig = config;
 		server = new Server(config.getHttpPort());
 		server.setHandler(getWebAppContext(config));
 	}
