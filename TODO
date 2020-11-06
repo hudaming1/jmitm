@@ -34,13 +34,14 @@
 【OK】clear按钮做成菜单
 【OK】增加在控制重制RequestBody功能
 【OK】控制台优化：将Session的Header和Body区域用文本域替代DIV，方便Ctrl+A全选Copy
-【P0】控制台不要展示wiretiger.com的请求
-【P1】控制台对每个链接增加请求时间，方便查看
+【OK】控制台不要展示wiretiger.com的请求
+【OK】控制台对每个链接增加请求时间，方便查看
+【OK】Rebuild Request支持修改Header维度（不要提交id了，直接提交整个Request报文，后台解析）
 
 ##功能优化
-【P0】Rebuild Request支持修改Header维度（不要提交id了，直接提交整个Request报文，后台解析）
 【P0】增加PostMan控制台（可以直接在控制台发送改动后的请求，不用借助telnet）
 【P1】「Rebuild Request and copy to clipboard」按钮放下面就会消失，下面的未知领域到底是哪个Div占领的？
+【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
 
 【P1】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
 【P2】控制台对错误没有统一的处理（例如查看详情搜索一个不存在的ID）

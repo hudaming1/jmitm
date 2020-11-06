@@ -89,4 +89,9 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	public static WtSession getById(long id) {
 		return RequestIndex4Id.get(id);
 	}
+	
+	public static void addSession(WtSession session) {
+		RequestIndex4Id.put(session.getId(), session);
+		wsSessionService.sendNewSessionMsg(null, session);
+	}
 }
