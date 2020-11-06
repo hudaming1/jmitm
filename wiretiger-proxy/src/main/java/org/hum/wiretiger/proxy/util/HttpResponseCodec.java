@@ -25,7 +25,7 @@ public class HttpResponseCodec {
 		// read request-line
 		String responseLine = br.readLine();
 		String[] responseLineArr = responseLine.split(" ");
-		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.valueOf(responseLineArr[0]), HttpResponseStatus.valueOf(Integer.parseInt(responseLineArr[0])));
+		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(Integer.parseInt(responseLineArr[1].trim())));
 		// read header
 		String headerLine = "";
 		while (!"".equals(headerLine = br.readLine())) {

@@ -5,6 +5,7 @@ public class HttpConstant {
 	public static final String Host = "Host";
 	public static final String ProxyClientIp = "Proxy-Client-IP";
 	public static final String ContentLength = "Content-Length";
+	public static final String TransferEncoding = "Transfer-Encoding";
 	public static final String ContentType = "Content-Type";
 	public static final String ContentEncoding = "Content-Encoding";
 	public static final String HTML_NEWLINE = "<br />";

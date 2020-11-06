@@ -75,6 +75,15 @@
 		<servlet-name>SessionRebuildServlet</servlet-name>
 		<url-pattern>/session/rebuild</url-pattern>
 	</servlet-mapping>
+	<!-- resend -->
+	<servlet>
+		<servlet-name>SendRequestServlet</servlet-name>
+		<servlet-class>org.hum.wiretiger.console.http.servlet.SendRequestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SendRequestServlet</servlet-name>
+		<url-pattern>/session/sendRequest</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 
