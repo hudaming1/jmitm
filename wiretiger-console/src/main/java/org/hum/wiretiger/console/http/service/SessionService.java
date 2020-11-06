@@ -3,10 +3,12 @@ package org.hum.wiretiger.console.http.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
+import org.hum.wiretiger.common.util.DateUtils;
 import org.hum.wiretiger.console.common.WtConsoleConstant;
 import org.hum.wiretiger.console.common.WtSession;
 import org.hum.wiretiger.console.common.chain.SessionManagerInvokeChain;
@@ -92,6 +94,7 @@ public class SessionService {
 			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
 			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession, HttpConstant.RETURN_LINE));
+			detailVo.setCreateTime(DateUtils.formatTime(new Date(simpleSession.getRequestTime())));
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
 				detailVo.setRequestBody4Parsed(new String(simpleSession.getRequestBytes()));
