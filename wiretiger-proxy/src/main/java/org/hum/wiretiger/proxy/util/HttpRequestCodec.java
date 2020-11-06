@@ -29,6 +29,9 @@ public class HttpRequestCodec {
 		// read header
 		String headerLine = "";
 		while (!"".equals(headerLine = br.readLine())) {
+			if (headerLine == null) {
+				break;
+			}
 			String key = headerLine.substring(0, headerLine.indexOf(":"));
 			String value = headerLine.substring(headerLine.indexOf(":") + 1, headerLine.length());
 			request.headers().set(key, value);
@@ -40,7 +43,30 @@ public class HttpRequestCodec {
 		return request;
 	}
 
-	public static String encode(FullHttpRequest request, String returnLine) {
+	public static String encodeWithBody(FullHttpRequest request, String returnLine) {
+		if (request == null) {
+			throw new IllegalArgumentException("request mustn't be null");
+		}
+		returnLine = returnLine == null ? HttpConstant.RETURN_LINE : returnLine;
+		StringBuilder requestStringBuilder = new StringBuilder(request.method().name() + " " + request.uri() + " " + request.protocolVersion()).append(returnLine);
+		// 将Host永远放在第一个，方便查看
+		requestStringBuilder.append(HttpConstant.Host + ": " + request.headers().get(HttpConstant.Host)).append(returnLine);
+		for (Entry<String, String> header : request.headers()) {
+			if (HttpConstant.Host.equals(header.getKey())) {
+				continue;
+			}
+			requestStringBuilder.append(header.getKey() + ": " + header.getValue()).append(returnLine);
+		}
+		requestStringBuilder.append(returnLine);
+		if (request.content().readableBytes() > 0) {
+			byte[] bytes = new byte[request.content().readableBytes()];
+			request.content().readBytes(bytes);
+			requestStringBuilder.append(new String(bytes));
+		}
+		return requestStringBuilder.toString();
+	}
+
+	public static String encodeWithoutBody(FullHttpRequest request, String returnLine) {
 		if (request == null) {
 			throw new IllegalArgumentException("request mustn't be null");
 		}

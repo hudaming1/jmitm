@@ -94,7 +94,7 @@ public class SessionService {
 		try {
 			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-			detailVo.setRequestHeader(HttpRequestCodec.encode(simpleSession.getRequest(), HttpConstant.RETURN_LINE));
+			detailVo.setRequestHeader(HttpRequestCodec.encodeWithoutBody(simpleSession.getRequest(), HttpConstant.RETURN_LINE));
 			detailVo.setCreateTime(DateUtils.formatTime(new Date(simpleSession.getRequestTime())));
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));

@@ -24,7 +24,11 @@ public class CopyHttpRequestServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "text/plain");
 		WtSession wtSession = sessionService.getWtSessionById(Long.parseLong(req.getParameter("id")));
-		resp.getWriter().print(HttpRequestCodec.encode(wtSession.getRequest(), HttpConstant.RETURN_LINE));
+		resp.getWriter().print(HttpRequestCodec.encodeWithoutBody(wtSession.getRequest(), HttpConstant.RETURN_LINE));
+		resp.getWriter().print(HttpConstant.RETURN_LINE);
+		if (wtSession.getRequestBytes() != null) {
+			resp.getWriter().print(new String(wtSession.getRequestBytes()));
+		}
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

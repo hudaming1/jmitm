@@ -29,9 +29,10 @@ public class SessionRebuildServlet extends HttpServlet {
 		
 		FullHttpRequest fullHttpRequest = HttpRequestCodec.decode(httpRequestWithoutBody);
 		fullHttpRequest.headers().set(HttpConstant.ContentLength, requestBody.getBytes().length);
-		fullHttpRequest.content().readBytes(requestBody.getBytes());
+		fullHttpRequest.content().clear();
+		fullHttpRequest.content().writeBytes(requestBody.getBytes());
 		
-		resp.getWriter().print(HttpRequestCodec.encode(fullHttpRequest, RETURN_LINE));
+		resp.getWriter().print(HttpRequestCodec.encodeWithBody(fullHttpRequest, RETURN_LINE));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}
