@@ -91,9 +91,9 @@
 			var cmenu;
 			function createColumnMenu(){
 				cmenu = $('<div/>').appendTo('body');
-				var row = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
 				cmenu.menu({
-					onClick: function(item){
+					onClick: function(item) {
+						var row = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
 						if (item.id == "btn2") {
 							$.post("/session/clear", function(resp) {
 								$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
@@ -101,7 +101,6 @@
 						} else if (item.id == "btn1"){
 							$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
 						} else if (item.id == "btn3"){
-						
 							$.get("/session/getHttpRequest?id=" + row.sessionId, function(resp) {
 								// load data
 								copy(resp);
@@ -151,7 +150,7 @@
 	        		return ;
 	        	}
 	        	var postData = {
-	        		"id": selectedRow.sessionId,
+	        		"request": $("#SESN_STAGE").find("#requestHeaderPannel").find("#parsed").textbox("getText"),
 	        		"body": $("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("getText")
 	        	};
 				$.post("/session/rebuild", postData, function(resp) {
