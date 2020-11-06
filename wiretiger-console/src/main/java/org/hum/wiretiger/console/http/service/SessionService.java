@@ -20,6 +20,7 @@ import org.hum.wiretiger.console.http.vo.WiretigerSessionDetailVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListQueryVO;
 import org.hum.wiretiger.console.http.vo.WiretigerSessionListVO;
 import org.hum.wiretiger.proxy.util.HttpMessageUtil;
+import org.hum.wiretiger.proxy.util.HttpRequestCodec;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
@@ -93,7 +94,7 @@ public class SessionService {
 		try {
 			WiretigerSessionDetailVO detailVo = new WiretigerSessionDetailVO();
 			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
-			detailVo.setRequestHeader(convert2RequestHeaderAndLine(simpleSession, HttpConstant.RETURN_LINE));
+			detailVo.setRequestHeader(HttpRequestCodec.encode(simpleSession.getRequest(), HttpConstant.RETURN_LINE));
 			detailVo.setCreateTime(DateUtils.formatTime(new Date(simpleSession.getRequestTime())));
 			if (simpleSession.getRequestBytes() != null) {
 				detailVo.setRequestBody4Source(Arrays.toString(simpleSession.getRequestBytes()));
@@ -128,22 +129,6 @@ public class SessionService {
 			log.error("getById.error, id={}", id, ce);
 			return null;
 		}
-	}
-	
-	public String convert2RequestHeaderAndLine(WtSession session, String returnLine) {
-		if (session == null) {
-			return "session lost";
-		}
-		StringBuilder request = new StringBuilder(session.getRequest().method().name() + " " + session.getRequest().uri() + " " + session.getRequest().protocolVersion()).append(returnLine);
-		// 将Host永远放在第一个，方便查看
-		request.append(HttpConstant.Host + ": " + session.getRequest().headers().get(HttpConstant.Host)).append(returnLine);
-		for (Entry<String, String> header : session.getRequest().headers()) {
-			if (HttpConstant.Host.equals(header.getKey())) {
-				continue;
-			}
-			request.append(header.getKey() + ": " + header.getValue()).append(returnLine);
-		}
-		return request.toString();
 	}
 	
 	private String convert2RepsonseHeader(WtSession session) {

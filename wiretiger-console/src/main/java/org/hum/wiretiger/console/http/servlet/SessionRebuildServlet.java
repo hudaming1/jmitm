@@ -9,8 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiretiger.common.constant.HttpConstant;
-import org.hum.wiretiger.console.common.WtSession;
-import org.hum.wiretiger.console.http.service.SessionService;
+import org.hum.wiretiger.proxy.util.HttpRequestCodec;
+
+import io.netty.handler.codec.http.FullHttpRequest;
 
 /**
  * http://localhost:8080/session/rebuild
@@ -18,17 +19,19 @@ import org.hum.wiretiger.console.http.service.SessionService;
 public class SessionRebuildServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private final SessionService sessionService = new SessionService();
 	private final String RETURN_LINE = "\r\n";
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "text/plain; charset=utf-8");
+		String httpRequestWithoutBody = req.getParameter("request");
 		String requestBody = Objects.toString(req.getParameter("body"), "");
-		WtSession wtSession = sessionService.getWtSessionById(Long.parseLong(req.getParameter("id")));
-		wtSession.getRequest().headers().set(HttpConstant.ContentLength, requestBody.getBytes().length);
-		String requestHeaderAndLine = sessionService.convert2RequestHeaderAndLine(wtSession, RETURN_LINE);
-		resp.getWriter().print(requestHeaderAndLine + RETURN_LINE + requestBody + RETURN_LINE);
+		
+		FullHttpRequest fullHttpRequest = HttpRequestCodec.decode(httpRequestWithoutBody);
+		fullHttpRequest.headers().set(HttpConstant.ContentLength, requestBody.getBytes().length);
+		fullHttpRequest.content().readBytes(requestBody.getBytes());
+		
+		resp.getWriter().print(HttpRequestCodec.encode(fullHttpRequest, RETURN_LINE));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

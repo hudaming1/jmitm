@@ -101,6 +101,7 @@
 						} else if (item.id == "btn1"){
 							$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
 						} else if (item.id == "btn3"){
+						
 							$.get("/session/getHttpRequest?id=" + row.sessionId, function(resp) {
 								// load data
 								copy(resp);
