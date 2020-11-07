@@ -6,7 +6,7 @@
 	<!-- pipe list -->
 	<servlet>
 		<servlet-name>pipeListServelet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.PipeListServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.PipeListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeListServelet</servlet-name>
@@ -15,7 +15,7 @@
 	<!-- pipe detail -->
 	<servlet>
 		<servlet-name>pipeDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.PipeDetailServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.PipeDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeDetailServlet</servlet-name>
@@ -24,7 +24,7 @@
 	<!-- session list -->
 	<servlet>
 		<servlet-name>SessionListServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionListServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.SessionListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionListServlet</servlet-name>
@@ -33,7 +33,7 @@
 	<!-- session detail -->
 	<servlet>
 		<servlet-name>SessionDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionDetailServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.SessionDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionDetailServlet</servlet-name>
@@ -42,7 +42,7 @@
 	<!-- download_cert -->
 	<servlet>
 		<servlet-name>certDownloadServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.CertDownloadServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.CertDownloadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>certDownloadServlet</servlet-name>
@@ -51,7 +51,7 @@
 	<!-- clear all -->
 	<servlet>
 		<servlet-name>SessionClearServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionClearServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.SessionClearServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionClearServlet</servlet-name>
@@ -60,7 +60,7 @@
 	<!-- clear all -->
 	<servlet>
 		<servlet-name>GetHttpRequest</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.CopyHttpRequestServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.CopyHttpRequestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GetHttpRequest</servlet-name>
@@ -69,7 +69,7 @@
 	<!-- rebuild -->
 	<servlet>
 		<servlet-name>SessionRebuildServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.SessionRebuildServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.SessionRebuildServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionRebuildServlet</servlet-name>
@@ -78,7 +78,7 @@
 	<!-- resend -->
 	<servlet>
 		<servlet-name>SendRequestServlet</servlet-name>
-		<servlet-class>org.hum.wiretiger.console.http.servlet.SendRequestServlet</servlet-class>
+		<servlet-class>org.hum.wiredog.console.http.servlet.SendRequestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SendRequestServlet</servlet-name>

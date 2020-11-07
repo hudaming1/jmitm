@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.hum.wiredog.console.common.codec.IContentCodec;
 import org.hum.wiredog.console.common.codec.impl.CodecFactory;
-import org.hum.wiredog.provider.wiredogBuilder;
+import org.hum.wiredog.provider.WiredogBuilder;
 import org.hum.wiredog.proxy.mock.CatchRequest;
 import org.hum.wiredog.proxy.mock.CatchResponse;
 import org.hum.wiredog.proxy.mock.Mock;
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class RunTest1 {
 	
 	public static void main(String[] args) throws Exception {
-		wiredogBuilder wtBuilder = new wiredogBuilder();
+		WiredogBuilder wtBuilder = new WiredogBuilder();
 		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);

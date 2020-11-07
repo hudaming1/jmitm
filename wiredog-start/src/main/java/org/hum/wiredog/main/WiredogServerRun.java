@@ -1,4 +1,4 @@
-package org.hum.test;
+package org.hum.wiredog.main;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,12 +10,11 @@ import org.hum.wiredog.proxy.mock.CatchRequest;
 import org.hum.wiredog.proxy.mock.CatchResponse;
 import org.hum.wiredog.proxy.mock.Mock;
 
-import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WorkUseCase1105 {
-
+public class WiredogServerRun {
+	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
 		wtBuilder.parseHttps(false);
@@ -32,14 +31,12 @@ public class WorkUseCase1105 {
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
 				// Mock Test
-				,mockAllInternelRequestForwardLocalhost()
-				,mockSupportOptionsMethod()
 //				,mockTest()
-//				,mockOffShelfQuery()
-//				,mockOffShelfSubmit()
+//				,mockTest2()
+				,mockTest3()
 				);
-		wtBuilder.webRoot(WiredogBuilder.class.getResource("/webroot").getFile());
-		wtBuilder.webXmlPath(WiredogBuilder.class.getResource("/webroot/WEB-INF/web.xml").getFile());
+		wtBuilder.webRoot(WiredogServerRun.class.getResource("/webroot").getFile());
+		wtBuilder.webXmlPath(WiredogServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
@@ -62,33 +59,6 @@ public class WorkUseCase1105 {
 			return response.removeHeader("Content-Encoding").body(outBody.getBytes());
 		}).mock();
 	}
-
-	private static Mock mockAllInternelRequestForwardLocalhost() {
-		return new CatchRequest().eval(request -> {
-			return request.uri().contains("/sms/internal/");
-		}).rebuildRequest(request -> {
-			request.forward("172.16.187.66:8081").header("X-User-Id", "3016");
-			request.uri("/migrate" + request.uri());
-			return request;
-		}).rebuildResponse(response -> {
-			response.header("Access-Control-Allow-Credentials", true);
-			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");	
-			return response;
-		}).mock();
-	}
-
-	private static Mock mockSupportOptionsMethod() {
-		return new CatchRequest().eval(request -> {
-			return "wuliu-ocean-gateway.b22.missfresh.net".equals(request.host()) && request.method() == HttpMethod.OPTIONS;
-		}).rebuildResponse(response -> {
-			response.header("Access-Control-Allow-Credentials", true);
-			response.header("Access-Control-Allow-Headers", "authorization, content-type, deviceid, devicetype, mfsig");
-			response.header("Access-Control-Allow-Methods", "OPTIONS,HEAD,GET,PUT,POST,DELETE,PATCH");
-			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
-			response.header("Access-Control-Max-Age", 18000);
-			return response;
-		}).mock();
-	}
 	
 	static Mock mockTest() {
 		return new CatchRequest().eval(request -> {
@@ -102,24 +72,24 @@ public class WorkUseCase1105 {
 		}).mock();
 	}
 	
-	static Mock mockOffShelfQuery() {
+	static Mock mockTest2() {
 		return new CatchRequest().eval(request -> {
 			return "/sms/internal/pda/stockTransfer/queryStockForUnshelve".equals(request.uri());
 		}).rebuildRequest(request-> {
 			System.out.println("mockTest2");
-			request.forward("172.16.187.66:8081");
+			request.host("172.16.187.66:8081");
 			request.header("X-User-Id", "3016");
 			request.uri("/migrate/sms/internal/pda/stockTransfer/queryStockForUnshelve");
 			return request;
 		}).mock();
 	}
 	
-	static Mock mockOffShelfSubmit() {
+	static Mock mockTest3() {
 		return new CatchRequest().eval(request -> {
 			return "/sms/internal/pda/stockTransfer/pdaUnshelveItems".equals(request.uri());
 		}).rebuildRequest(request-> {
 			System.out.println("mockTest3");
-			request.forward("172.16.187.66:8081");
+			request.host("172.16.187.66:8081");
 			request.header("X-User-Id", "3016");
 			request.uri("/migrate/sms/internal/pda/stockTransfer/pdaUnshelveItems");
 			return request;
@@ -147,7 +117,7 @@ public class WorkUseCase1105 {
 	
 	private static byte[] readFile(String file) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(new File(WiredogBuilder.class.getResource(file).getFile()));
+			FileInputStream fileInputStream = new FileInputStream(new File(WiredogServerRun.class.getResource(file).getFile()));
 			byte[] bytes = new byte[fileInputStream.available()];
 			fileInputStream.read(bytes);
 			fileInputStream.close();

@@ -4,16 +4,16 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.hum</groupId>
-		<artifactId>wiretiger</artifactId>
+		<artifactId>wiredog</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<artifactId>wiretiger-start</artifactId>
+	<artifactId>wiredog-start</artifactId>
 	<name>${project.artifactId}</name>
 	
 	<dependencies>
 		<dependency>
 			<groupId>org.hum</groupId>
-			<artifactId>wiretiger-console</artifactId>
+			<artifactId>wiredog-console</artifactId>
             <version>${project.parent.version}</version>
 		</dependency>
 	</dependencies>
