@@ -3,17 +3,17 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
-		<title>WireTiger</title>
+		<title>Wiredog</title>
 		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.9.7/themes/metro/easyui.css">
 		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.9.7/themes/icon.css">
 		<link rel="stylesheet" type="text/css" href="../demo.css">
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.min.js"></script>
 		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.easyui.min.js"></script>
 		<script type="text/javascript">
-			// 设置wiretiger控制台全局请求，不在控制台中展示（一定要放在最上面，放到$(function)里，会无法拦截html里优先渲染完成的组件）
+			// 设置wiredog控制台全局请求，不在控制台中展示（一定要放在最上面，放到$(function)里，会无法拦截html里优先渲染完成的组件）
 			$.ajaxSetup({
 				global: true,
-			  	headers: {"_wiretiger_console": true}
+			  	headers: {"_wiredog_console": true}
 			});
 				
 			function sessionDgClickRow(index, row) {
