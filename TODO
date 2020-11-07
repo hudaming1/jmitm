@@ -40,6 +40,7 @@
 
 ##功能优化
 【P0】PostMan支持Https功能
+【P0】支持不转发请求，直接MockResponse的功能
 【P1】「Rebuild Request and copy to clipboard」按钮放下面就会消失，下面的未知领域到底是哪个Div占领的？
 【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
 

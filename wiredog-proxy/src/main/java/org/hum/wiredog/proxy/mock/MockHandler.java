@@ -23,6 +23,9 @@ public class MockHandler {
 		
 		for (Mock mock : mockList) {
 			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
+				// TODO mock
+				
+				// rebuild
 				if (mock.getRequestRebuilder() != null) {
 					request = mock.getRequestRebuilder().eval(request);
 				}

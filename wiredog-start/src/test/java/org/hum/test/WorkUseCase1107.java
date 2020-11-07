@@ -11,6 +11,7 @@ import org.hum.wiredog.proxy.mock.CatchResponse;
 import org.hum.wiredog.proxy.mock.Mock;
 
 import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -79,13 +80,16 @@ public class WorkUseCase1107 {
 
 	private static Mock mockSupportOptionsMethod() {
 		return new CatchRequest().eval(request -> {
-			return "wuliu-ocean-gateway.b22.missfresh.net".equals(request.host()) && request.method() == HttpMethod.OPTIONS;
+			return ("wuliu-ocean-gateway.b22.missfresh.net".equals(request.host()) || "wuliu-ocean-gateway.b22.missfresh.net".equals(request.header("Proxy-Client-IP")))
+					&& request.method() == HttpMethod.OPTIONS;
 		}).rebuildResponse(response -> {
 			response.header("Access-Control-Allow-Credentials", true);
 			response.header("Access-Control-Allow-Headers", "authorization, content-type, deviceid, devicetype, mfsig");
 			response.header("Access-Control-Allow-Methods", "OPTIONS,HEAD,GET,PUT,POST,DELETE,PATCH");
 			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");
 			response.header("Access-Control-Max-Age", 18000);
+			response.bodyClear();
+			response.toFullHttpResponse().setStatus(HttpResponseStatus.OK);
 			return response;
 		}).mock();
 	}

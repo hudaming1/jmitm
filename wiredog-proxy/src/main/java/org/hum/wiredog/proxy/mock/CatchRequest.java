@@ -84,6 +84,15 @@ public class CatchRequest {
 		};
 		return this;
 	}
+	/**
+	 * 不会真实请求，直接根据Request进行mock
+	 * @param HttpResponseRebuild
+	 * @return
+	 */
+	public CatchRequest mockResponse(HttpResponseRebuild responseRebuild) {
+		// TODO
+		return this;
+	}
 
 	/**
 	 * 重制Response（基于NettyResponse）

@@ -46,6 +46,12 @@ public class HttpResponse {
 		fullResponse.headers().set(HttpConstant.ContentLength, bytes.length);
 		return this;
 	}
+	
+	public HttpResponse bodyClear() {
+		fullResponse.content().clear();
+		fullResponse.headers().set(HttpConstant.ContentLength, 0);
+		return this;
+	}
 
 	public HttpResponse removeHeader(String header) {
 		this.fullResponse.headers().remove(header);

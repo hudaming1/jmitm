@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 	<head>
@@ -154,8 +153,7 @@
 	        		"body": $("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("getText")
 	        	};
 				$.post("/session/sendRequest", postData, function(resp) {
-					copy(resp);
-	            	console("Rebuild Finish, Copy into clipboard");
+	            	alert("send success");
 				});
 	        }
 		</script>
