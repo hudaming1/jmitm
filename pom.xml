@@ -96,7 +96,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.hum.wiretiger.WiretigerServerRun</mainClass>
+							<mainClass>org.hum.wiredog.main.WiredogServerRun</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
