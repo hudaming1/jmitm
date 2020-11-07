@@ -101,13 +101,14 @@ public class CatchRequest {
 	/**
 	 * 根据请求进行Mock响应，不会对对目标服务器发出真正的请求
 	 * @param responseMock
-	 * @return
+	 * @return 返回null代表不做mock，放行请求目标服务器
 	 */
 	public CatchRequest mockResponse(HttpResponseMock responseMock) {
 		this.responseMock = new NettyHttpResponseMock() {
 			@Override
 			public FullHttpResponse eval(FullHttpRequest request) {
-				return responseMock.eval(new HttpRequest(request)).toFullHttpResponse();
+				HttpResponse httpResponse = responseMock.eval(new HttpRequest(request));
+				return httpResponse == null ? null : httpResponse.toFullHttpResponse();
 			}
 		};
 		return this;

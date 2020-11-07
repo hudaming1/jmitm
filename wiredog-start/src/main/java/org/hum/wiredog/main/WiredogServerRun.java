@@ -9,6 +9,7 @@ import org.hum.wiredog.provider.WiredogBuilder;
 import org.hum.wiredog.proxy.mock.CatchRequest;
 import org.hum.wiredog.proxy.mock.CatchResponse;
 import org.hum.wiredog.proxy.mock.Mock;
+import org.hum.wiredog.proxy.mock.wiredog.HttpResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +18,7 @@ public class WiredogServerRun {
 	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
-		wtBuilder.parseHttps(false);
+		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
@@ -101,14 +102,14 @@ public class WiredogServerRun {
 			return response.header("signby", "hudaming");
 		}).mock();
 	}
-
+	
 	private static Mock mockDemo3() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.host()) &&
 					("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
-		}).rebuildResponse(response -> {
-			System.out.println("mock google logo");
+		}).mockResponse(httpRequest -> {
 			byte[] googleLogo = readFile("/mock/google.png");
+			HttpResponse response = new HttpResponse();
 			return response.body(googleLogo).header("Content-Type", "image/gif");
 		}).mock();
 	}

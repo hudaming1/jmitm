@@ -3,12 +3,18 @@ package org.hum.wiredog.proxy.mock.wiredog;
 import org.hum.wiredog.common.constant.HttpConstant;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 
 public class HttpResponse {
 
 	private FullHttpResponse fullResponse;
+	
+	public HttpResponse() {
+		fullResponse = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+	}
 	
 	public HttpResponse(FullHttpResponse fullResponse) {
 		this.fullResponse = fullResponse;

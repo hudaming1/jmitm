@@ -88,13 +88,21 @@ public class WorkUseCase1107 {
 	
 	private static Mock mockResponse() {
 		return new CatchRequest().eval(request -> {
-			return request.uri().contains("/mock");
+			return "www.baidu.com".equals(request.host());
 		}).mockResponse(new HttpResponseMock() {
 			@Override
 			public HttpResponse eval(HttpRequest httpRequest) {
-				HttpResponse resp = new HttpResponse(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK));
-				resp.body("This is Mock Response".getBytes());
-				return resp;
+				if ("/mock".equals(httpRequest.uri())) {
+					HttpResponse resp = new HttpResponse();
+					resp.body("This is Mock Page".getBytes());
+					return resp;
+				} else if ("/1".equals(httpRequest.uri())) {
+					HttpResponse resp = new HttpResponse();
+					resp.body(("This is Page 1").getBytes());
+					return resp;
+				} else {
+					return null;
+				}
 			}
 		}).mock();
 	}
