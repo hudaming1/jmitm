@@ -4,16 +4,16 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hum</groupId>
-	<artifactId>wiretiger</artifactId>
+	<artifactId>wiredog</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     
 	<modules>
-		<module>wiretiger-common</module>
-		<module>wiretiger-ssl</module>
-		<module>wiretiger-proxy</module>
-		<module>wiretiger-console</module>
-		<module>wiretiger-start</module>
+		<module>wiredog-common</module>
+		<module>wiredog-ssl</module>
+		<module>wiredog-proxy</module>
+		<module>wiredog-console</module>
+		<module>wiredog-start</module>
 	</modules>
     
     <dependencyManagement>

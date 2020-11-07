@@ -39,7 +39,7 @@
 【OK】Rebuild Request支持修改Header维度（不要提交id了，直接提交整个Request报文，后台解析）
 
 ##功能优化
-【P0】增加PostMan控制台（可以直接在控制台发送改动后的请求，不用借助telnet）
+【P0】PostMan支持Https功能
 【P1】「Rebuild Request and copy to clipboard」按钮放下面就会消失，下面的未知领域到底是哪个Div占领的？
 【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
 
