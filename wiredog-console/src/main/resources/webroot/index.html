@@ -142,7 +142,7 @@
 	            currentFocus.focus();
 	        }
 	        
-	        function rebuildRequest() {
+	        function sendRequest() {
 	        	var selectedRow = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
 	        	if (selectedRow == null) {
 	        		alert("Please select row");
@@ -199,7 +199,7 @@
 								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="prompt: 'No Body...', fit:true, multiline: true">
 							</div>
 							<div data-options="region:'south', border: false, height: 40" class="easyui-panel">
-								<a style="float: right; margin: 5px;" class="easyui-linkbutton" onclick="rebuildRequest();">Rebuild Request and copy to clipboard</a>
+								<a style="float: right; margin: 5px;" class="easyui-linkbutton" onclick="sendRequest();">Post A Dog!</a>
 							</div>
 						</div>
 						<div id="source" title="Source" data-options="fit:true, border:false">
