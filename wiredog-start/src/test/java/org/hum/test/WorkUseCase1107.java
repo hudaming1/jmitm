@@ -14,7 +14,7 @@ import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WorkUseCase1105 {
+public class WorkUseCase1107 {
 
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
@@ -31,7 +31,7 @@ public class WorkUseCase1105 {
 				mockDemo4(),
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
-				// Mock Test
+				// Mock WorkUseCase1107
 				,mockAllInternelRequestForwardLocalhost()
 				,mockSupportOptionsMethod()
 //				,mockTest()
