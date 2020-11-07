@@ -9,6 +9,7 @@ import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
@@ -56,7 +57,17 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			
 			// mock
 			if (mockHandler != null) {
-				mockHandler.mock(request);
+				FullHttpResponse response4Mock = mockHandler.mock(request);
+				// 如果返回了MockResponse，则不在请求真正的目标服务器
+				if (response4Mock != null) {
+					fullPipeHandler.clientRead(wtContext, request);
+					wtContext.appendResponse(response4Mock);
+					fullPipeHandler.serverRead(wtContext, response4Mock);
+					wtContext.getClientChannel().writeAndFlush(response4Mock).addListener(future -> {
+						((ChannelFuture) future).channel().close();
+					});
+					return ;
+				}
 				mockRequestStack.push(request);
 			}
 			

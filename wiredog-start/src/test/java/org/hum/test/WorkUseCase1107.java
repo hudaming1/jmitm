@@ -9,9 +9,14 @@ import org.hum.wiredog.provider.WiredogBuilder;
 import org.hum.wiredog.proxy.mock.CatchRequest;
 import org.hum.wiredog.proxy.mock.CatchResponse;
 import org.hum.wiredog.proxy.mock.Mock;
+import org.hum.wiredog.proxy.mock.wiredog.HttpRequest;
+import org.hum.wiredog.proxy.mock.wiredog.HttpResponse;
+import org.hum.wiredog.proxy.mock.wiredog.HttpResponseMock;
 
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
+import io.netty.handler.codec.http.HttpVersion;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,7 +24,7 @@ public class WorkUseCase1107 {
 
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
-		wtBuilder.parseHttps(false);
+		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
@@ -32,6 +37,7 @@ public class WorkUseCase1107 {
 				mockDemo4(),
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
+				,mockResponse()
 				// Mock WorkUseCase1107
 //				,mockSupportOptionsMethod()
 //				,mockAllInternelRequestForwardLocalhost()
@@ -40,8 +46,6 @@ public class WorkUseCase1107 {
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
 				);
-		wtBuilder.webRoot(WiredogBuilder.class.getResource("/webroot").getFile());
-		wtBuilder.webXmlPath(WiredogBuilder.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
@@ -79,6 +83,19 @@ public class WorkUseCase1107 {
 			response.header("Access-Control-Allow-Credentials", true);
 			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");	
 			return response;
+		}).mock();
+	}
+	
+	private static Mock mockResponse() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/mock");
+		}).mockResponse(new HttpResponseMock() {
+			@Override
+			public HttpResponse eval(HttpRequest httpRequest) {
+				HttpResponse resp = new HttpResponse(new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK));
+				resp.body("This is Mock Response".getBytes());
+				return resp;
+			}
 		}).mock();
 	}
 	

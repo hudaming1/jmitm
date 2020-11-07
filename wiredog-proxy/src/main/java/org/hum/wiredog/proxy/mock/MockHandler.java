@@ -16,22 +16,33 @@ public class MockHandler {
 		this.mockList = mocks;
 	}
 
-	public void mock(FullHttpRequest request) {
+	public FullHttpResponse mock(FullHttpRequest request) {
 		if (mockList == null || mockList.isEmpty()) {
-			return ;
+			return null;
 		}
 		
+		// rebuild-request
 		for (Mock mock : mockList) {
 			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
-				// TODO mock
-				
-				// rebuild
+				// 标记Header被拦截过
+				request.headers().set(WT_MOCK_SIGN, mock.getId());
 				if (mock.getRequestRebuilder() != null) {
 					request = mock.getRequestRebuilder().eval(request);
 				}
-				request.headers().set(WT_MOCK_SIGN, mock.getId());
 			}
 		}
+		// mock (在Mock响应前，要保证获取到最终Rebuild过的Request)
+		for (Mock mock : mockList) {
+			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
+				// 标记Header被拦截过
+				request.headers().set(WT_MOCK_SIGN, mock.getId());
+				// mock
+				if (mock.getHttpMockResponse() != null) {
+					return mock.getHttpMockResponse().eval(request);
+				}
+			}
+		}
+		return null;
 	}
 
 	public void mock(FullHttpRequest request, FullHttpResponse resp) {

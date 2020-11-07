@@ -64,7 +64,6 @@ public class CatchResponse {
 	}
 
 	public Mock mock() {
-		return new Mock(null, responseInterceptor, null, responseRebuild);
+		return new Mock(null, responseInterceptor, null, responseRebuild, null);
 	}
-
 }

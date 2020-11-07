@@ -1,5 +1,6 @@
 package org.hum.wiredog.proxy.mock;
 
+import org.hum.wiredog.proxy.mock.netty.NettyHttpResponseMock;
 import org.hum.wiredog.proxy.mock.netty.NettyRequestInterceptor;
 import org.hum.wiredog.proxy.mock.netty.NettyRequestRebuilder;
 import org.hum.wiredog.proxy.mock.netty.NettyResponseRebuild;
@@ -7,6 +8,7 @@ import org.hum.wiredog.proxy.mock.wiredog.HttpRequest;
 import org.hum.wiredog.proxy.mock.wiredog.HttpRequestInterceptor;
 import org.hum.wiredog.proxy.mock.wiredog.HttpRequestRebuilder;
 import org.hum.wiredog.proxy.mock.wiredog.HttpResponse;
+import org.hum.wiredog.proxy.mock.wiredog.HttpResponseMock;
 import org.hum.wiredog.proxy.mock.wiredog.HttpResponseRebuild;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -19,6 +21,7 @@ public class CatchRequest {
 	private NettyRequestInterceptor requestInterceptor;
 	private NettyRequestRebuilder requestRebuilder;
 	private NettyResponseRebuild responseRebuild;
+	private NettyHttpResponseMock responseMock;
 	
 	/**
 	 * 定义拦截具有某一特征的HTTP请求
@@ -84,13 +87,29 @@ public class CatchRequest {
 		};
 		return this;
 	}
+	
 	/**
-	 * 不会真实请求，直接根据Request进行mock
-	 * @param HttpResponseRebuild
+	 * 根据请求进行Mock响应，不会对对目标服务器发出真正的请求（基于NettyRequest）
+	 * @param nettyResponseMock
 	 * @return
 	 */
-	public CatchRequest mockResponse(HttpResponseRebuild responseRebuild) {
-		// TODO
+	public CatchRequest mockNettyResponse(NettyHttpResponseMock nettyResponseMock) {
+		this.responseMock = nettyResponseMock;
+		return this;
+	}
+	
+	/**
+	 * 根据请求进行Mock响应，不会对对目标服务器发出真正的请求
+	 * @param responseMock
+	 * @return
+	 */
+	public CatchRequest mockResponse(HttpResponseMock responseMock) {
+		this.responseMock = new NettyHttpResponseMock() {
+			@Override
+			public FullHttpResponse eval(FullHttpRequest request) {
+				return responseMock.eval(new HttpRequest(request)).toFullHttpResponse();
+			}
+		};
 		return this;
 	}
 
@@ -105,6 +124,6 @@ public class CatchRequest {
 	}
 
 	public Mock mock() {
-		return new Mock(requestInterceptor, null, requestRebuilder, responseRebuild);
+		return new Mock(requestInterceptor, null, requestRebuilder, responseRebuild, responseMock);
 	}
 }

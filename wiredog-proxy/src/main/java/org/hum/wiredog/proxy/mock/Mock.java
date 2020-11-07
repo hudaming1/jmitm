@@ -2,6 +2,7 @@ package org.hum.wiredog.proxy.mock;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.hum.wiredog.proxy.mock.netty.NettyHttpResponseMock;
 import org.hum.wiredog.proxy.mock.netty.NettyRequestInterceptor;
 import org.hum.wiredog.proxy.mock.netty.NettyRequestRebuilder;
 import org.hum.wiredog.proxy.mock.netty.NettyResponseInterceptor;
@@ -22,12 +23,15 @@ public class Mock {
 	private NettyRequestRebuilder requestRebuilder;
 	// 对拦截到的HTTP响应进行重制，你可以修改HTTP响应报文的任意信息，包括状态码、Header、以及Body部分
 	private NettyResponseRebuild responseRebuild;
+	// 对拦截到的HTTP请求进行Mock
+	private NettyHttpResponseMock httpMockResponse;
 
-	public Mock(NettyRequestInterceptor requestInterceptor, NettyResponseInterceptor responseInterceptor, NettyRequestRebuilder requestRebuilder, NettyResponseRebuild responseRebuild) {
+	public Mock(NettyRequestInterceptor requestInterceptor, NettyResponseInterceptor responseInterceptor, NettyRequestRebuilder requestRebuilder, NettyResponseRebuild responseRebuild, NettyHttpResponseMock httpMockResponse) {
 		this.requestInterceptor = requestInterceptor;
 		this.responseInterceptor = responseInterceptor;
 		this.requestRebuilder = requestRebuilder;
 		this.responseRebuild = responseRebuild;
+		this.httpMockResponse = httpMockResponse;
 		this.id = idGenerator.getAndIncrement() + "";
 	}
 
