@@ -33,8 +33,9 @@ public class WorkUseCase1107 {
 				// DEMO6：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo6()
 				// Mock WorkUseCase1107
-				,mockAllInternelRequestForwardLocalhost()
-				,mockSupportOptionsMethod()
+//				,mockSupportOptionsMethod()
+//				,mockAllInternelRequestForwardLocalhost()
+//				,mockAllReplenishmentRequestForwardLocalhost()
 //				,mockTest()
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
@@ -44,6 +45,9 @@ public class WorkUseCase1107 {
 		
 		wtBuilder.build().start();
 	}
+	
+//	private static final String USER_ID = "15412";
+	private static final String USER_ID = "3016";
 
 	private static Mock mockDemo6() {
 		return new CatchRequest().eval(request -> {
@@ -66,9 +70,23 @@ public class WorkUseCase1107 {
 
 	private static Mock mockAllInternelRequestForwardLocalhost() {
 		return new CatchRequest().eval(request -> {
-			return request.uri().contains("/sms/internal/");
+			return request.uri().contains("/sms/internal/") && HttpMethod.OPTIONS != request.method();
 		}).rebuildRequest(request -> {
-			request.forward("172.16.187.66:8081").header("X-User-Id", "3016");
+			request.forward("172.16.187.66:8081").header("X-User-Id", USER_ID);
+			request.uri("/migrate" + request.uri());
+			return request;
+		}).rebuildResponse(response -> {
+			response.header("Access-Control-Allow-Credentials", true);
+			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");	
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockAllReplenishmentRequestForwardLocalhost() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/replenishment/") && HttpMethod.OPTIONS != request.method();
+		}).rebuildRequest(request -> {
+			request.forward("172.16.187.66:9030").header("X-User-Id", USER_ID);
 			request.uri("/migrate" + request.uri());
 			return request;
 		}).rebuildResponse(response -> {

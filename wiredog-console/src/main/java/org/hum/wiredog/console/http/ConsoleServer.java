@@ -1,5 +1,7 @@
 package org.hum.wiredog.console.http;
 
+import java.util.Objects;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.hum.wiredog.console.http.config.WiredogConsoleConfig;
@@ -25,8 +27,8 @@ public class ConsoleServer {
 
 	private static WebAppContext getWebAppContext(WiredogConsoleConfig config) {
 		WebAppContext context = new WebAppContext();
-		context.setDescriptor(config.getWebXmlPath()); 
-		context.setResourceBase(config.getWebRoot());
+		context.setResourceBase(Objects.toString(config.getWebRoot(), ConsoleServer.class.getResource("/webroot").getFile()));
+		context.setDescriptor(Objects.toString(config.getWebXmlPath(), ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile())); 
 		context.setParentLoaderPriority(true);
 		return context;
 	}

@@ -35,8 +35,6 @@ public class WiredogServerRun {
 //				,mockTest2()
 				,mockTest3()
 				);
-		wtBuilder.webRoot(WiredogServerRun.class.getResource("/webroot").getFile());
-		wtBuilder.webXmlPath(WiredogServerRun.class.getResource("/webroot/WEB-INF/web.xml").getFile());
 		
 		wtBuilder.build().start();
 	}
