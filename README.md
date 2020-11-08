@@ -17,21 +17,7 @@ proxy.add(new CatchRequest().eval(request -> {
 ```
 
 **根据Request重制Response**    
-1.拦截百度首页Logo，读取本地GoogleLogo文件，首页Logo变为Google
-```java
-proxy.add(new CatchRequest().eval(request -> {
-    // 如果域名是baidu，访问的图片是百度的Logo（第一个图片是PC上的，后两个路径是移动端的Logo）
-    return "www.baidu.com".equals(request.host()) &&("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
-}).mockResponse(httpRequest -> {
-    // 如果命中请求，则不会将请求转发到百度服务器，而直接读取本地Google图片作为Response返回。
-    HttpResponse response = new HttpResponse();
-    byte[] googleLogo = readFile("/mock/google.png");
-    return response.body(googleLogo).header("Content-Type", "image/gif");
-}).mock());
-```
-![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
-
-2.对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
+对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 ```java
 proxy.add(new CatchRequest().eval(request -> {
     // 如果访问的是百度首页
@@ -47,6 +33,22 @@ proxy.add(new CatchRequest().eval(request -> {
 }).mock());
 ```
 ![](https://github.com/hudaming1/wiretiger/blob/master/Show2.png)
+
+**根据Request Mock Response**    
+拦截百度首页Logo，不做真实转发，直接读取本地GoogleLogo文件作为Response，首页Logo变为Google
+```java
+proxy.add(new CatchRequest().eval(request -> {
+    // 如果域名是baidu，访问的图片是百度的Logo（第一个图片是PC上的，后两个路径是移动端的Logo）
+    return "www.baidu.com".equals(request.host()) &&("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
+}).mockResponse(httpRequest -> {
+    // 如果命中请求，则不会将请求转发到百度服务器，而直接读取本地Google图片作为Response返回。
+    HttpResponse response = new HttpResponse();
+    byte[] googleLogo = readFile("/mock/google.png");
+    return response.body(googleLogo).header("Content-Type", "image/gif");
+}).mock());
+```
+![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
+
 **根据Response重制Response**  
 暂时No Case...
 
