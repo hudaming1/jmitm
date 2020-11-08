@@ -22,7 +22,7 @@ public class WorkUseCase1107 {
 	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
-		wtBuilder.parseHttps(true);
+		wtBuilder.parseHttps(false);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
@@ -40,6 +40,7 @@ public class WorkUseCase1107 {
 //				,mockSupportOptionsMethod()
 //				,mockAllInternelRequestForwardLocalhost()
 				,mockAllReplenishmentRequestForwardLocalhost()
+				,mockAllStockRequestForwardLocalhost()
 //				,mockTest()
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
@@ -110,6 +111,20 @@ public class WorkUseCase1107 {
 			return request.uri().contains("/sms/replenishment/") && HttpMethod.OPTIONS != request.method();
 		}).rebuildRequest(request -> {
 			request.forward("172.16.187.66:9030").header("X-User-Id", USER_ID);
+			request.uri("/migrate" + request.uri());
+			return request;
+		}).rebuildResponse(response -> {
+			response.header("Access-Control-Allow-Credentials", true);
+			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");	
+			return response;
+		}).mock();
+	}
+	
+	private static Mock mockAllStockRequestForwardLocalhost() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().contains("/sms/stock/") && HttpMethod.OPTIONS != request.method();
+		}).rebuildRequest(request -> {
+			request.forward("172.16.187.66:9040").header("X-User-Id", USER_ID);
 			request.uri("/migrate" + request.uri());
 			return request;
 		}).rebuildResponse(response -> {

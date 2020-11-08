@@ -143,11 +143,6 @@
 	        }
 	        
 	        function sendRequest() {
-	        	var selectedRow = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
-	        	if (selectedRow == null) {
-	        		alert("Please select row");
-	        		return ;
-	        	}
 	        	var postData = {
 	        		"request": $("#SESN_STAGE").find("#requestHeaderPannel").find("#parsed").textbox("getText"),
 	        		"body": $("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("getText")

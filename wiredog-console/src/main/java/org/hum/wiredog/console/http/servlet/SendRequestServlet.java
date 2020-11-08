@@ -54,10 +54,12 @@ public class SendRequestServlet extends HttpServlet {
 		socket.getOutputStream().write(HttpRequestCodec.encodeWithBody(fullHttpRequest, HttpConstant.RETURN_LINE).getBytes());
 		socket.getOutputStream().flush();
 		
-		String responseWithoutBody = readResponseLineAndHeader(socket.getInputStream());
+		DataInputStream dis = new DataInputStream(socket.getInputStream());
+		
+		String responseWithoutBody = readResponseLineAndHeader(dis);
 		FullHttpResponse httpResponse = HttpResponseCodec.decode(responseWithoutBody);
 		
-		byte[] body = readResponseBody(httpResponse, socket.getInputStream());
+		byte[] body = readResponseBody(httpResponse, dis);
 		wtSession.setResponse(httpResponse, body, System.currentTimeMillis());
 		SessionManagerInvokeChain.addSession(wtSession);
 		
@@ -67,11 +69,11 @@ public class SendRequestServlet extends HttpServlet {
 		resp.getWriter().close();
 	}
 
-	private String readResponseLineAndHeader(InputStream inputStream) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+	private String readResponseLineAndHeader(DataInputStream inputStream) throws IOException {
+//		BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 		StringBuilder sbuilder = new StringBuilder();
 		String line = null;
-		while (!"".equals((line = br.readLine()))) {
+		while (!"".equals((line = inputStream.readLine()))) {
 			if (line == null) {
 				break;
 			}
@@ -80,25 +82,26 @@ public class SendRequestServlet extends HttpServlet {
 		return sbuilder.toString();
 	}
 	
-	private byte[] readResponseBody(FullHttpResponse httpResponse, InputStream inputStream) throws IOException {
+	private byte[] readResponseBody(FullHttpResponse httpResponse, DataInputStream dis) throws IOException {
 		// 考虑body读取方式
 		// 1.read by content-length
 		if (httpResponse.headers().contains(HttpConstant.ContentLength)) {
 			Integer contentLength = Integer.parseInt(httpResponse.headers().get(HttpConstant.ContentLength).trim());
 			byte[] body = new byte[contentLength];
-			inputStream.read(body);
+			dis.read(body);
 			return body;
 		}
 		
 		// 2.read by chunked
 		if (httpResponse.headers().contains(HttpConstant.TransferEncoding)) {
-			DataInputStream dis = new DataInputStream(inputStream);
-			// read \r\n
-			dis.skipBytes(2);
-			// 
-			short len = 0;
+			// chunked格式：#chunked_size#|\r\n|#chunked_data#|\r\n|#chunked_size#|\r\n|#chunked_data#|\r\n|0|\r\n|\r\n
 			byte[] body = new byte[0];
-			while ((len = dis.readShort()) > 0) {
+			String chunkedSize = "";
+			while (!"".equals((chunkedSize = dis.readLine()))) {
+				if (chunkedSize == null) {
+					break;
+				}
+				int len = Integer.parseInt(chunkedSize, 16);
 				byte[] chunked = new byte[len];
 				dis.read(chunked);
 				body = Arrays.concatenate(body, chunked);
