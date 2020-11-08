@@ -11,15 +11,6 @@
 	<name>${project.artifactId}</name>
 
 	<dependencies>
-		<!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
-		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-log4j12</artifactId>
-		</dependency>
 		<!-- fastjson -->
 		<dependency>
 			<groupId>com.alibaba</groupId>

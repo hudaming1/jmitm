@@ -1,6 +1,10 @@
 package org.hum.wiredog.proxy.mock;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hum.wiredog.proxy.mock.netty.NettyResponseInterceptor;
 
@@ -24,8 +28,9 @@ public class MockHandler {
 		// rebuild-request
 		for (Mock mock : mockList) {
 			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
-				// 标记Header被拦截过
-				request.headers().set(WT_MOCK_SIGN, mock.getId());
+				// 标记Header被拦截过(标记格式：#mockId1,#mockId2,#mockId3....)
+				String mockIdenArray = !request.headers().contains(WT_MOCK_SIGN) ? mock.getId() + "," : request.headers().get(WT_MOCK_SIGN) + "," + mock.getId() + ",";
+				request.headers().set(WT_MOCK_SIGN, mockIdenArray.substring(0, mockIdenArray.length() - 1));
 				if (mock.getRequestRebuilder() != null) {
 					request = mock.getRequestRebuilder().eval(request);
 				}
@@ -35,7 +40,8 @@ public class MockHandler {
 		for (Mock mock : mockList) {
 			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
 				// 标记Header被拦截过
-				request.headers().set(WT_MOCK_SIGN, mock.getId());
+				String mockIden = request.headers().get(WT_MOCK_SIGN) + "," + mock.getId();
+				request.headers().set(WT_MOCK_SIGN, mockIden.substring(0, mockIden.length() - 1));
 				// mock
 				if (mock.getHttpMockResponse() != null) {
 					return mock.getHttpMockResponse().eval(request);
@@ -44,15 +50,20 @@ public class MockHandler {
 		}
 		return null;
 	}
-
+	
 	public void mock(FullHttpRequest request, FullHttpResponse resp) {
 		if (mockList == null || mockList.isEmpty()) {
 			return ;
 		}
 		
+		// 获取请求命中Mock时种下的Header
+		String mockIds = request.headers().get(WT_MOCK_SIGN);
+		Set<String> mockIdSet = mockIds == null ? Collections.emptySet() : new HashSet<>(Arrays.asList(mockIds.split(",")));
+		
 		for (Mock mock : mockList) {
-			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false || !mock.getId().equals(request.headers().get(WT_MOCK_SIGN));
+			boolean requestMiss = request.headers().contains(WT_MOCK_SIGN) == false || !mockIdSet.contains(mock.getId());
 			NettyResponseInterceptor responseInterceptor = mock.getResponseInterceptor();
+			// 如果Request和Response都没有命中，则返回
 			if (requestMiss && (responseInterceptor == null || !responseInterceptor.isHit(resp))) {
 				continue;
 			}

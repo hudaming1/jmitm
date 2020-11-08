@@ -13,15 +13,13 @@ import org.hum.wiredog.proxy.mock.wiredog.HttpRequest;
 import org.hum.wiredog.proxy.mock.wiredog.HttpResponse;
 import org.hum.wiredog.proxy.mock.wiredog.HttpResponseMock;
 
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import io.netty.handler.codec.http.HttpVersion;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WorkUseCase1107 {
-
+	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
 		wtBuilder.parseHttps(true);
@@ -41,7 +39,7 @@ public class WorkUseCase1107 {
 				// Mock WorkUseCase1107
 //				,mockSupportOptionsMethod()
 //				,mockAllInternelRequestForwardLocalhost()
-//				,mockAllReplenishmentRequestForwardLocalhost()
+				,mockAllReplenishmentRequestForwardLocalhost()
 //				,mockTest()
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
