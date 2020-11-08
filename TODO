@@ -43,6 +43,7 @@
 【P0】PostMan支持Https功能
 【P1】「Rebuild Request and copy to clipboard」按钮放下面就会消失，下面的未知领域到底是哪个Div占领的？
 【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
+【P3】针对MockResponse补充GitHub Readme
 
 【P1】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
 【P2】控制台对错误没有统一的处理（例如查看详情搜索一个不存在的ID）

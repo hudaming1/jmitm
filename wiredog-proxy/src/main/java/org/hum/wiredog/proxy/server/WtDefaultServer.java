@@ -2,13 +2,13 @@ package org.hum.wiredog.proxy.server;
 
 import org.hum.wiredog.common.exception.WiredogException;
 import org.hum.wiredog.common.util.NamedThreadFactory;
+import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.proxy.config.WiredogCoreConfig;
 import org.hum.wiredog.proxy.facade.InvokeChainInit;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.chain.ContextManagerInvokeChain;
 import org.hum.wiredog.proxy.pipe.core.FullRequestDecoder;
 import org.hum.wiredog.proxy.pipe.core.ProxyHandshakeHandler;
-import org.hum.wiredog.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

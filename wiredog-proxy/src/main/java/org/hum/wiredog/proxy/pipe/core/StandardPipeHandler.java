@@ -58,7 +58,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			// mock
 			if (mockHandler != null) {
 				FullHttpResponse response4Mock = mockHandler.mock(request);
-				// 如果返回了MockResponse，则不在请求真正的目标服务器
+				// 如果提前返回了Response，说明存在Mock，则不在请求真正的目标服务器
 				if (response4Mock != null) {
 					fullPipeHandler.clientRead(wtContext, request);
 					wtContext.appendResponse(response4Mock);

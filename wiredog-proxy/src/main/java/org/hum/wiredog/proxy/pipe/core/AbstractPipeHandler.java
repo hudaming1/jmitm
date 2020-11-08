@@ -3,8 +3,8 @@ package org.hum.wiredog.proxy.pipe.core;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;

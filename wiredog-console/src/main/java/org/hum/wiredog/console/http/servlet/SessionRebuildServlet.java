@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiredog.common.constant.HttpConstant;
-import org.hum.wiredog.proxy.util.HttpRequestCodec;
+import org.hum.wiredog.common.util.HttpRequestCodec;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 

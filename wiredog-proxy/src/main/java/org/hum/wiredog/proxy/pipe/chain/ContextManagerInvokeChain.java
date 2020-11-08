@@ -1,10 +1,10 @@
 package org.hum.wiredog.proxy.pipe.chain;
 
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;

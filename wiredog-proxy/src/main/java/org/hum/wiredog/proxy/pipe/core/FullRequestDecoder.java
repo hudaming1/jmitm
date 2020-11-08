@@ -1,6 +1,6 @@
 package org.hum.wiredog.proxy.pipe.core;
 
-import org.hum.wiredog.proxy.util.HttpMessageUtil;
+import org.hum.wiredog.common.util.HttpMessageUtil;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;

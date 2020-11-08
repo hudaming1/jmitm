@@ -8,10 +8,10 @@ import java.util.Map;
 
 import org.hum.wiredog.common.exception.WiredogException;
 import org.hum.wiredog.common.util.SyncLinkedHashMap;
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.console.websocket.service.WsPipeService;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;

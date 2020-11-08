@@ -1,10 +1,10 @@
 package org.hum.wiredog.console.websocket;
 
 import org.hum.wiredog.common.util.NamedThreadFactory;
+import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.console.websocket.handler.BusinessServerHandler;
 import org.hum.wiredog.console.websocket.handler.WebSocketDecoder;
 import org.hum.wiredog.console.websocket.handler.WebSocketEncoder;
-import org.hum.wiredog.proxy.util.NettyUtils;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;

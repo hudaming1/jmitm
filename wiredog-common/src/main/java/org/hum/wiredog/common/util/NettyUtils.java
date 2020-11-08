@@ -1,11 +1,11 @@
-package org.hum.wiredog.proxy.util;
+package org.hum.wiredog.common.util;
 
 import java.net.InetSocketAddress;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadFactory;
 
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;

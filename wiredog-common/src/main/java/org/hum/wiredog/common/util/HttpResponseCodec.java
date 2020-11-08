@@ -1,4 +1,4 @@
-package org.hum.wiredog.proxy.util;
+package org.hum.wiredog.common.util;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -8,23 +8,24 @@ import java.util.Map.Entry;
 
 import org.hum.wiredog.common.constant.HttpConstant;
 
-import io.netty.handler.codec.http.DefaultFullHttpRequest;
+import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
-public class HttpRequestCodec {
+public class HttpResponseCodec {
 
-	public static FullHttpRequest decode(String httpRequestWithoutBody) throws IOException {
-		return decode(httpRequestWithoutBody, null);
+	public static FullHttpResponse decode(String httpResponseWithoutBody) throws IOException {
+		return decode(httpResponseWithoutBody, null);
 	}
 	
-	public static FullHttpRequest decode(String httpRequestWithoutBody, byte[] body) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(httpRequestWithoutBody.getBytes())));
+	public static FullHttpResponse decode(String httpResponseWithoutBody, byte[] body) throws IOException {
+		BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(httpResponseWithoutBody.getBytes())));
 		// read request-line
-		String requestLine = br.readLine();
-		String[] requestLineArr = requestLine.split(" ");
-		FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.valueOf(requestLineArr[2]), HttpMethod.valueOf(requestLineArr[0]), requestLineArr[1]);
+		String responseLine = br.readLine();
+		String[] responseLineArr = responseLine.split(" ");
+		FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.valueOf(Integer.parseInt(responseLineArr[1].trim())));
 		// read header
 		String headerLine = "";
 		while (!"".equals(headerLine = br.readLine())) {
@@ -33,13 +34,13 @@ public class HttpRequestCodec {
 			}
 			String key = headerLine.substring(0, headerLine.indexOf(":"));
 			String value = headerLine.substring(headerLine.indexOf(":") + 1, headerLine.length());
-			request.headers().set(key, value);
+			response.headers().set(key, value);
 		}
 		// read body
 		if (body != null) {
-			request.content().readBytes(body);
+			response.content().readBytes(body);
 		}
-		return request;
+		return response;
 	}
 
 	public static String encodeWithBody(FullHttpRequest request, String returnLine) {

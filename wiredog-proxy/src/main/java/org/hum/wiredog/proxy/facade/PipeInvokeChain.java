@@ -1,6 +1,6 @@
 package org.hum.wiredog.proxy.facade;
 
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;

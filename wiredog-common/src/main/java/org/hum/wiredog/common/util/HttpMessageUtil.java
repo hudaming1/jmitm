@@ -1,4 +1,4 @@
-package org.hum.wiredog.proxy.util;
+package org.hum.wiredog.common.util;
 
 import java.util.List;
 import java.util.Map;

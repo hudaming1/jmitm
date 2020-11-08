@@ -15,13 +15,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.bouncycastle.util.Arrays;
 import org.hum.wiredog.common.constant.HttpConstant;
+import org.hum.wiredog.common.util.HttpMessageUtil;
+import org.hum.wiredog.common.util.HttpRequestCodec;
+import org.hum.wiredog.common.util.HttpResponseCodec;
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.console.common.WtConsoleConstant;
 import org.hum.wiredog.console.common.WtSession;
 import org.hum.wiredog.console.common.chain.SessionManagerInvokeChain;
-import org.hum.wiredog.proxy.util.HttpMessageUtil;
-import org.hum.wiredog.proxy.util.HttpMessageUtil.InetAddress;
-import org.hum.wiredog.proxy.util.HttpRequestCodec;
-import org.hum.wiredog.proxy.util.HttpResponseCodec;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;

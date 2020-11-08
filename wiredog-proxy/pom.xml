@@ -22,11 +22,6 @@
 			<artifactId>wiredog-ssl</artifactId>
             <version>${project.parent.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
-		<dependency>
-			<groupId>io.netty</groupId>
-			<artifactId>netty-all</artifactId>
-		</dependency>
 	</dependencies>
 
 </project>
