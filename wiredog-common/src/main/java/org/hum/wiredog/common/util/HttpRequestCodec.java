@@ -47,21 +47,14 @@ public class HttpRequestCodec {
 			throw new IllegalArgumentException("request mustn't be null");
 		}
 		returnLine = returnLine == null ? HttpConstant.RETURN_LINE : returnLine;
-		StringBuilder requestStringBuilder = new StringBuilder(request.method().name() + " " + request.uri() + " " + request.protocolVersion()).append(returnLine);
-		// 将Host永远放在第一个，方便查看
-		requestStringBuilder.append(HttpConstant.Host + ": " + request.headers().get(HttpConstant.Host)).append(returnLine);
-		for (Entry<String, String> header : request.headers()) {
-			if (HttpConstant.Host.equals(header.getKey())) {
-				continue;
-			}
-			requestStringBuilder.append(header.getKey() + ": " + header.getValue()).append(returnLine);
-		}
-		requestStringBuilder.append(returnLine);
+		StringBuilder requestStringBuilder = new StringBuilder(encodeWithoutBody(request, returnLine));
+		// 处理Body
 		if (request.content().readableBytes() > 0) {
 			byte[] bytes = new byte[request.content().readableBytes()];
 			request.content().readBytes(bytes);
 			requestStringBuilder.append(new String(bytes));
 		}
+		requestStringBuilder.append(returnLine);
 		return requestStringBuilder.toString();
 	}
 
@@ -72,13 +65,14 @@ public class HttpRequestCodec {
 		returnLine = returnLine == null ? HttpConstant.RETURN_LINE : returnLine;
 		StringBuilder requestStringBuilder = new StringBuilder(request.method().name() + " " + request.uri() + " " + request.protocolVersion()).append(returnLine);
 		// 将Host永远放在第一个，方便查看
-		requestStringBuilder.append(HttpConstant.Host + ": " + request.headers().get(HttpConstant.Host)).append(returnLine);
+		requestStringBuilder.append(HttpConstant.Host + ":" + request.headers().get(HttpConstant.Host)).append(returnLine);
 		for (Entry<String, String> header : request.headers()) {
 			if (HttpConstant.Host.equals(header.getKey())) {
 				continue;
 			}
-			requestStringBuilder.append(header.getKey() + ": " + header.getValue()).append(returnLine);
+			requestStringBuilder.append(header.getKey() + ":" + header.getValue()).append(returnLine);
 		}
+		requestStringBuilder.append(returnLine);
 		return requestStringBuilder.toString();
 	}
 }

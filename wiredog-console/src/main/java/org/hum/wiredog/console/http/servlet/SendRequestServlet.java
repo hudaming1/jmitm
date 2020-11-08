@@ -1,10 +1,7 @@
 package org.hum.wiredog.console.http.servlet;
 
-import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Objects;
 
@@ -16,9 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.bouncycastle.util.Arrays;
 import org.hum.wiredog.common.constant.HttpConstant;
 import org.hum.wiredog.common.util.HttpMessageUtil;
+import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.common.util.HttpRequestCodec;
 import org.hum.wiredog.common.util.HttpResponseCodec;
-import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.console.common.WtConsoleConstant;
 import org.hum.wiredog.console.common.WtSession;
 import org.hum.wiredog.console.common.chain.SessionManagerInvokeChain;
@@ -48,7 +45,6 @@ public class SendRequestServlet extends HttpServlet {
 		
 		WtSession wtSession = new WtSession(WtConsoleConstant.CONSOLE_SESSION_PIPE_ID, fullHttpRequest, System.currentTimeMillis());
 		wtSession.setRequestBytes(requestBody.getBytes());
-		
 		
 		Socket socket = new Socket(remoteAddress.getHost().trim(), remoteAddress.getPort());
 		socket.getOutputStream().write(HttpRequestCodec.encodeWithBody(fullHttpRequest, HttpConstant.RETURN_LINE).getBytes());
