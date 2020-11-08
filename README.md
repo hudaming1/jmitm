@@ -22,8 +22,9 @@ proxy.add(new CatchRequest().eval(request -> {
 proxy.add(new CatchRequest().eval(request -> {
     // 如果域名是baidu，访问的图片是百度的Logo（第一个图片是PC上的，后两个路径是移动端的Logo）
     return "www.baidu.com".equals(request.host()) &&("/img/PCtm_d9c8750bed0b3c7d089fa7d55720d6cf.png".equals(request.uri()) || "/img/flexible/logo/pc/result.png".equals(request.uri()) || "/img/flexible/logo/pc/result@2.png".equals(request.uri()));
-}).rebuildResponse(response -> {
-    // 如果命中请求，则读取本地Google的Logo并对响应进行替换
+}).mockResponse(httpRequest -> {
+    // 如果命中请求，则不会将请求转发到百度服务器，而直接读取本地Google图片作为Response返回。
+    HttpResponse response = new HttpResponse();
     byte[] googleLogo = readFile("/mock/google.png");
     return response.body(googleLogo).header("Content-Type", "image/gif");
 }).mock());
