@@ -153,9 +153,9 @@
 	        }
 		</script>
 	</head>
-	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
+	<body class="easyui-layout" data-options="tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
 		<div id="centerLayout" class="easyui-layout" data-options="region:'center', collapsible:false, split: false" style="width:40%">
-			<div data-options="region:'center', border:false, collapsible:false, split: false">
+			<div data-options="region:'center', border:false, collapsible: false, split: false">
 				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
 						onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
 					<thead>
@@ -167,7 +167,6 @@
 					</thead>
 				</table>
 				<div id="sessionDgTb" style="padding:5px;height:auto">
-					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
 					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
 					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
 					<!-- 
@@ -181,7 +180,8 @@
 					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/c/d"> Cert Download </a>
 				</div>
 			</div>
-			<div class="easyui-layout" id="statusPannel" data-options="region:'south', border:false, collapsible:false, split: false" style="height:24px;">
+			<div class="easyui-panel" id="statusPannel" data-options="region:'south', border:false, collapsible:false, split: false"
+				style="height:24px; padding: 2px 0px 0px 5px; font-weight: bold">
 			</div>
 		</div>
 		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
