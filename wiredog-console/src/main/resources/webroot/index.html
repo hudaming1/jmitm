@@ -154,30 +154,34 @@
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="fit:true, tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
-		<div id="centerLayout" data-options="region:'center'" style="padding:5px 5px 10px 5px; width:40%">
-			<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
-					onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
-				<thead>
-					<tr>
-						<th data-options="field:'sessionId', width: 55, hidden: true, align: 'center'">ID</th>
-						<th data-options="field:'uri', width: '90%'">Name</th>
-						<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
-					</tr>
-				</thead>
-			</table>
-			<div id="sessionDgTb" style="padding:5px;height:auto">
-				<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
-				<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
-				<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
-				<!-- 
-				<select class="easyui-combobox" style="width:100px;">
-				    <option value="all">*</option>
-				    <option value="text/html">html</option>
-				    <option value="application/json">json</option>
-				    <option value="jpeg/gif/png">image</option>
-				</select>-->
-				<a href="javascript:clickSessionSearchBtn();" class="easyui-linkbutton" iconCls="icon-search">Search</a>
-				<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/c/d"> Cert Download </a>
+		<div id="centerLayout" class="easyui-layout" data-options="region:'center', collapsible:false, split: false" style="width:40%">
+			<div data-options="region:'center', border:false, collapsible:false, split: false">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
+						onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
+					<thead>
+						<tr>
+							<th data-options="field:'sessionId', width: 55, hidden: true, align: 'center'">ID</th>
+							<th data-options="field:'uri', width: '90%'">Name</th>
+							<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
+						</tr>
+					</thead>
+				</table>
+				<div id="sessionDgTb" style="padding:5px;height:auto">
+					<!-- BUG：增加了TagBox，左侧就会多一个空的Tab页 -->
+					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
+					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
+					<!-- 
+					<select class="easyui-combobox" style="width:100px;">
+					    <option value="all">*</option>
+					    <option value="text/html">html</option>
+					    <option value="application/json">json</option>
+					    <option value="jpeg/gif/png">image</option>
+					</select>-->
+					<a href="javascript:clickSessionSearchBtn();" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/c/d"> Cert Download </a>
+				</div>
+			</div>
+			<div class="easyui-layout" id="statusPannel" data-options="region:'south', border:false, collapsible:false, split: false" style="height:24px;">
 			</div>
 		</div>
 		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
@@ -194,7 +198,7 @@
 								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="prompt: 'No Body...', fit:true, multiline: true">
 							</div>
 							<div data-options="region:'south', border: false, height: 40" class="easyui-panel">
-								<a style="float: right; margin: 5px;" class="easyui-linkbutton" onclick="sendRequest();">Post A Dog!</a>
+								<a style="float: right; margin: 5px;" class="easyui-linkbutton" onclick="sendRequest();">Send Request!</a>
 							</div>
 						</div>
 						<div id="source" title="Source" data-options="fit:true, border:false">
@@ -212,9 +216,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="easyui-layout" id="statusPannel" data-options="region:'south', border:false" style="height:24px; padding:2px 2px 2px 5px">
-		     
 		</div>
 	</body>
 </html>

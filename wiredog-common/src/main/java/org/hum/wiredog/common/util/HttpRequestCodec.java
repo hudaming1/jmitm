@@ -24,6 +24,9 @@ public class HttpRequestCodec {
 		// read request-line
 		String requestLine = br.readLine();
 		String[] requestLineArr = requestLine.split(" ");
+		if (requestLineArr.length < 3) {
+			throw new IllegalArgumentException("RequestLine is invaild, line=" + requestLine);
+		}
 		FullHttpRequest request = new DefaultFullHttpRequest(HttpVersion.valueOf(requestLineArr[2]), HttpMethod.valueOf(requestLineArr[0]), requestLineArr[1]);
 		// read header
 		String headerLine = "";

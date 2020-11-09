@@ -41,19 +41,18 @@
 
 ##功能优化
 【P0】PostMan支持Https功能
-【P1】「Rebuild Request and copy to clipboard」按钮放下面就会消失，下面的未知领域到底是哪个Div占领的？
+【P1】界面Bug越来越多，集中调整吧
 【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
-【P3】针对MockResponse补充GitHub Readme
+
+【P1】优化线程模型
 
 【P1】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
 【P2】控制台对错误没有统一的处理（例如查看详情搜索一个不存在的ID）
 【P3】证书换成wiredog吧
 
 【P1】将start模块改成facade和demo模块
-【P2】显示当前存活连接数(避免一共就16个线程，阻塞15个，就留也一个可用线程，在UI需要查到)
 【P2】need support more types, find type=class io.netty.buffer.PooledUnsafeDirectByteBuf到底是什么鬼，目测不影响使用，但不知道这部分内容是什么？
 【P2】SimpleForwardPipeHandler对InvokeChain支持不好，两者目前没有打通，因为新的Forward对协议不做解析，因此InvokeChain无法支持
-【P2】优化线程模型
 
 
 【P2】Console没有探活，页面刷新后连接没有断开

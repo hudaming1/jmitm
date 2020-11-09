@@ -39,8 +39,8 @@ public class WorkUseCase1107 {
 				// Mock WorkUseCase1107
 //				,mockSupportOptionsMethod()
 //				,mockAllInternelRequestForwardLocalhost()
-				,mockAllReplenishmentRequestForwardLocalhost()
-				,mockAllStockRequestForwardLocalhost()
+//				,mockAllReplenishmentRequestForwardLocalhost()
+//				,mockAllStockRequestForwardLocalhost()
 //				,mockTest()
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
