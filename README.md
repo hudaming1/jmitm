@@ -3,13 +3,13 @@
 基于编程式网关，你可以：
 
 **根据Request重制Request**    
-例如将「wiretiger.com」重定向到「localhost:8080」，等效于配置浏览器级别的host:   wiretiger.com    127.0.0.1:8080  
+例如将「wiredog.com」重定向到「localhost:8080」，等效于配置浏览器级别的host:   wiredog.com    127.0.0.1:8080  
 
 ```java
-// 将wiretiger.com重定向到localhost:8080
+// 将wiredog.com重定向到localhost:8080
 proxy.add(new CatchRequest().eval(request -> {
-    // 判断请求域名是wiretigert.com
-    return "wiretiger.com".equals(request.host());
+    // 判断请求域名是wiredog.com
+    return "wiredog.com".equals(request.host());
 }).rebuildRequest(request -> {
     // 如果命中Request，则将请求实际转发到localhost:8080
     return request.header("Host", "localhost:8080");
@@ -25,14 +25,14 @@ proxy.add(new CatchRequest().eval(request -> {
 }).rebuildResponse(response -> {
     // 如果命中百度首页，则将以下JS代码追加到网页HTML的末尾，通过查看浏览器网页源代码也会发现在末尾处多了一段JS
     // 注入的JS代码
-    String json = "<!--add by wiretigher--><script type='text/javascript'>alert('Wiretiger say hello');</script>";
+    String json = "<!--add by wiretigher--><script type='text/javascript'>alert('Wiredog say hello');</script>";
     // 因为响应头是gzip进行压缩，因此无法直接将ASCII串追加到内容末尾，需要先将原响应报文解压，在将JS追加到末尾
     String outBody = new String(CodecFactory.create("gzip").decompress(response.body())) + json;
     // 解压后为了省事，就不再进行压缩
     return response.removeHeader("Content-Encoding").body(outBody.getBytes());
 }).mock());
 ```
-![](https://github.com/hudaming1/wiretiger/blob/master/Show2.png)
+![](https://github.com/hudaming1/wiredog/blob/master/Show2.png)
 
 **根据Request Mock Response**    
 拦截百度首页Logo，不做真实转发，直接读取本地GoogleLogo文件作为Response，首页Logo变为Google
@@ -47,16 +47,16 @@ proxy.add(new CatchRequest().eval(request -> {
     return response.body(googleLogo).header("Content-Type", "image/gif");
 }).mock());
 ```
-![](https://github.com/hudaming1/wiretiger/blob/master/Show.png)
+![](https://github.com/hudaming1/wiredog/blob/master/Show.png)
 
 **根据Response重制Response**  
 暂时No Case...
 
 ## Quick Start
-1.git clone https://github.com/hudaming1/wiretiger.git   
-2.启动 WiretigerServerRun.java （默认端口52007）   
+1.git clone https://github.com/hudaming1/wiredog.git   
+2.启动 WiredogServerRun.java （默认端口52007）   
 3.访问localhost:8080进入控制台    
-4.点击控制台单「Download Cert」按钮下载并安装CA（如果需要卸载，在证书库中搜索Wiretiger删除即可）   
+4.点击控制台单「Download Cert」按钮下载并安装CA（如果需要卸载，在证书库中搜索Wiredog删除即可）   
 🌟Mac系统导入后，还需要手动将CA进行授信。    
 5.访问HTTPS网页，当控制台显示出HTTPS请求时，即可对HTTP请求响应进行重制   
 
