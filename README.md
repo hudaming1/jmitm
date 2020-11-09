@@ -60,4 +60,6 @@ proxy.add(new CatchRequest().eval(request -> {
 🌟Mac系统导入后，还需要手动将CA进行授信。    
 5.访问HTTPS网页，当控制台显示出HTTPS请求时，即可对HTTP请求响应进行重制   
 
-#### 其他
+## 其他
+#### 内置PostMan
+在控制台中抓到的HTTP请求，可以通过界面对原生HTTP请求报文快捷修改并进行重发，等效于实现集成Fillder和PostMan。
