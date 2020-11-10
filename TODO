@@ -40,27 +40,32 @@
 【M11W1】支持不转发请求，直接MockResponse的功能
 
 ##功能优化
-【P0】PostMan支持Https功能
+###M11W2
+【P0】PostMan支持Https功能(8h)
 【P1】界面Bug越来越多，集中调整吧
-【P2】设计上优化：对FullRequest和FullRepsonse加上包装类
+【P2】设计上优化：对FullRequest和FullRepsonse加上包装类(2h)
+【P1】界面优化：LocalStorage记录当前搜索条件。(2h)
 
-【P1】优化线程模型
+####M11W3
+【P1】优化线程模型（8h）
+【P1】是否走Mock流程，用控制台开关进行配置，避免每次切Mock开关改代码然后重启程序。（4h）
+【P1】是否拦截并解析HTTPS请求，也做成控制台配置。（4h）
 
 【P1】测试下载会不会把内存压爆（会crash的...期望增加配置，单条ResponseBody保存最大字节数）
 【P2】控制台对错误没有统一的处理（例如查看详情搜索一个不存在的ID）
 【P3】证书换成wiredog吧
-
 【P1】将start模块改成facade和demo模块
 【P2】need support more types, find type=class io.netty.buffer.PooledUnsafeDirectByteBuf到底是什么鬼，目测不影响使用，但不知道这部分内容是什么？
 【P2】SimpleForwardPipeHandler对InvokeChain支持不好，两者目前没有打通，因为新的Forward对协议不做解析，因此InvokeChain无法支持
-
-
 【P2】Console没有探活，页面刷新后连接没有断开
 【P3】Request支持分页
 【P3】处于Init状态5秒无状态变化的，直接Closed
 【P3】配置闲置连接最长5分钟
 【P3】开启debug模式（log4j和nettyhandler）
 【P3】控制台增加断开连接的按钮
+【P3】Session请求超时后，会一直停留在pending状态
+【P3】建立独立数据库，保存一些Session信息，可以直接打开调用
+【P3】客户端控制台启用重连机制
 
 ##BUG
 

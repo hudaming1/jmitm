@@ -51,6 +51,7 @@ public class HttpRequestCodec {
 		}
 		returnLine = returnLine == null ? HttpConstant.RETURN_LINE : returnLine;
 		StringBuilder requestStringBuilder = new StringBuilder(encodeWithoutBody(request, returnLine));
+		requestStringBuilder.append(returnLine);
 		// 处理Body
 		if (request.content().readableBytes() > 0) {
 			byte[] bytes = new byte[request.content().readableBytes()];
@@ -75,7 +76,6 @@ public class HttpRequestCodec {
 			}
 			requestStringBuilder.append(header.getKey() + ":" + header.getValue()).append(returnLine);
 		}
-		requestStringBuilder.append(returnLine);
 		return requestStringBuilder.toString();
 	}
 }
