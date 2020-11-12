@@ -185,6 +185,13 @@
 			</div>
 		</div>
 		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
+			<div id="tab-tools">
+				<a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm1', plain:true,iconCls:'icon-more'" onclick="addPanel()"></a>
+			</div>
+			<div id="mm1" style="width:150px;">
+		        <div onclick="alert('unimplements');">Options</div> 
+		        <div onclick="$('#mockWindow').window('open');">Mock Panel</div>
+		    </div>
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
 					<div id="requestHeaderPannel" data-options="border:false, title:'SourceText',region:'north',split:true, collapsible:false, height:'50%'" style="padding-bottom: 20px;">
@@ -217,5 +224,21 @@
 				</div>
 			</div>
 		</div>
+		<!-- Mock Window -->
+	    <div id="mockWindow" class="easyui-window" title="Mock Window" data-options="modal: true, closed: false, iconCls:'icon-man'" style="width:50%; height:50%;">
+			<div class="easyui-layout" data-options="split:true, fit: true">
+				<div class="easyui-panel" data-options="region:'west', border:false, collapsible:false" style="width: 300px;">
+					<center style="padding-top: 50%;">
+						<form>
+							<div><input class="easyui-radiobutton" name="masterMockButton" value="Apple" checked label="Mock On" /></div>
+							<div style="padding-top: 10px"><input class="easyui-radiobutton" name="masterMockButton" value="Apple" label="Mock Off" /></div>
+						</form>
+					</center>
+				</div>
+				<div class="easyui-datalist" data-options="modal: true, region:'center', url: '/mock_list.json',
+					method: 'get', checkbox: true, selectOnCheck: false, onBeforeSelect: function(){return false;}">
+			    </div>
+			</div>
+	    </div>
 	</body>
 </html>
