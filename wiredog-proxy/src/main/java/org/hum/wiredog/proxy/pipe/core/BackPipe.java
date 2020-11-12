@@ -1,6 +1,6 @@
 package org.hum.wiredog.proxy.pipe.core;
 
-import org.hum.wiredog.proxy.server.WtDefaultServer;
+import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -34,7 +34,7 @@ public class BackPipe {
 		try {
 			SsslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 			log.info("init ssl_context success...");
-			int backPipeThreadCount = WtDefaultServer.config.getThreads() / 2;
+			int backPipeThreadCount = WiredogCoreConfigProvider.get().getThreads() / 2;
 			eventLoopGroup = new NioEventLoopGroup(backPipeThreadCount);
 		} catch (Exception ce) {
 			log.error("init ssl_context failed", ce);

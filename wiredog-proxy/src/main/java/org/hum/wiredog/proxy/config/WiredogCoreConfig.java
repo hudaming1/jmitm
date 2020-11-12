@@ -17,6 +17,11 @@ public class WiredogCoreConfig {
 	//
 	private boolean isDebug;
 	/**
+	 * 是否打开Mock总开关(true-打开Mock；false-关闭mock)
+	 * true-MockList全部生效；false-MockList全部禁止。
+	 */
+	private boolean masterMockStwich = true;
+	/**
 	 * Mock清单：决定了对哪些「请求」或「响应」进行拦截，以及拦截后进行什么样的处理
 	 * 确保Interceptor和Rebuilder必须均至少出现一次
 	 */

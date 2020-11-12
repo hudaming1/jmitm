@@ -4,6 +4,7 @@ import org.hum.wiredog.common.exception.WiredogException;
 import org.hum.wiredog.common.util.NamedThreadFactory;
 import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.proxy.config.WiredogCoreConfig;
+import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.InvokeChainInit;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.chain.ContextManagerInvokeChain;
@@ -26,27 +27,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WtDefaultServer implements WtServer {
 	
-	public static WiredogCoreConfig config;
-	
 	private MockHandler mockHandler;
 	
 	private InvokeChainInit invokeChainInit;
 
 	public WtDefaultServer(WiredogCoreConfig config) {
-		WtDefaultServer.config = config;
+		WiredogCoreConfigProvider.init(config);
 	}
 
 	@Override
 	public ChannelFuture start() {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
-		int frontPipeThreadPoolCount = config.getThreads() / 2;
+		int frontPipeThreadPoolCount = WiredogCoreConfigProvider.get().getThreads() / 2;
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(frontPipeThreadPoolCount, new NamedThreadFactory("wt-worker-thread"));
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
 			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class);
-			if (config.isDebug()) {
+			if (WiredogCoreConfigProvider.get().isDebug()) {
 				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
 			// singleton
@@ -60,9 +59,9 @@ public class WtDefaultServer implements WtServer {
 				}
 			});
 
-			return bootStrap.bind(config.getPort());
+			return bootStrap.bind(WiredogCoreConfigProvider.get().getPort());
 		} catch (Exception e) {
-			log.error("start occur error, config=" + config, e);
+			log.error("start occur error, config=" + WiredogCoreConfigProvider.get(), e);
 			throw new WiredogException("WtDefaultServer start failed.", e);
 		}
 	}
@@ -82,6 +81,6 @@ public class WtDefaultServer implements WtServer {
 	}
 	
 	public int getListeningPort() {
-		return config.getPort();
+		return WiredogCoreConfigProvider.get().getPort();
 	}
 }

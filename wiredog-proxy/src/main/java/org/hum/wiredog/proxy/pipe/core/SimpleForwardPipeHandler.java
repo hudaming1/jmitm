@@ -1,9 +1,9 @@
 package org.hum.wiredog.proxy.pipe.core;
 
+import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
-import org.hum.wiredog.proxy.server.WtDefaultServer;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -29,7 +29,7 @@ public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 	private static EventLoopGroup eventLoopGroup = null;
 	
 	static {
-		eventLoopGroup = new NioEventLoopGroup(WtDefaultServer.config.getThreads() / 2);
+		eventLoopGroup = new NioEventLoopGroup(WiredogCoreConfigProvider.get().getThreads() / 2);
 	}
 	
 	public SimpleForwardPipeHandler(WtPipeContext wtContext) {

@@ -3,6 +3,7 @@ package org.hum.wiredog.proxy.pipe.core;
 import java.net.ConnectException;
 import java.util.Stack;
 
+import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
@@ -56,7 +57,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			}
 			
 			// mock
-			if (mockHandler != null) {
+			if (mockHandler != null && WiredogCoreConfigProvider.get().isOpenMasterMockStwich()) {
 				FullHttpResponse response4Mock = mockHandler.mock(request);
 				// 如果提前返回了Response，说明存在Mock，则不在请求真正的目标服务器
 				if (response4Mock != null) {

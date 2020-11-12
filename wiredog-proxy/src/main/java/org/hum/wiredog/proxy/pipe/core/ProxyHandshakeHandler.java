@@ -4,14 +4,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.hum.wiredog.common.constant.HttpConstant;
 import org.hum.wiredog.common.util.HttpMessageUtil;
-import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
+import org.hum.wiredog.common.util.NettyUtils;
+import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.WtPipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.constant.Constant;
 import org.hum.wiredog.proxy.pipe.enumtype.Protocol;
-import org.hum.wiredog.proxy.server.WtDefaultServer;
 import org.hum.wiredog.ssl.HttpSslContextFactory;
 
 import io.netty.buffer.Unpooled;
@@ -72,7 +72,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		if (WtDefaultServer.config.isParseHttps()) {
+    		if (WiredogCoreConfigProvider.get().isParseHttps()) {
         		// SSL
         		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
     			sslHandler.handshakeFuture().addListener(sslHandshakeResult -> {
