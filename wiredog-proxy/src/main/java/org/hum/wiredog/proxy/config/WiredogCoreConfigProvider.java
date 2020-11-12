@@ -16,7 +16,9 @@ public class WiredogCoreConfigProvider {
 	private static WiredogCoreConfigProvider provider;
 	
 	public static synchronized WiredogCoreConfigProvider init(WiredogCoreConfig wiredogCoreConfig) {
-		if (provider == null) {
+		if (provider != null) {
+			throw new IllegalStateException("provider has been initilized");
+		} else if (provider == null) {
 			provider = new WiredogCoreConfigProvider(wiredogCoreConfig);
 		}
 		return provider;
@@ -24,7 +26,7 @@ public class WiredogCoreConfigProvider {
 	
 	public static WiredogCoreConfigProvider get() {
 		if (provider == null) {
-			throw new IllegalStateException("provider has not been inited");
+			throw new IllegalStateException("provider has not been initilize");
 		}
 		return provider;
 	}
@@ -47,6 +49,10 @@ public class WiredogCoreConfigProvider {
 	
 	public boolean isOpenMasterMockStwich() {
 		return this.wiredogCoreConfig.isMasterMockStwich();
+	}
+	
+	public void setOpenMasterMockStwich(boolean value) {
+		this.wiredogCoreConfig.setMasterMockStwich(value);
 	}
 
 	public boolean isDebug() {

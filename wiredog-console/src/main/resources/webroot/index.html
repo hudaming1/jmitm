@@ -66,6 +66,20 @@
 						$("#SESN_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
 					}
 				};
+				
+				// 初始化MockButton
+				$('#mockButton').switchbutton({
+					checked: true,
+					onChange: function(checked) {
+						$.post("/mock/switch", {"switcher": checked}, function(resp) {
+							if (checked) {
+			            		console("Mock Open");
+			            	} else {
+			            		console("Mock Closed");
+			            	}
+						});
+					}
+				});
 		    })
 		    
 		    function clickSessionSearchBtn() {
@@ -167,6 +181,7 @@
 					</thead>
 				</table>
 				<div id="sessionDgTb" style="padding:5px;height:auto">
+					<input id="mockButton" class="easyui-switchbutton" data-options="onText:'MockOn',offText:'MockOff'" checked style="width:95px;" />
 					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
 					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
 					<!-- 
@@ -225,13 +240,13 @@
 			</div>
 		</div>
 		<!-- Mock Window -->
-	    <div id="mockWindow" class="easyui-window" title="Mock Window" data-options="modal: true, closed: false, iconCls:'icon-man'" style="width:50%; height:50%;">
+	    <div id="mockWindow" class="easyui-window" title="Mock Window" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false, iconCls:'icon-man'" style="width:50%; height:50%;">
 			<div class="easyui-layout" data-options="split:true, fit: true">
 				<div class="easyui-panel" data-options="region:'west', border:false, collapsible:false" style="width: 300px;">
 					<center style="padding-top: 50%;">
-						<form>
-							<div><input class="easyui-radiobutton" name="masterMockButton" value="Apple" checked label="Mock On" /></div>
-							<div style="padding-top: 10px"><input class="easyui-radiobutton" name="masterMockButton" value="Apple" label="Mock Off" /></div>
+						<form id="mockSwitchForm">
+							<div><input type="radio" onclick="openMockSwitch(1);" checked="checked" name="SelectOrder" value="1" />Open Mock</div>
+							<div style="padding-top: 10px"><input type="radio" onclick="openMockSwitch(0);" name="SelectOrder" value="0" />Close Mock</div>
 						</form>
 					</center>
 				</div>

@@ -84,6 +84,15 @@
 		<servlet-name>SendRequestServlet</servlet-name>
 		<url-pattern>/session/sendRequest</url-pattern>
 	</servlet-mapping>
+	<!-- mock switch -->
+	<servlet>
+		<servlet-name>MockMasterSwitchServlet</servlet-name>
+		<servlet-class>org.hum.wiredog.console.http.servlet.MockMasterSwitchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockMasterSwitchServlet</servlet-name>
+		<url-pattern>/mock/switch</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 

@@ -22,7 +22,7 @@ public class WorkUseCase1107 {
 	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
-		wtBuilder.parseHttps(false);
+		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
@@ -37,10 +37,10 @@ public class WorkUseCase1107 {
 				mockDemo6()
 				,mockResponse()
 				// Mock WorkUseCase1107
-//				,mockSupportOptionsMethod()
-//				,mockAllInternelRequestForwardLocalhost()
-//				,mockAllReplenishmentRequestForwardLocalhost()
-//				,mockAllStockRequestForwardLocalhost()
+				,mockSupportOptionsMethod()
+				,mockAllInternelRequestForwardLocalhost()
+				,mockAllReplenishmentRequestForwardLocalhost()
+				,mockAllStockRequestForwardLocalhost()
 //				,mockTest()
 //				,mockOffShelfQuery()
 //				,mockOffShelfSubmit()
