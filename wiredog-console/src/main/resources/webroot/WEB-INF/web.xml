@@ -93,6 +93,15 @@
 		<servlet-name>MockMasterSwitchServlet</servlet-name>
 		<url-pattern>/mock/switch</url-pattern>
 	</servlet-mapping>
+	<!-- mock detail -->
+	<servlet>
+		<servlet-name>MockMasterDetailServlet</servlet-name>
+		<servlet-class>org.hum.wiredog.console.http.servlet.MockMasterDetailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockMasterDetailServlet</servlet-name>
+		<url-pattern>/mock/get</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list> 
 		<welcome-file>index.html</welcome-file> 

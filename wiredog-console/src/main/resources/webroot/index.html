@@ -80,6 +80,14 @@
 						});
 					}
 				});
+				
+				$.get("/mock/get", function(resp) {
+					if (resp == "true") {
+						$('#mockButton').switchbutton("check");
+					} else {
+						$('#mockButton').switchbutton("uncheck");
+					}
+				});
 		    })
 		    
 		    function clickSessionSearchBtn() {
