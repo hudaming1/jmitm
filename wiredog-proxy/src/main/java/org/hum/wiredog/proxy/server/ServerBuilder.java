@@ -3,22 +3,22 @@ package org.hum.wiredog.proxy.server;
 import org.hum.wiredog.proxy.config.WiredogCoreConfig;
 import org.hum.wiredog.proxy.mock.MockHandler;
 
-public class WtServerBuilder {
+public class ServerBuilder {
 	
 	private WiredogCoreConfig config;
 	
 
-	public static WtServerBuilder init(WiredogCoreConfig config) {
-		WtServerBuilder serverBuilder = new WtServerBuilder();
+	public static ServerBuilder init(WiredogCoreConfig config) {
+		ServerBuilder serverBuilder = new ServerBuilder();
 		serverBuilder.config = config;
 		return serverBuilder;
 	}
 	
-	private WtServerBuilder() {
+	private ServerBuilder() {
 	}
 	
-	public WtServer build() {
-		WtDefaultServer server = new WtDefaultServer(config);
+	public Server build() {
+		DefaultServer server = new DefaultServer(config);
 		server.setMockHandler(new MockHandler(config.getMockList()));
 		return server;
 	}

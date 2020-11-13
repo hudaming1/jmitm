@@ -25,13 +25,13 @@ import io.netty.handler.logging.LoggingHandler;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WtDefaultServer implements WtServer {
+public class DefaultServer implements Server {
 	
 	private MockHandler mockHandler;
 	
 	private InvokeChainInit invokeChainInit;
 
-	public WtDefaultServer(WiredogCoreConfig config) {
+	public DefaultServer(WiredogCoreConfig config) {
 		WiredogCoreConfigProvider.init(config);
 	}
 
@@ -62,7 +62,7 @@ public class WtDefaultServer implements WtServer {
 			return bootStrap.bind(WiredogCoreConfigProvider.get().getPort());
 		} catch (Exception e) {
 			log.error("start occur error, config=" + WiredogCoreConfigProvider.get(), e);
-			throw new WiredogException("WtDefaultServer start failed.", e);
+			throw new WiredogException("DefaultServer start failed.", e);
 		}
 	}
 	

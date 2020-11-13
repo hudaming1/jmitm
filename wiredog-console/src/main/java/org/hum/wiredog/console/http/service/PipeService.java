@@ -14,7 +14,7 @@ import org.hum.wiredog.console.http.helper.ConsoleHelper;
 import org.hum.wiredog.console.http.vo.WiredogPipeDetailVO;
 import org.hum.wiredog.console.http.vo.WiredogPipeListQueryVO;
 import org.hum.wiredog.console.http.vo.WiredogPipeListVO;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 
 public class PipeService {
@@ -22,7 +22,7 @@ public class PipeService {
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
 	public List<WiredogPipeListVO> list(WiredogPipeListQueryVO queryVo) {
-		Collection<WtPipeContext> all = PipeManagerInvokeChain.getAll();
+		Collection<PipeContext> all = PipeManagerInvokeChain.getAll();
 		List<WiredogPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
 			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
@@ -34,7 +34,7 @@ public class PipeService {
 	}
 
 	public WiredogPipeDetailVO getById(Long id) {
-		WtPipeContext pipe = PipeManagerInvokeChain.getById(id);
+		PipeContext pipe = PipeManagerInvokeChain.getById(id);
 		if (pipe == null) {
 			return new WiredogPipeDetailVO();
 		}

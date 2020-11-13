@@ -16,8 +16,8 @@ import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.common.util.HttpRequestCodec;
 import org.hum.wiredog.common.util.HttpResponseCodec;
-import org.hum.wiredog.console.common.WtConsoleConstant;
-import org.hum.wiredog.console.common.WtSession;
+import org.hum.wiredog.console.common.ConsoleConstant;
+import org.hum.wiredog.console.common.Session;
 import org.hum.wiredog.console.common.chain.SessionManagerInvokeChain;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -43,7 +43,7 @@ public class SendRequestServlet extends HttpServlet {
 		
 		InetAddress remoteAddress = HttpMessageUtil.parse2InetAddress(fullHttpRequest, false);
 		
-		WtSession wtSession = new WtSession(WtConsoleConstant.CONSOLE_SESSION_PIPE_ID, fullHttpRequest, System.currentTimeMillis());
+		Session wtSession = new Session(ConsoleConstant.CONSOLE_SESSION_PIPE_ID, fullHttpRequest, System.currentTimeMillis());
 		wtSession.setRequestBytes(requestBody.getBytes());
 		
 		Socket socket = new Socket(remoteAddress.getHost().trim(), remoteAddress.getPort());

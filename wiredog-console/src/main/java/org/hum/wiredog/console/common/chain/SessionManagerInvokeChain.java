@@ -7,10 +7,10 @@ import java.util.Stack;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.hum.wiredog.common.util.SyncLinkedHashMap;
-import org.hum.wiredog.console.common.WtSession;
+import org.hum.wiredog.console.common.Session;
 import org.hum.wiredog.console.websocket.service.WsSessionService;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.pipe.chain.DefaultPipeInvokeChain;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -22,9 +22,9 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	/**
 	 * 保存了当前HTTP连接，正在等待响应的请求
 	 */
-	protected Stack<WtSession> reqStack4WattingResponse = new Stack<>();
+	protected Stack<Session> reqStack4WattingResponse = new Stack<>();
 	private static WsSessionService wsSessionService = new WsSessionService();
-	private static Map<Long, WtSession> RequestIndex4Id;
+	private static Map<Long, Session> RequestIndex4Id;
 	private static final AtomicBoolean RequestIndex4Id_INIT_FLAG = new AtomicBoolean();
 
 	public SessionManagerInvokeChain(PipeInvokeChain next, int sessionHistory) {
@@ -39,8 +39,8 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	}
 
 	@Override
-	protected boolean clientRead0(WtPipeContext ctx, FullHttpRequest request) {
-		WtSession session = new WtSession(ctx.getId(), request, System.currentTimeMillis());
+	protected boolean clientRead0(PipeContext ctx, FullHttpRequest request) {
+		Session session = new Session(ctx.getId(), request, System.currentTimeMillis());
 		byte[] bytes = null;
 		if (request.content().readableBytes() > 0) {
 			bytes = new byte[request.content().readableBytes()];
@@ -53,13 +53,13 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 	}
 
 	@Override
-	protected boolean serverRead0(WtPipeContext ctx, FullHttpResponse response) {
+	protected boolean serverRead0(PipeContext ctx, FullHttpResponse response) {
 		if (reqStack4WattingResponse.isEmpty() || reqStack4WattingResponse.size() > 1) {
 			log.warn(this + "---reqStack4WattingResponse.size error, size=" + reqStack4WattingResponse.size());
 			ctx.getClientChannel().writeAndFlush(response);
 			return true;
 		}
-		WtSession session = reqStack4WattingResponse.pop();
+		Session session = reqStack4WattingResponse.pop();
 
 		byte[] bytes = null;
 		if (response.content().readableBytes() > 0) {
@@ -72,7 +72,7 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 		return true;
 	}
 	
-	public static Collection<WtSession> getAll() {
+	public static Collection<Session> getAll() {
 		if (RequestIndex4Id == null || RequestIndex4Id.values() == null) {
 			return Collections.unmodifiableCollection(Collections.emptyList());
 		}
@@ -86,11 +86,11 @@ public class SessionManagerInvokeChain extends DefaultPipeInvokeChain {
 		RequestIndex4Id.clear();
 	}
 	
-	public static WtSession getById(long id) {
+	public static Session getById(long id) {
 		return RequestIndex4Id.get(id);
 	}
 	
-	public static void addSession(WtSession session) {
+	public static void addSession(Session session) {
 		RequestIndex4Id.put(session.getId(), session);
 		wsSessionService.sendNewSessionMsg(null, session);
 	}

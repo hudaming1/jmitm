@@ -8,7 +8,7 @@ import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.constant.Constant;
 import org.hum.wiredog.proxy.pipe.enumtype.Protocol;
@@ -47,7 +47,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
         // [HTTP] 1.建立front连接
 		InetAddress inetAddr = NettyUtils.toHostAndPort(ctx.channel());
 		// init context
-		WtPipeContext wtContext = new WtPipeContext(counter.getAndIncrement(), ctx.channel());
+		PipeContext wtContext = new PipeContext(counter.getAndIncrement(), ctx.channel());
 		wtContext.setName(inetAddr.toString());
         wtContext.setSource(inetAddr.getHost(), inetAddr.getPort());
         ctx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).set(wtContext);
@@ -66,7 +66,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		}
 		
 		// wrap pipeholder
-		WtPipeContext wtContext = (WtPipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
+		PipeContext wtContext = (PipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		wtContext.setTarget(InetAddress.getHost(), InetAddress.getPort());
 		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
 		fullPipeHandler.clientParsed(wtContext);

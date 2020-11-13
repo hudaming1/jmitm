@@ -3,7 +3,7 @@ package org.hum.wiredog.proxy.pipe.core;
 import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class HttpsPipeHandler extends StandardPipeHandler {
 
-	public HttpsPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, WtPipeContext wtContext,
+	public HttpsPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, PipeContext wtContext,
 			MockHandler mockHandler) {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}

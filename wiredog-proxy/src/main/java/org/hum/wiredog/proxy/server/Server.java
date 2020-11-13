@@ -2,7 +2,7 @@ package org.hum.wiredog.proxy.server;
 
 import io.netty.channel.ChannelFuture;
 
-public interface WtServer {
+public interface Server {
 
 	public ChannelFuture start();
 	

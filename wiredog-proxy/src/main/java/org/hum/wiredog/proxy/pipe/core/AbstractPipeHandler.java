@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
@@ -20,10 +20,10 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 
 	protected Map<String, BackPipe> backMap;
-	protected WtPipeContext wtContext;
+	protected PipeContext wtContext;
 	private final String BACK_PIPE_KEY = "%s:%s";
 	
-	public AbstractPipeHandler(WtPipeContext wtContext) {
+	public AbstractPipeHandler(PipeContext wtContext) {
 		this.backMap = new ConcurrentHashMap<>();
 		this.wtContext = wtContext;
 	}

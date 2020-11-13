@@ -11,8 +11,8 @@ import org.hum.wiredog.common.constant.HttpConstant;
 import org.hum.wiredog.common.util.DateUtils;
 import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpRequestCodec;
-import org.hum.wiredog.console.common.WtConsoleConstant;
-import org.hum.wiredog.console.common.WtSession;
+import org.hum.wiredog.console.common.ConsoleConstant;
+import org.hum.wiredog.console.common.Session;
 import org.hum.wiredog.console.common.chain.SessionManagerInvokeChain;
 import org.hum.wiredog.console.common.codec.IContentCodec;
 import org.hum.wiredog.console.common.codec.impl.CodecFactory;
@@ -44,8 +44,8 @@ public class SessionService {
 		return sessionList;
 	}
 
-	private static boolean isShowwiredogConsoleSession(WtSession session) {
-		if (!session.getRequest().headers().contains(WtConsoleConstant.wiredog_CONSOLE_IDEN)) {
+	private static boolean isShowwiredogConsoleSession(Session session) {
+		if (!session.getRequest().headers().contains(ConsoleConstant.wiredog_CONSOLE_IDEN)) {
 			return true;
 		}
 		return ConsoleServer.wiredogConsoleConfig.isShowConsoleSession();
@@ -63,7 +63,7 @@ public class SessionService {
 		QUERY.setPipeId(newCondition.getPipeId());
 	}
 	
-	public static boolean isMatch(WtSession session) {
+	public static boolean isMatch(Session session) {
 		if (!isShowwiredogConsoleSession(session)) {
 			return false;
 		} else if (QUERY == null || QUERY.isEmpty()) {
@@ -86,14 +86,14 @@ public class SessionService {
 		return true;
 	}
 	
-	public WtSession getWtSessionById(Long id) {
+	public Session getWtSessionById(Long id) {
 		return SessionManagerInvokeChain.getById(id);
 	}
 	
 	public WiredogSessionDetailVO getById(Long id) {
 		try {
 			WiredogSessionDetailVO detailVo = new WiredogSessionDetailVO();
-			WtSession simpleSession = SessionManagerInvokeChain.getById(id);
+			Session simpleSession = SessionManagerInvokeChain.getById(id);
 			detailVo.setRequestHeader(HttpRequestCodec.encodeWithoutBody(simpleSession.getRequest(), HttpConstant.RETURN_LINE));
 			detailVo.setCreateTime(DateUtils.formatTime(new Date(simpleSession.getRequestTime())));
 			if (simpleSession.getRequestBytes() != null) {
@@ -131,7 +131,7 @@ public class SessionService {
 		}
 	}
 	
-	private String convert2RepsonseHeader(WtSession session) {
+	private String convert2RepsonseHeader(Session session) {
 		if (session.getResponse() == null) {
 			return "";
 		}

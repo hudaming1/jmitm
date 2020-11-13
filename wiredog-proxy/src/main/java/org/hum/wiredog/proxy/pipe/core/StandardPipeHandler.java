@@ -5,7 +5,7 @@ import java.util.Stack;
 
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
@@ -34,7 +34,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	protected BackPipe currentBack;
 	protected Stack<FullHttpRequest> mockRequestStack = new Stack<>();
 
-	public StandardPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, WtPipeContext wtContext, MockHandler mockHandler) {
+	public StandardPipeHandler(FrontPipe front, PipeInvokeChain fullPipeHandler, PipeContext wtContext, MockHandler mockHandler) {
 		// init
 		super(wtContext);
 		this.mockHandler = mockHandler;

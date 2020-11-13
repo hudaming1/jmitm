@@ -1,7 +1,7 @@
 package org.hum.wiredog.proxy.pipe.core;
 
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 
@@ -25,14 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 	
-	private WtPipeContext wtContext;
+	private PipeContext wtContext;
 	private static EventLoopGroup eventLoopGroup = null;
 	
 	static {
 		eventLoopGroup = new NioEventLoopGroup(WiredogCoreConfigProvider.get().getThreads() / 2);
 	}
 	
-	public SimpleForwardPipeHandler(WtPipeContext wtContext) {
+	public SimpleForwardPipeHandler(PipeContext wtContext) {
 		this.wtContext = wtContext;
 		Bootstrap bootstrap = new Bootstrap();
 		bootstrap.channel(NioSocketChannel.class);
@@ -100,9 +100,9 @@ public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
     
     static class ServerForwrdHandler extends ChannelInboundHandlerAdapter {
     	
-    	private WtPipeContext wtContext;
+    	private PipeContext wtContext;
     	
-    	public ServerForwrdHandler(WtPipeContext wtContext) {
+    	public ServerForwrdHandler(PipeContext wtContext) {
     		this.wtContext = wtContext;
     	}
 

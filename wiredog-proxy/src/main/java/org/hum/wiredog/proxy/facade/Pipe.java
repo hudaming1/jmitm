@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiredog.proxy.pipe.bean.WtPipeEvent;
+import org.hum.wiredog.proxy.pipe.bean.PipeEvent;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiredog.proxy.pipe.enumtype.Protocol;
 
@@ -16,7 +16,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Getter;
 
 @Getter
-class WtPipe {
+class Pipe {
 	
 	// pipeId
 	private Long id;
@@ -33,11 +33,11 @@ class WtPipe {
 	// pipe status
 	private Map<Long, PipeStatus> statusMap = new HashMap<>();
 	// event
-	private List<WtPipeEvent> events = new ArrayList<>();
+	private List<PipeEvent> events = new ArrayList<>();
 	// protocol
 	private Protocol protocol;
 	
-	void addEvent(WtPipeEvent event) {
+	void addEvent(PipeEvent event) {
 		this.events.add(event);
 	}
 	

@@ -1,6 +1,6 @@
 package org.hum.wiredog.console.common;
 
-public class WtConsoleConstant {
+public class ConsoleConstant {
 
 	// 控制台请求Header标记
 	public static final String wiredog_CONSOLE_IDEN = "_wiredog_console";

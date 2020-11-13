@@ -11,7 +11,7 @@ import org.hum.wiredog.common.util.SyncLinkedHashMap;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.console.websocket.service.WsPipeService;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -21,8 +21,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class PipeManagerInvokeChain extends PipeInvokeChain {
 
-	private static Map<Channel, WtPipeContext> pipes4ClientChannel;
-	private static Map<Long, WtPipeContext> pipes4Id;
+	private static Map<Channel, PipeContext> pipes4ClientChannel;
+	private static Map<Long, PipeContext> pipes4Id;
 	private WsPipeService wsPipeService = new WsPipeService();
 
 	public PipeManagerInvokeChain(PipeInvokeChain next, int queueSize) {
@@ -32,7 +32,7 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 	}
 
 	@Override
-	protected boolean clientConnect0(WtPipeContext ctx) {
+	protected boolean clientConnect0(PipeContext ctx) {
 		if (pipes4ClientChannel.containsKey(ctx.getClientChannel())) {
 			log.error(ctx.getClientChannel() + "has exists, id=" + pipes4ClientChannel.get(ctx.getClientChannel()).getId());
 			throw new WiredogException(ctx.getClientChannel() + " has exists");
@@ -43,17 +43,17 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 		return true;
 	}
 
-	public static WtPipeContext getById(Long id) {
+	public static PipeContext getById(Long id) {
 		return pipes4Id.get(id);
 	}
 	
-	public static List<WtPipeContext> getAll() {
-		List<WtPipeContext> list = new ArrayList<>();
+	public static List<PipeContext> getAll() {
+		List<PipeContext> list = new ArrayList<>();
 		list.addAll(pipes4Id.values());
 		// 按照Id顺序展示
-		Collections.sort(list, new Comparator<WtPipeContext>() {
+		Collections.sort(list, new Comparator<PipeContext>() {
 			@Override
-			public int compare(WtPipeContext o1, WtPipeContext o2) {
+			public int compare(PipeContext o1, PipeContext o2) {
 				if (o1 == null) {
 					return -1;
 				} else if (o2 == null) {
@@ -66,91 +66,91 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 	}
 
 	@Override
-	protected boolean clientParsed0(WtPipeContext ctx) {
+	protected boolean clientParsed0(PipeContext ctx) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientRead0(WtPipeContext ctx, FullHttpRequest request) {
+	protected boolean clientRead0(PipeContext ctx, FullHttpRequest request) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverConnect0(WtPipeContext ctx, InetAddress InetAddress) {
+	protected boolean serverConnect0(PipeContext ctx, InetAddress InetAddress) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverHandshakeSucc0(WtPipeContext ctx) {
+	protected boolean serverHandshakeSucc0(PipeContext ctx) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverFlush0(WtPipeContext ctx, FullHttpRequest request) {
+	protected boolean serverFlush0(PipeContext ctx, FullHttpRequest request) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverRead0(WtPipeContext ctx, FullHttpResponse response) {
+	protected boolean serverRead0(PipeContext ctx, FullHttpResponse response) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientFlush0(WtPipeContext ctx, FullHttpResponse response) {
+	protected boolean clientFlush0(PipeContext ctx, FullHttpResponse response) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientClose0(WtPipeContext ctx) {
+	protected boolean clientClose0(PipeContext ctx) {
 		wsPipeService.sendDisConnectMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverClose0(WtPipeContext ctx) {
+	protected boolean serverClose0(PipeContext ctx) {
 		wsPipeService.sendDisConnectMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientError0(WtPipeContext ctx, Throwable cause) {
+	protected boolean clientError0(PipeContext ctx, Throwable cause) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverError0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverError0(PipeContext ctx, Throwable cause) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientHandshakeSucc0(WtPipeContext ctx) {
+	protected boolean clientHandshakeSucc0(PipeContext ctx) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean clientHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+	protected boolean clientHandshakeFail0(PipeContext ctx, Throwable cause) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverConnectFailed0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverConnectFailed0(PipeContext ctx, Throwable cause) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}
 
 	@Override
-	protected boolean serverHandshakeFail0(WtPipeContext ctx, Throwable cause) {
+	protected boolean serverHandshakeFail0(PipeContext ctx, Throwable cause) {
 		wsPipeService.sendStatusChangeMsg(ctx);
 		return true;
 	}

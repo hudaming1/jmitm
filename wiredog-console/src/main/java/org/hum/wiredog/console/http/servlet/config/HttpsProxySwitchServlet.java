@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hum.wiredog.console.common.chain.PipeManagerInvokeChain;
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 
 /**
@@ -19,6 +20,11 @@ public class HttpsProxySwitchServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		WiredogCoreConfigProvider.get().setParseHttps("true".equals(req.getParameter("switcher")));
+		
+		PipeManagerInvokeChain.getAll().forEach(context -> {
+			
+		});
+		
 		resp.getWriter().print("true");
 		resp.getWriter().flush();
 		resp.getWriter().close();

@@ -1,7 +1,7 @@
 package org.hum.wiredog.proxy.pipe.core;
 
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
-import org.hum.wiredog.proxy.facade.WtPipeContext;
+import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 
@@ -13,9 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 public class InactiveChannelHandler extends ChannelInboundHandlerAdapter {
 	
 	private PipeInvokeChain fullPipeHandler;
-	private WtPipeContext wtContext;
+	private PipeContext wtContext;
 	
-	public InactiveChannelHandler(WtPipeContext wtContext, PipeInvokeChain fullPipeHandler) {
+	public InactiveChannelHandler(PipeContext wtContext, PipeInvokeChain fullPipeHandler) {
 		this.wtContext = wtContext;
 		this.fullPipeHandler = fullPipeHandler;
 	}

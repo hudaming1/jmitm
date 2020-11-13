@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiredog.common.constant.HttpConstant;
 import org.hum.wiredog.common.util.HttpRequestCodec;
-import org.hum.wiredog.console.common.WtSession;
+import org.hum.wiredog.console.common.Session;
 import org.hum.wiredog.console.http.service.SessionService;
 
 /**
@@ -23,7 +23,7 @@ public class CopyHttpRequestServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "text/plain");
-		WtSession wtSession = sessionService.getWtSessionById(Long.parseLong(req.getParameter("id")));
+		Session wtSession = sessionService.getWtSessionById(Long.parseLong(req.getParameter("id")));
 		resp.getWriter().print(HttpRequestCodec.encodeWithoutBody(wtSession.getRequest(), HttpConstant.RETURN_LINE));
 		resp.getWriter().print(HttpConstant.RETURN_LINE);
 		if (wtSession.getRequestBytes() != null) {

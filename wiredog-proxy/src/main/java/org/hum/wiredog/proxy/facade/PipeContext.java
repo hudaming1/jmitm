@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.wiredog.proxy.pipe.bean.WtPipeEvent;
+import org.hum.wiredog.proxy.pipe.bean.PipeEvent;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeEventType;
 import org.hum.wiredog.proxy.pipe.enumtype.PipeStatus;
 import org.hum.wiredog.proxy.pipe.enumtype.Protocol;
@@ -16,15 +16,15 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpRequest;
 
-public class WtPipeContext {
+public class PipeContext {
 
 	private String sourceHost;
 	private int sourcePort;
 	private String targetHost;
 	private int targetPort;
-	private WtPipe pipe = new WtPipe();
+	private Pipe pipe = new Pipe();
 	
-	public WtPipeContext(int id, Channel clientChannel) {
+	public PipeContext(int id, Channel clientChannel) {
 		pipe.setId(id);
 		pipe.setSourceCtx(clientChannel);
 	}
@@ -93,10 +93,10 @@ public class WtPipeContext {
 	}
 	
 	public void addEvent(PipeEventType type, String desc) {
-		this.pipe.addEvent(new WtPipeEvent(type, desc, System.currentTimeMillis()));
+		this.pipe.addEvent(new PipeEvent(type, desc, System.currentTimeMillis()));
 	}
 	
-	public List<WtPipeEvent> getEventList() {
+	public List<PipeEvent> getEventList() {
 		return Collections.unmodifiableList(this.pipe.getEvents());
 	}
 

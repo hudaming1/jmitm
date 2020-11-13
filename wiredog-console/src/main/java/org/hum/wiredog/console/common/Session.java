@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import lombok.Getter;
 
 @Getter
-public class WtSession {
+public class Session {
 	
 	private static final AtomicInteger IdCreator = new AtomicInteger(0);
 	
@@ -20,7 +20,7 @@ public class WtSession {
 	private byte[] responseBytes;
 	private long responseTime;
 	
-	public WtSession(Long pipeId, FullHttpRequest request, long requestTime) {
+	public Session(Long pipeId, FullHttpRequest request, long requestTime) {
 		this.id = IdCreator.incrementAndGet();
 		this.pipeId = pipeId;
 		this.request = request;

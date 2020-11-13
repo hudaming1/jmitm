@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class WtPipeEvent implements Serializable {
+public class PipeEvent implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private PipeEventType type;

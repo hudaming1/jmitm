@@ -7,7 +7,7 @@ import org.hum.wiredog.console.http.config.WiredogConsoleConfig;
 import org.hum.wiredog.console.websocket.WebSocketServer;
 import org.hum.wiredog.proxy.config.WiredogCoreConfig;
 import org.hum.wiredog.proxy.mock.MockHandler;
-import org.hum.wiredog.proxy.server.WtDefaultServer;
+import org.hum.wiredog.proxy.server.DefaultServer;
 
 import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -15,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class WiredogServerProvider {
 	
-	private WtDefaultServer proxyServer;
+	private DefaultServer proxyServer;
 	private ConsoleServer consoleServer;
 	private WebSocketServer webSocketServer;
 	
 	public WiredogServerProvider(WiredogCoreConfig coreConfig, WiredogConsoleConfig consoleConfig) {
 		PipeManagerInvokeChain pipeManagerInvokeChain = new PipeManagerInvokeChain(null, consoleConfig.getPipeHistory());
 		// proxy-server
-		this.proxyServer = new WtDefaultServer(coreConfig);
+		this.proxyServer = new DefaultServer(coreConfig);
 		this.proxyServer.setMockHandler(new MockHandler(coreConfig.getMockList()));
 		this.proxyServer.setInvokeChainInit(()-> {
 			return new SessionManagerInvokeChain(pipeManagerInvokeChain, consoleConfig.getSessionHistory());
