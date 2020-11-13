@@ -1,4 +1,4 @@
-package org.hum.wiredog.console.http.servlet;
+package org.hum.wiredog.console.http.servlet.session;
 
 import java.io.DataInputStream;
 import java.io.IOException;

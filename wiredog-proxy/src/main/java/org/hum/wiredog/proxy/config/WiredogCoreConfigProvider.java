@@ -47,6 +47,10 @@ public class WiredogCoreConfigProvider {
 		return this.wiredogCoreConfig.isParseHttps();
 	}
 	
+	public void setParseHttps(boolean isParseHttps) {
+		this.wiredogCoreConfig.setParseHttps(isParseHttps);
+	}
+	
 	public boolean isOpenMasterMockStwich() {
 		return this.wiredogCoreConfig.isMasterMockStwich();
 	}

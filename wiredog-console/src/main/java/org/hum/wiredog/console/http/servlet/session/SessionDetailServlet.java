@@ -1,4 +1,4 @@
-package org.hum.wiredog.console.http.servlet;
+package org.hum.wiredog.console.http.servlet.session;
 
 import java.io.IOException;
 
@@ -7,22 +7,22 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hum.wiredog.console.http.service.PipeService;
+import org.hum.wiredog.console.http.service.SessionService;
 
 import com.alibaba.fastjson.JSON;
 
 /**
- * http://localhost:8080/pipe/get
+ * http://localhost:8080/session/get
  */
-public class PipeDetailServlet extends HttpServlet {
+public class SessionDetailServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
-	private PipeService pipeService = new PipeService();
+	private final SessionService sessionService = new SessionService();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "application/json");
-		resp.getWriter().print(JSON.toJSONString(pipeService.getById(Long.parseLong(req.getParameter("id")))));
+		resp.getWriter().print(JSON.toJSONString(sessionService.getById(Long.parseLong(req.getParameter("id")))));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

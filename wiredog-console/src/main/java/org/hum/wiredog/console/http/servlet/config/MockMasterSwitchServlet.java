@@ -1,4 +1,4 @@
-package org.hum.wiredog.console.http.servlet;
+package org.hum.wiredog.console.http.servlet.config;
 
 import java.io.IOException;
 
@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 
 /**
- * http://localhost:8080/mock/switch
+ * http://localhost:8080/config/mock_update
  */
 public class MockMasterSwitchServlet extends HttpServlet {
 
@@ -18,7 +18,6 @@ public class MockMasterSwitchServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		// 传入1位开启开关；其余包括null全部认为关闭Mock
 		WiredogCoreConfigProvider.get().setOpenMasterMockStwich("true".equals(req.getParameter("switcher")));
 		resp.getWriter().print("true");
 		resp.getWriter().flush();

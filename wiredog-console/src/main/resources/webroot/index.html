@@ -71,22 +71,26 @@
 				$('#mockButton').switchbutton({
 					checked: true,
 					onChange: function(checked) {
-						$.post("/mock/switch", {"switcher": checked}, function(resp) {
-							if (checked) {
-			            		console("Mock Open");
-			            	} else {
-			            		console("Mock Closed");
-			            	}
+						$.post("/config/mock_update", {"switcher": checked}, function(resp) {
+			            	console(checked ? "Mock Open": "Mock Closed");
 						});
 					}
 				});
 				
-				$.get("/mock/get", function(resp) {
-					if (resp == "true") {
-						$('#mockButton').switchbutton("check");
-					} else {
-						$('#mockButton').switchbutton("uncheck");
+				// 初始化HttpsProxy按钮
+				$('#httpProxyButton').switchbutton({
+					checked: true,
+					onChange: function(checked) {
+						$.post("/config/https_proxy_update", {"switcher": checked}, function(resp) {
+			            	console(checked ? "Mock Open" : "Mock Closed");
+						});
 					}
+				});
+				
+				$.get("/config/get", function(resp) {
+					var configObj = eval("(" + resp + ")");
+					$('#mockButton').switchbutton(configObj.mock ? "check" : "uncheck");
+					$('#httpProxyButton').switchbutton(configObj.httpsProxy ? "check" : "uncheck");
 				});
 		    })
 		    
@@ -247,9 +251,9 @@
 			</div>
 		</div>
 		<!-- Mock Window -->
-	    <div id="masterSwtichWindow" class="easyui-window" title="Master Switcher" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:150px; height:117px;">
+	    <div id="masterSwtichWindow" class="easyui-window" title="Switch" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:150px; height:117px;">
 	    	<div style="margin: 5px;"><b>Mock:</b> <input id="mockButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
-			<div style="margin: 5px;"><b>Https:</b> <input class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
+			<div style="margin: 5px;"><b>Https:</b> <input id="httpProxyButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
 	    </div>
 	</body>
 </html>
