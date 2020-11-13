@@ -189,7 +189,6 @@
 					</thead>
 				</table>
 				<div id="sessionDgTb" style="padding:5px;height:auto">
-					<input id="mockButton" class="easyui-switchbutton" data-options="onText:'MockOn',offText:'MockOff'" checked style="width:95px;" />
 					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
 					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
 					<!-- 
@@ -212,8 +211,8 @@
 				<a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm1', plain:true,iconCls:'icon-more'" onclick="addPanel()"></a>
 			</div>
 			<div id="mm1" style="width:150px;">
-		        <div onclick="alert('unimplements');">Options</div> 
-		        <div onclick="$('#mockWindow').window('open');">Mock Panel</div>
+		        <div onclick="$('#masterSwtichWindow').window('open');">Master Switch</div> 
+		        <div onclick="alert('unimplements');">Mock Panel</div>
 		    </div>
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
@@ -248,20 +247,9 @@
 			</div>
 		</div>
 		<!-- Mock Window -->
-	    <div id="mockWindow" class="easyui-window" title="Mock Window" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false, iconCls:'icon-man'" style="width:50%; height:50%;">
-			<div class="easyui-layout" data-options="split:true, fit: true">
-				<div class="easyui-panel" data-options="region:'west', border:false, collapsible:false" style="width: 300px;">
-					<center style="padding-top: 50%;">
-						<form id="mockSwitchForm">
-							<div><input type="radio" onclick="openMockSwitch(1);" checked="checked" name="SelectOrder" value="1" />Open Mock</div>
-							<div style="padding-top: 10px"><input type="radio" onclick="openMockSwitch(0);" name="SelectOrder" value="0" />Close Mock</div>
-						</form>
-					</center>
-				</div>
-				<div class="easyui-datalist" data-options="modal: true, region:'center', url: '/mock_list.json',
-					method: 'get', checkbox: true, selectOnCheck: false, onBeforeSelect: function(){return false;}">
-			    </div>
-			</div>
+	    <div id="masterSwtichWindow" class="easyui-window" title="Master Switcher" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:150px; height:117px;">
+	    	<div style="margin: 5px;"><b>Mock:</b> <input id="mockButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
+			<div style="margin: 5px;"><b>Https:</b> <input class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
 	    </div>
 	</body>
 </html>
