@@ -42,6 +42,7 @@
 
 ##功能优化
 ###M11W2
+【P0】isProxyHttps功能想简单了，切换代理时，对已经建立的连接时无法感知的，需要切断所有连接才能生效
 【P0】PostMan支持Https功能(8h)
 【P1】界面Bug越来越多，集中调整吧
 【P2】设计上优化：对FullRequest和FullRepsonse加上包装类(2h)
