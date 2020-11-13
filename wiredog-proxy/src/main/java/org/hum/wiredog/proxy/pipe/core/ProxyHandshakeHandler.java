@@ -7,8 +7,8 @@ import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.common.util.NettyUtils;
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
-import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.PipeContext;
+import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.mock.MockHandler;
 import org.hum.wiredog.proxy.pipe.constant.Constant;
 import org.hum.wiredog.proxy.pipe.enumtype.Protocol;
@@ -65,7 +65,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 			return ;
 		}
 		
-		// wrap pipeholder
+		// wrap pipe_context
 		PipeContext wtContext = (PipeContext) client2ProxyCtx.channel().attr(AttributeKey.valueOf(Constant.ATTR_PIPE)).get();
 		wtContext.setTarget(InetAddress.getHost(), InetAddress.getPort());
 		wtContext.setProtocol(HttpMessageUtil.isHttpsRequest(request) ? Protocol.HTTPS : Protocol.HTTP);
