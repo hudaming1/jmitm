@@ -16,5 +16,6 @@ public class MockListVO implements Serializable {
 	private String id;
 	private String name;
 	private String desc;
+	private boolean checked;
 	private String status;
 }

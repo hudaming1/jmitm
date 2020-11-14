@@ -32,19 +32,6 @@
 				});
 			}
 			
-			function pipeDgDbClickRow(index, row) {
-				$("body").tabs("select", 1);
-				$("#SESN_STAGE").find("#sessionDgTb").find("#searchPipe").tagbox({ prompt : "", value : "PIPE" + row.pipeId });
-		        $("#SESN_STAGE").find("#dgMain").datagrid("load", {
-		        	pipe_id: row.pipeId
-		        });
-			}
-			
-			function reqDgReload() {
-				$("#SESN_STAGE").find("#dgMain").datagrid("load", {
-		        });
-			}
-			
 			var wssocket;
 			var consoleId = new Date().getTime();
 			
@@ -177,13 +164,34 @@
 	            	alert("send success");
 				});
 	        }
+	        
+	        function bindStatus(value,row,index){
+                    return true;
+            }
+            $.extend($.fn.datagrid.methods, {
+				getChecked: function (jq) {
+					var rr = [];
+					var rows = jq.datagrid('getRows');
+					jq.datagrid('getPanel').find('div.datagrid-cell input:checked').each(function () {
+						var index = $(this).parents('tr:first').attr('datagrid-row-index');
+						rr.push(rows[index]);
+					});
+					return rr;
+				}
+			});
+			
+			function mockListDgClickRow(index, row) {
+				$.post("/config/mock/update", {"id": row.id, "status": row.status == 0 ? 1 : 0}, function(resp) {
+					$("#MockListDataGrid").datagrid("reload");
+				});
+			}
 		</script>
 	</head>
 	<body class="easyui-layout" data-options="tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
 		<div id="centerLayout" class="easyui-layout" data-options="region:'center', collapsible:false, split: false" style="width:40%">
 			<div data-options="region:'center', border:false, collapsible: false, split: false">
 				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
-						onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
+						onClickRow: sessionDgClickRow, striped: true, singleSelect: false, collapsible: true, url:'/session/list', method:'get'">
 					<thead>
 						<tr>
 							<th data-options="field:'sessionId', width: 55, hidden: true, align: 'center'">ID</th>
@@ -216,7 +224,7 @@
 			</div>
 			<div id="mm1" style="width:150px;">
 		        <div onclick="$('#masterSwtichWindow').window('open');">Master Switch</div> 
-		        <div onclick="alert('unimplements');">Mock Panel</div>
+		        <div onclick="$('#mockWindow').window('open');">Mock Panel</div>
 		    </div>
 			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
 				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
@@ -250,10 +258,23 @@
 				</div>
 			</div>
 		</div>
-		<!-- Mock Window -->
+		<!-- Switch Window -->
 	    <div id="masterSwtichWindow" class="easyui-window" title="Switch" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:150px; height:117px;">
 	    	<div style="margin: 5px;"><b>Mock:</b> <input id="mockButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
 			<div style="margin: 5px;"><b>Https:</b> <input id="httpProxyButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
+	    </div>
+		<!-- Mock Window -->
+	    <div id="mockWindow" class="easyui-window" title="MockList" data-options="closed: false, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:400px	; height:70%;">
+		    <table class="easyui-datagrid" id="MockListDataGrid" data-options="onClickRow: mockListDgClickRow, showHeader:false, border:false, method:'get', fit: true, url:'/config/mock/list',fitColumns:true, singleSelect:true">
+			    <thead>
+			        <tr>
+                		<th data-options="field:'ck',checkbox:true, formatter: bindStatus"></th>
+			            <th data-options="field:'id',hidden:true">mockId</th>
+			            <th data-options="field:'name',width:100">MockName</th>
+			            <th data-options="field:'status',hidden:true">status</th>
+				        </tr>
+			    </thead>
+			</table>
 	    </div>
 	</body>
 </html>

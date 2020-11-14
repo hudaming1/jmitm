@@ -23,7 +23,7 @@ public class MockUpdatorServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	@Override
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String mockId = req.getParameter("id");
 		String mockStatus = req.getParameter("status");
 		

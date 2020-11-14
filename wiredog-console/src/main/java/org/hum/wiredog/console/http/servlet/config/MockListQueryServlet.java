@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.wiredog.console.http.vo.MockListVO;
-import org.hum.wiredog.console.http.vo.ServletResult;
 import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
 import org.hum.wiredog.proxy.mock.Mock;
+import org.hum.wiredog.proxy.mock.MockStatus;
 
 import com.alibaba.fastjson.JSON;
 
@@ -30,10 +30,11 @@ public class MockListQueryServlet extends HttpServlet {
 		List<MockListVO> mockVoList = new ArrayList<MockListVO>();
 		if (mockList != null && !mockList.isEmpty()) {
 			mockList.forEach(item -> {
-				mockVoList.add(new MockListVO(item.getId(), item.getName(), item.getDesc(), item.getStatus().getName()));
+				mockVoList.add(new MockListVO(item.getId(), item.getName(), item.getDesc(), item.getStatus() == MockStatus.Enabled, item.getStatus().getCode() + ""));
 			});
 		}
-		resp.getWriter().print(JSON.toJSONString(new ServletResult<List<MockListVO>>(mockVoList)));
+		resp.setHeader("Content-Type", "application/json; charset=utf-8");
+		resp.getWriter().print(JSON.toJSONString(mockVoList));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}
