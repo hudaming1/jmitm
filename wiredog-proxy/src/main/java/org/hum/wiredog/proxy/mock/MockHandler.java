@@ -27,7 +27,9 @@ public class MockHandler {
 		
 		// rebuild-request
 		for (Mock mock : mockList) {
-			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
+			if (mock.status() == MockStatus.Disabled) {
+				continue;
+			} else if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
 				// 标记Header被拦截过(标记格式：#mockId1,#mockId2,#mockId3....)
 				String mockIdenArray = !request.headers().contains(WT_MOCK_SIGN) ? mock.getId() + "," : request.headers().get(WT_MOCK_SIGN) + "," + mock.getId() + ",";
 				request.headers().set(WT_MOCK_SIGN, mockIdenArray.substring(0, mockIdenArray.length() - 1));
@@ -38,7 +40,9 @@ public class MockHandler {
 		}
 		// mock (在Mock响应前，要保证获取到最终Rebuild过的Request)
 		for (Mock mock : mockList) {
-			if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
+			if (mock.status() == MockStatus.Disabled) {
+				continue;
+			} else if (mock.getRequestInterceptor() != null && mock.getRequestInterceptor().isHit(request)) {
 				// 标记Header被拦截过
 				String mockIden = request.headers().get(WT_MOCK_SIGN) + "," + mock.getId();
 				request.headers().set(WT_MOCK_SIGN, mockIden.substring(0, mockIden.length() - 1));

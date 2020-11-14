@@ -13,6 +13,7 @@ import org.hum.wiredog.proxy.mock.wiredog.HttpResponseRebuild;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.util.internal.StringUtil;
 import lombok.Data;
 
 @Data
@@ -125,6 +126,21 @@ public class CatchRequest {
 	}
 
 	public Mock mock() {
-		return new Mock(requestInterceptor, null, requestRebuilder, responseRebuild, responseMock);
+		return mock(null, null);
+	}
+
+	public Mock mock(String name, String desc) {
+		Mock mock = new Mock(requestInterceptor, null, requestRebuilder, responseRebuild, responseMock);
+		if (!StringUtil.isNullOrEmpty(name)) {
+			mock.name(name);
+		} else {
+			mock.name("Mock_" + mock.getId());
+		}
+		if (!StringUtil.isNullOrEmpty(desc)) {
+			mock.desc(desc);
+		} else {
+			mock.desc("");
+		}
+		return mock;
 	}
 }

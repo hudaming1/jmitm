@@ -1,12 +1,9 @@
 package org.hum.wiredog.proxy.pipe.core;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
-import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.PipeContext;
+import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.mock.MockHandler;
 
 import io.netty.channel.EventLoopGroup;
