@@ -1,13 +1,10 @@
 package org.hum.wiredog.proxy.pipe.core;
 
-import org.hum.wiredog.proxy.config.WiredogCoreConfigProvider;
-
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestEncoder;
@@ -22,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BackPipe {
 
-	private static EventLoopGroup eventLoopGroup = null;
 	private static SslContext SsslContext;
 	private String host;
 	private int port;
@@ -34,24 +30,22 @@ public class BackPipe {
 		try {
 			SsslContext = SslContextBuilder.forClient().trustManager(InsecureTrustManagerFactory.INSTANCE).build();
 			log.info("init ssl_context success...");
-			int backPipeThreadCount = WiredogCoreConfigProvider.get().getThreads() / 2;
-			eventLoopGroup = new NioEventLoopGroup(backPipeThreadCount);
 		} catch (Exception ce) {
 			log.error("init ssl_context failed", ce);
 		}
 	}
 
-	public BackPipe(String host, int port, boolean isHttps) {
+	public BackPipe(EventLoopGroup eventLoopGroup, String host, int port, boolean isHttps) {
 		this.host = host;
 		this.port = port;
 		if (isHttps) {
-			initHttpsBackPipe(host, port);
+			initHttpsBackPipe(eventLoopGroup, host, port);
 		} else {
-			initHttpBackPipe(host, port);
+			initHttpBackPipe(eventLoopGroup, host, port);
 		}
 	}
 	
-	private void initHttpsBackPipe(String host, int port) {
+	private void initHttpsBackPipe(EventLoopGroup eventLoopGroup, String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
 		bootStrap.group(eventLoopGroup);
@@ -66,7 +60,7 @@ public class BackPipe {
 		});
 	}
 	
-	private void initHttpBackPipe(String host, int port) {
+	private void initHttpBackPipe(EventLoopGroup eventLoopGroup, String host, int port) {
 		bootStrap = new Bootstrap();
 		bootStrap.channel(NioSocketChannel.class);
 		bootStrap.group(eventLoopGroup);

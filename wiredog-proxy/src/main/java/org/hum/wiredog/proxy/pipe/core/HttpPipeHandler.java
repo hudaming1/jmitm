@@ -2,10 +2,11 @@ package org.hum.wiredog.proxy.pipe.core;
 
 import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
-import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.PipeContext;
+import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.mock.MockHandler;
 
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +18,8 @@ public class HttpPipeHandler extends StandardPipeHandler {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}
 
-	protected void connect(FullHttpRequest request) throws InterruptedException {
+	@Override
+	protected void connect(EventLoopGroup eventLoopGroup, FullHttpRequest request) throws InterruptedException {
 		InetAddress inetAddress = HttpMessageUtil.parse2InetAddress(request, false);
 		if (inetAddress == null) {
 			close();
@@ -28,7 +30,7 @@ public class HttpPipeHandler extends StandardPipeHandler {
 
 		currentBack = super.select(inetAddress.getHost(), inetAddress.getPort());
 		if (currentBack == null) {
-			currentBack = initBackpipe(inetAddress);
+			currentBack = initBackpipe(eventLoopGroup, inetAddress);
 		}
 		if (!currentBack.isActive()) {
 			currentBack.connect().addListener(f -> {
@@ -46,7 +48,7 @@ public class HttpPipeHandler extends StandardPipeHandler {
 	}
 
 	@Override
-	protected BackPipe initBackpipe0(InetAddress InetAddress) {
-		return new BackPipe(InetAddress.getHost(), InetAddress.getPort(), false);
+	protected BackPipe initBackpipe0(EventLoopGroup eventLoopGroup, InetAddress InetAddress) {
+		return new BackPipe(eventLoopGroup, InetAddress.getHost(), InetAddress.getPort(), false);
 	}
 }

@@ -1,11 +1,15 @@
 package org.hum.wiredog.proxy.pipe.core;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.hum.wiredog.common.util.HttpMessageUtil;
 import org.hum.wiredog.common.util.HttpMessageUtil.InetAddress;
 import org.hum.wiredog.proxy.facade.PipeInvokeChain;
 import org.hum.wiredog.proxy.facade.PipeContext;
 import org.hum.wiredog.proxy.mock.MockHandler;
 
+import io.netty.channel.EventLoopGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +21,8 @@ public class HttpsPipeHandler extends StandardPipeHandler {
 		super(front, fullPipeHandler, wtContext, mockHandler);
 	}
 
-	protected void connect(FullHttpRequest request) throws InterruptedException {
+	@Override
+	protected void connect(EventLoopGroup eventLoopGroup, FullHttpRequest request) throws InterruptedException {
 		InetAddress InetAddress = HttpMessageUtil.parse2InetAddress(request, true);
 		if (InetAddress == null) {
 			close();
@@ -27,7 +32,7 @@ public class HttpsPipeHandler extends StandardPipeHandler {
 
 		currentBack = super.select(InetAddress.getHost(), InetAddress.getPort());
 		if (currentBack == null) {
-			currentBack = initBackpipe(InetAddress);
+			currentBack = initBackpipe(eventLoopGroup, InetAddress);
 		}
 
 		if (!currentBack.isActive()) {
@@ -43,7 +48,7 @@ public class HttpsPipeHandler extends StandardPipeHandler {
 			}).sync();
 			currentBack.handshakeFuture().addListener(tls -> {
 				if (!tls.isSuccess()) {
-					log.error("[" + wtContext.getId() + "] server tls error, cause={}", tls.cause().getMessage());
+					log.error("[" + wtContext.getId() + "] server tls error, cause={}", tls.cause().getMessage(), tls.cause());
 					fullPipeHandler.serverHandshakeFail(wtContext, tls.cause());
 					close();
 					return;
@@ -55,7 +60,7 @@ public class HttpsPipeHandler extends StandardPipeHandler {
 	}
 
 	@Override
-	protected BackPipe initBackpipe0(InetAddress InetAddress) {
-		return new BackPipe(InetAddress.getHost(), InetAddress.getPort(), true);
+	protected BackPipe initBackpipe0(EventLoopGroup eventLoopGroup, InetAddress InetAddress) {
+		return new BackPipe(eventLoopGroup, InetAddress.getHost(), InetAddress.getPort(), true);
 	}
 }

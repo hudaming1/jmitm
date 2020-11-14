@@ -10,6 +10,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
+import io.netty.channel.EventLoopGroup;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -37,13 +38,13 @@ public abstract class AbstractPipeHandler extends ChannelDuplexHandler {
 		return null;
 	}
 
-	protected BackPipe initBackpipe(InetAddress InetAddress) {
-		BackPipe newBackpipe = initBackpipe0(InetAddress);
+	protected BackPipe initBackpipe(EventLoopGroup eventLoopGroup, InetAddress InetAddress) {
+		BackPipe newBackpipe = initBackpipe0(eventLoopGroup, InetAddress);
 		backMap.put(String.format(BACK_PIPE_KEY, InetAddress.getHost(), InetAddress.getPort()), newBackpipe);
 		return newBackpipe;
 	} 
 	
-	protected abstract BackPipe initBackpipe0(InetAddress InetAddress);
+	protected abstract BackPipe initBackpipe0(EventLoopGroup eventLoopGroup, InetAddress InetAddress);
 	
 	protected BackPipe select(String host, int port) {
 		return backMap.get(String.format(BACK_PIPE_KEY, host, port));

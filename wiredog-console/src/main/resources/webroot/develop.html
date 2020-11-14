@@ -39,10 +39,8 @@
 			}
 			
 			function pipeDgClickRow(index, row) {
-				$.get("/pipe/get?id=" + row.pipeId, function(resp) {
-				
+				$.get("/pipe/get?id=" + row.pipeId, function(jsonObj) {
 					// load data
-					var jsonObj = eval("(" + resp + ")");
 					$("#PIPE_STAGE").find("#eventsDg").datagrid("loadData", jsonObj.pipeEvent);
 					// expand east_panel
 					if($("#PIPE_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {

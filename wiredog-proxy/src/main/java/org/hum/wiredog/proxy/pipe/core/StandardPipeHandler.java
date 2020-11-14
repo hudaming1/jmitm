@@ -15,6 +15,8 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.ConnectTimeoutException;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.LastHttpContent;
@@ -28,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Sharable
 public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	
+	// 后期不要额外定义线程池，直接复用front传来的LoopGroup
+	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(WiredogCoreConfigProvider.get().getThreads() / 2);
 	protected MockHandler mockHandler;
 	protected PipeInvokeChain fullPipeHandler;
 	// 当前保持的服务端连接
@@ -74,14 +78,16 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			
 			fullPipeHandler.clientRead(wtContext, request);
 
-			connect(request);
+			connect(eventLoopGroup, request);
+//			TODO 为什么不能复用clientCtx.channel().eventLoop()
+//			connect(clientCtx.channel().eventLoop(), request);
 		} else {
 			log.warn("need support more types, find type=" + msg.getClass());
 		}
 		currentBack.getChannel().writeAndFlush(msg);
 	}
 	
-	protected abstract void connect(FullHttpRequest request) throws InterruptedException;
+	protected abstract void connect(EventLoopGroup eventLoopGroup, FullHttpRequest request) throws InterruptedException;
 
 	/**
 	 * 读取到对端服务器请求
