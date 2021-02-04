@@ -157,7 +157,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Client(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException) {
+		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException || cause instanceof java.net.UnknownHostException) {
 			log.warn("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
 			log.error("front exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
@@ -168,7 +168,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 
 	@Override
 	public void exceptionCaught4Server(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException) {
+		if (cause instanceof ConnectTimeoutException || cause instanceof ConnectException || cause instanceof java.net.UnknownHostException) {
 			log.warn("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage());
 		} else {
 			log.error("back exception, pipeId=" + wtContext.getId() + ", host=" + wtContext.getTargetHost() + ", cause=" + cause.getMessage(), cause);
