@@ -34,12 +34,35 @@ public class WiredogServerRun {
 				// Mock WorkUseCase1107
 //				,mockTest()
 //				,mockTest2()
-				,mockTest3()
+				,mockTest3(),
+				mockXmly()
 				);
 		
 		wtBuilder.build().start();
 	}
-
+	
+	private static Mock mockXmly() {
+		return new CatchRequest().eval(request -> {
+			if ("/pay-trade-gateway/pay-trade-gateway/recharge".equals(request.uri())) {
+				log.info("hit xmly recharge!");
+				return true;
+			}
+			return false;
+		}).rebuildResponse(resp -> {
+			try {
+				String payOrder = new String(CodecFactory.create("gzip").decompress(resp.body()));
+				payOrder = payOrder.replace("total_fee=\\\"6\\\"", "total_fee=\\\"1\\\"");
+				System.out.println(payOrder);
+				byte[] bytes = CodecFactory.create("gzip").compress(payOrder.getBytes());
+				resp.body(bytes);
+				resp.header("content-length", bytes.length);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return resp;
+		}).mock();
+	}
+	
 	private static Mock mockDemo6() {
 		return new CatchRequest().eval(request -> {
 			return "www.baidu.com".equals(request.host()) && "/".equals(request.uri());
@@ -136,3 +159,5 @@ public class WiredogServerRun {
 		}).mock();
 	}
 }
+
+

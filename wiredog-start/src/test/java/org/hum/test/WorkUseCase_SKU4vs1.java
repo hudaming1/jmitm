@@ -14,17 +14,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class WorkUseCase_SKU4vs1 {
-	
 	public static void main(String[] args) throws Exception {
 		WiredogBuilder wtBuilder = new WiredogBuilder();
 		wtBuilder.parseHttps(true);
-		wtBuilder.proxyPort(52008).threads(40);
+		wtBuilder.proxyPort(52007).threads(40);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
 				// DEMO1：将「wiredog.com」重定向到「localhost:8080」，等效于配置host:   wiredog.com    127.0.0.1:8080
 				mockDemo1(), 
-				mockDemo3(),
+//				mockDemo3(),
 				mockDemo6(),
 				// Mock WorkUseCase1107 
 				mockAreaType(),
@@ -45,7 +44,8 @@ public class WorkUseCase_SKU4vs1 {
 				mockQueryLocationLike(),
 				mockImport(),
 				// Mock Location Bind
-				mockLocationBindQuery()
+				mockLocationBindQuery(),
+				mockLocationBindUpload()
 		);
 		
 		wtBuilder.build().start();
@@ -96,7 +96,7 @@ public class WorkUseCase_SKU4vs1 {
 
 	/*************************************************** 库区Mock ***************************************************/
 
-	private static final String USER_ID = "3016";
+	private static final String USER_ID = "12902";
 
 	private static Mock mockAreaType() {
 		return new CatchRequest().eval(request -> {
@@ -353,11 +353,26 @@ public class WorkUseCase_SKU4vs1 {
 
 	private static Mock mockLocationBindQuery() {
 		return new CatchRequest().eval(request -> {
-			return request.uri().equals("/sms/internal/locationbind/listByPage") && HttpMethod.POST == request.method();
+			return request.uri().equals("/sms/basic/locationbind/listByPage") && HttpMethod.POST == request.method();
 		}).rebuildRequest(request -> {
 			print("查询库位绑定关系");
 			request.forward("localhost:9005").header("X-User-Id", USER_ID);
 			request.uri("/sms/basic/locationbind/listByPage");
+			return request;
+		}).rebuildResponse(response -> {
+			response.header("Access-Control-Allow-Credentials", true);
+			response.header("Access-Control-Allow-Origin", "http://56hub-web-staging.missfresh.net");	
+			return response;
+		}).mock();
+	}
+
+	private static Mock mockLocationBindUpload() {
+		return new CatchRequest().eval(request -> {
+			return request.uri().equals("/sms/internal/locationbind/import") && HttpMethod.POST == request.method();
+		}).rebuildRequest(request -> {
+			print("上传库位绑定关系");
+			request.forward("localhost:9005").header("X-User-Id", USER_ID);
+			request.uri("/sms/basic/locationbind/import");
 			return request;
 		}).rebuildResponse(response -> {
 			response.header("Access-Control-Allow-Credentials", true);

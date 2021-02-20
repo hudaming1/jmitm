@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.hum.wiredog.console.common.codec.IContentCodec;
 
@@ -24,5 +25,14 @@ public class GzipContentCodec implements IContentCodec {
 			baos.write(buffer, 0, len);
 		}
 		return baos.toByteArray();
+	}
+
+	@Override
+	public byte[] compress(byte[] bytes) throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		GZIPOutputStream gzip = new GZIPOutputStream(out);
+		gzip.write(bytes);
+		gzip.close();
+		return out.toByteArray();
 	}
 }
