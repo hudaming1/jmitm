@@ -24,6 +24,9 @@
 					$("#SESN_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
 					$("#SESN_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
 					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
+					// FIXME 总是展示不全
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").height($("#SESN_STAGE").find("#responsePannel4Detail").height() - 100);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").doLayout();
 					// expand east_panel
 					if($("#SESN_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
 						$("#SESN_STAGE").find("body").layout("expand", "east");
@@ -247,10 +250,10 @@
 					</div>
 				</div>
 				<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
-					<div id="responseHeaderPannel" data-options="region:'center', border:false, split:true,collapsible:false" style="height:40%;padding:10px 20px 10px 10px;">
+					<div id="responseHeaderPannel" data-options="region:'center', border:false, split:true,collapsible:false" style="height:40%; padding:10px 20px 10px 10px;">
 					</div>
 					<div id="responsePannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;">
-						<div id="parsed" title="Parsed" data-options="fit:true, border:false" style="padding:10px 20px 10px 10px;">
+						<div id="parsed" title="Parsed" data-options="fit:true, border:false, doSize: true" style="padding:10px 20px 10px 10px;">
 						</div>
 						<div id="source" title="Source" data-options="fit:true, border:false" style="padding:10px 20px 10px 10px;">
 						</div>
