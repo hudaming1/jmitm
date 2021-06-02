@@ -62,5 +62,5 @@ proxy.add(new CatchRequest().eval(request -> {
 
 ## 其他
 #### 内置PostMan
-对于抓到的HTTP请求，在控制台中不仅可以查看请求和响应结果，也可以实时进行修改并进行再次发送，等效于实现集成Fillder和PostMan。   
+请求重访功能：对于抓到的HTTP请求，在控制台中不仅可以查看请求和响应结果，也可以实时进行修改并进行再次发送，等效于实现集成Fillder和PostMan。   
 <补充示例>
