@@ -1,5 +1,5 @@
 ## 可编程式网关
-简单说就是你可以对自己浏览器的所有请求和响应进行拦截，并通过Java代码方式进行重制。
+简单说就是你可以对自己浏览器的所有「请求」和「响应」进行拦截，并通过「Java代码方式」进行「重制」。
 基于编程式网关，你可以：
 
 **根据Request重制Request**    
@@ -35,7 +35,7 @@ proxy.add(new CatchRequest().eval(request -> {
 ![](https://github.com/hudaming1/wiredog/blob/master/Show2.png)
 
 **根据Request Mock Response**    
-拦截百度首页Logo，不做真实转发，直接读取本地GoogleLogo文件作为Response，首页Logo变为Google
+拦截百度首页Logo，不做真实转发，直接读取本地GoogleLogo文件作为Response，百度首页的Logo变为本地Google的图片
 ```java
 proxy.add(new CatchRequest().eval(request -> {
     // 如果域名是baidu，访问的图片是百度的Logo（第一个图片是PC上的，后两个路径是移动端的Logo）
