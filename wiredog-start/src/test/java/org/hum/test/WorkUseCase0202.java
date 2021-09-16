@@ -21,7 +21,7 @@ public class WorkUseCase0202 {
 				mockAllInternelRequestForwardLocalhost2()
 				);
 		
-		wtBuilder.build().start();
+		wtBuilder.build().start(); 
 	}
 	
 	private static final String USER_ID = "3102";
