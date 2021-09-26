@@ -37,7 +37,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>org.hum.wiredog.main.WiredogServerRun</mainClass>
+							<mainClass>org.hum.jmitm.main.WiredogServerRun</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

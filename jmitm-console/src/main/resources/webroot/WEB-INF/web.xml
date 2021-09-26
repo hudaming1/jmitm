@@ -6,7 +6,7 @@
 	<!-- pipe list -->
 	<servlet>
 		<servlet-name>pipeListServelet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.pipe.PipeListServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.pipe.PipeListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeListServelet</servlet-name>
@@ -15,7 +15,7 @@
 	<!-- pipe detail -->
 	<servlet>
 		<servlet-name>pipeDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.pipe.PipeDetailServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.pipe.PipeDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>pipeDetailServlet</servlet-name>
@@ -24,7 +24,7 @@
 	<!-- session list -->
 	<servlet>
 		<servlet-name>SessionListServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.SessionListServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionListServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionListServlet</servlet-name>
@@ -33,7 +33,7 @@
 	<!-- session detail -->
 	<servlet>
 		<servlet-name>SessionDetailServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.SessionDetailServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionDetailServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionDetailServlet</servlet-name>
@@ -42,7 +42,7 @@
 	<!-- download_cert -->
 	<servlet>
 		<servlet-name>certDownloadServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.CertDownloadServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.CertDownloadServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>certDownloadServlet</servlet-name>
@@ -51,7 +51,7 @@
 	<!-- clear all -->
 	<servlet>
 		<servlet-name>SessionClearServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.SessionClearServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionClearServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionClearServlet</servlet-name>
@@ -60,7 +60,7 @@
 	<!-- clear all -->
 	<servlet>
 		<servlet-name>GetHttpRequest</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.CopyHttpRequestServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.CopyHttpRequestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>GetHttpRequest</servlet-name>
@@ -69,7 +69,7 @@
 	<!-- rebuild -->
 	<servlet>
 		<servlet-name>SessionRebuildServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.SessionRebuildServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionRebuildServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SessionRebuildServlet</servlet-name>
@@ -78,7 +78,7 @@
 	<!-- resend -->
 	<servlet>
 		<servlet-name>SendRequestServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.session.SendRequestServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SendRequestServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>SendRequestServlet</servlet-name>
@@ -87,7 +87,7 @@
 	<!-- mock switch -->
 	<servlet>
 		<servlet-name>MockMasterSwitchServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.config.MockMasterSwitchServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockMasterSwitchServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MockMasterSwitchServlet</servlet-name>
@@ -96,7 +96,7 @@
 	<!-- https_proxy switch -->
 	<servlet>
 		<servlet-name>HttpsProxySwitchServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.config.HttpsProxySwitchServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.HttpsProxySwitchServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>HttpsProxySwitchServlet</servlet-name>
@@ -105,7 +105,7 @@
 	<!-- config query -->
 	<servlet>
 		<servlet-name>ConsoleConfigQueryServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.config.ConsoleConfigQueryServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.ConsoleConfigQueryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ConsoleConfigQueryServlet</servlet-name>
@@ -114,7 +114,7 @@
 	<!-- query mock list -->
 	<servlet>
 		<servlet-name>MockListQueryServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.config.MockListQueryServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockListQueryServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MockListQueryServlet</servlet-name>
@@ -123,7 +123,7 @@
 	<!-- query mock list -->
 	<servlet>
 		<servlet-name>MockUpdatorServlet</servlet-name>
-		<servlet-class>org.hum.wiredog.console.http.servlet.config.MockUpdatorServlet</servlet-class>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockUpdatorServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>MockUpdatorServlet</servlet-name>

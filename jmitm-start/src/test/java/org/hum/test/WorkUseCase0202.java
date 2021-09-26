@@ -1,8 +1,8 @@
 package org.hum.test;
 
-import org.hum.wiredog.provider.WiredogBuilder;
-import org.hum.wiredog.proxy.mock.CatchRequest;
-import org.hum.wiredog.proxy.mock.Mock;
+import org.hum.jmitm.provider.WiredogBuilder;
+import org.hum.jmitm.proxy.mock.CatchRequest;
+import org.hum.jmitm.proxy.mock.Mock;
 
 import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;

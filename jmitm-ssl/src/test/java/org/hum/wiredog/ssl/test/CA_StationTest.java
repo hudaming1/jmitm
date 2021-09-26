@@ -2,7 +2,7 @@ package org.hum.wiredog.ssl.test;
 
 import java.io.ByteArrayInputStream;
 
-import org.hum.wiredog.ssl.CA_Station;
+import org.hum.jmitm.ssl.CA_Station;
 
 public class CA_StationTest {
 
