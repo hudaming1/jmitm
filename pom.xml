@@ -4,16 +4,16 @@
 	
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.hum</groupId>
-	<artifactId>wiredog</artifactId>
+	<artifactId>jmitm</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     
 	<modules>
-		<module>wiredog-common</module>
-		<module>wiredog-ssl</module>
-		<module>wiredog-proxy</module>
-		<module>wiredog-console</module>
-		<module>wiredog-start</module>
+		<module>jmitm-common</module>
+		<module>jmitm-ssl</module>
+		<module>jmitm-proxy</module>
+		<module>jmitm-console</module>
+		<module>jmitm-start</module>
 	</modules>
     
     <dependencyManagement>
