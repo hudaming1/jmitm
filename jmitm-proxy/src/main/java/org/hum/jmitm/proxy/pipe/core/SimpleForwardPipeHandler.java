@@ -1,6 +1,6 @@
 package org.hum.jmitm.proxy.pipe.core;
 
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.facade.PipeContext;
 import org.hum.jmitm.proxy.pipe.enumtype.PipeEventType;
 import org.hum.jmitm.proxy.pipe.enumtype.PipeStatus;
@@ -29,7 +29,7 @@ public class SimpleForwardPipeHandler extends ChannelInboundHandlerAdapter {
 	private static EventLoopGroup eventLoopGroup = null;
 	
 	static {
-		eventLoopGroup = new NioEventLoopGroup(WiredogCoreConfigProvider.get().getThreads() / 2);
+		eventLoopGroup = new NioEventLoopGroup(JmitmCoreConfigProvider.get().getThreads() / 2);
 	}
 	
 	public SimpleForwardPipeHandler(PipeContext wtContext) {

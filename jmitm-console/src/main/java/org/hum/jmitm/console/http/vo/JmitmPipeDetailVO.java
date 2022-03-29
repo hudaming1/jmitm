@@ -7,7 +7,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
-public class WiredogPipeDetailVO implements Serializable {
+public class JmitmPipeDetailVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

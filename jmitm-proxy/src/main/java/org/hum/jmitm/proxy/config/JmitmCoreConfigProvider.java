@@ -5,26 +5,26 @@ import java.util.List;
 
 import org.hum.jmitm.proxy.mock.Mock;
 
-public class WiredogCoreConfigProvider {
+public class JmitmCoreConfigProvider {
 
-	private WiredogCoreConfig wiredogCoreConfig;
+	private JmitmCoreConfig wiredogCoreConfig;
 	
-	private WiredogCoreConfigProvider(WiredogCoreConfig wiredogCoreConfig) {
+	private JmitmCoreConfigProvider(JmitmCoreConfig wiredogCoreConfig) {
 		this.wiredogCoreConfig = wiredogCoreConfig;
 	}
 	
-	private static WiredogCoreConfigProvider provider;
+	private static JmitmCoreConfigProvider provider;
 	
-	public static synchronized WiredogCoreConfigProvider init(WiredogCoreConfig wiredogCoreConfig) {
+	public static synchronized JmitmCoreConfigProvider init(JmitmCoreConfig wiredogCoreConfig) {
 		if (provider != null) {
 			throw new IllegalStateException("provider has been initilized");
 		} else if (provider == null) {
-			provider = new WiredogCoreConfigProvider(wiredogCoreConfig);
+			provider = new JmitmCoreConfigProvider(wiredogCoreConfig);
 		}
 		return provider;
 	}
 	
-	public static WiredogCoreConfigProvider get() {
+	public static JmitmCoreConfigProvider get() {
 		if (provider == null) {
 			throw new IllegalStateException("provider has not been initilize");
 		}

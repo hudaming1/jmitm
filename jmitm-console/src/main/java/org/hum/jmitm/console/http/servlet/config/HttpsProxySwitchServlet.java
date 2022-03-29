@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.jmitm.console.common.chain.PipeManagerInvokeChain;
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.pipe.enumtype.PipeEventType;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class HttpsProxySwitchServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		WiredogCoreConfigProvider.get().setParseHttps("true".equals(req.getParameter("switcher")));
+		JmitmCoreConfigProvider.get().setParseHttps("true".equals(req.getParameter("switcher")));
 
 		// 当切换代理模式时，需要将已建立的连接全部断掉，这样才能保证新的请求采用最新的代理模式。
 		PipeManagerInvokeChain.getAll().forEach(context -> {

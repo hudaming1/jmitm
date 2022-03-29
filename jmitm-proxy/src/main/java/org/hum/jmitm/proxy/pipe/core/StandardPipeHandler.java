@@ -3,7 +3,7 @@ package org.hum.jmitm.proxy.pipe.core;
 import java.net.ConnectException;
 import java.util.Stack;
 
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.facade.PipeContext;
 import org.hum.jmitm.proxy.facade.PipeInvokeChain;
 import org.hum.jmitm.proxy.mock.MockHandler;
@@ -31,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 public abstract class StandardPipeHandler extends AbstractPipeHandler {
 	
 	// 后期不要额外定义线程池，直接复用front传来的LoopGroup
-	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(WiredogCoreConfigProvider.get().getThreads() / 2);
+	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup(JmitmCoreConfigProvider.get().getThreads() / 2);
 	protected MockHandler mockHandler;
 	protected PipeInvokeChain fullPipeHandler;
 	// 当前保持的服务端连接
@@ -61,7 +61,7 @@ public abstract class StandardPipeHandler extends AbstractPipeHandler {
 			}
 			
 			// mock
-			if (mockHandler != null && WiredogCoreConfigProvider.get().isOpenMasterMockStwich()) {
+			if (mockHandler != null && JmitmCoreConfigProvider.get().isOpenMasterMockStwich()) {
 				FullHttpResponse response4Mock = mockHandler.mock(request);
 				// 如果提前返回了Response，说明存在Mock，则不在请求真正的目标服务器
 				if (response4Mock != null) {

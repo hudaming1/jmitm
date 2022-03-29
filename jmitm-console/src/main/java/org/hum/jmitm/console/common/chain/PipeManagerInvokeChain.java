@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.hum.jmitm.common.exception.WiredogException;
+import org.hum.jmitm.common.exception.JmitmException;
 import org.hum.jmitm.common.util.SyncLinkedHashMap;
 import org.hum.jmitm.common.util.HttpMessageUtil.InetAddress;
 import org.hum.jmitm.console.websocket.service.WsPipeService;
@@ -35,7 +35,7 @@ public class PipeManagerInvokeChain extends PipeInvokeChain {
 	protected boolean clientConnect0(PipeContext ctx) {
 		if (pipes4ClientChannel.containsKey(ctx.getClientChannel())) {
 			log.error(ctx.getClientChannel() + "has exists, id=" + pipes4ClientChannel.get(ctx.getClientChannel()).getId());
-			throw new WiredogException(ctx.getClientChannel() + " has exists");
+			throw new JmitmException(ctx.getClientChannel() + " has exists");
 		}
 		pipes4Id.put(ctx.getId(), ctx);
 		pipes4ClientChannel.put(ctx.getClientChannel(), ctx);

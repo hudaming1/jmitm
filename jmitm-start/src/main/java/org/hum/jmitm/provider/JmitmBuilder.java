@@ -1,13 +1,13 @@
 package org.hum.jmitm.provider;
 
-import org.hum.jmitm.console.http.config.WiredogConsoleConfig;
-import org.hum.jmitm.proxy.config.WiredogCoreConfig;
+import org.hum.jmitm.console.http.config.JmitmConsoleConfig;
+import org.hum.jmitm.proxy.config.JmitmCoreConfig;
 import org.hum.jmitm.proxy.mock.Mock;
 
-public class WiredogBuilder {
+public class JmitmBuilder {
 
-	private WiredogCoreConfig coreConfig = new WiredogCoreConfig();
-	private WiredogConsoleConfig consoleConfig = new WiredogConsoleConfig();
+	private JmitmCoreConfig coreConfig = new JmitmCoreConfig();
+	private JmitmConsoleConfig consoleConfig = new JmitmConsoleConfig();
 	
 	/**
 	 * 为网关代理添加Mock支持
@@ -43,7 +43,7 @@ public class WiredogBuilder {
 	 * @param port
 	 * @return
 	 */
-	public WiredogBuilder proxyPort(int port) {
+	public JmitmBuilder proxyPort(int port) {
 		coreConfig.setPort(port);
 		return this;
 	}
@@ -56,7 +56,7 @@ public class WiredogBuilder {
 	 * 代理启用线程数（front使用thread/2，back使用thread/2）
 	 * @return
 	 */
-	public WiredogBuilder threads(int threads) {
+	public JmitmBuilder threads(int threads) {
 		coreConfig.setThreads(threads);
 		return this;
 	}
@@ -70,17 +70,17 @@ public class WiredogBuilder {
 	 * @param isDebug
 	 * @return
 	 */
-	public WiredogBuilder debug(boolean isDebug) {
+	public JmitmBuilder debug(boolean isDebug) {
 		coreConfig.setDebug(isDebug);
 		return this;
 	}
 	
-	public WiredogCoreConfig getWtCoreConfig() {
+	public JmitmCoreConfig getWtCoreConfig() {
 		return coreConfig;
 	}
 	
-	public WiredogServerProvider build() {
-		return new WiredogServerProvider(coreConfig, consoleConfig);
+	public JmitmServerProvider build() {
+		return new JmitmServerProvider(coreConfig, consoleConfig);
 	}
 
 	/** console config **/
@@ -89,12 +89,12 @@ public class WiredogBuilder {
 		return consoleConfig.getHttpPort();
 	}
 
-	public WiredogBuilder consoleHttpPort(int port) {
+	public JmitmBuilder consoleHttpPort(int port) {
 		consoleConfig.setHttpPort(port);
 		return this;
 	}
 
-	public WiredogBuilder webRoot(String webRoot) {
+	public JmitmBuilder webRoot(String webRoot) {
 		consoleConfig.setWebRoot(webRoot);
 		return this;
 	}
@@ -103,7 +103,7 @@ public class WiredogBuilder {
 		return consoleConfig.getWebRoot();
 	}
 	
-	public WiredogBuilder webXmlPath(String webXmlPath) {
+	public JmitmBuilder webXmlPath(String webXmlPath) {
 		consoleConfig.setWebXmlPath(webXmlPath);
 		return this;
 	}
@@ -116,17 +116,17 @@ public class WiredogBuilder {
 		return consoleConfig.getWebSocketPort();
 	}
 
-	public WiredogBuilder consoleWsPort(int port) {
+	public JmitmBuilder consoleWsPort(int port) {
 		consoleConfig.setWebSocketPort(port);
 		return this;
 	}
 	
-	public WiredogBuilder pipeHistory(int count) {
+	public JmitmBuilder pipeHistory(int count) {
 		consoleConfig.setPipeHistory(count);
 		return this;
 	}
 
-	public WiredogBuilder sessionHistory(int count) {
+	public JmitmBuilder sessionHistory(int count) {
 		consoleConfig.setSessionHistory(count);
 		return this;
 	}

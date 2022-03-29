@@ -6,7 +6,7 @@ import org.hum.jmitm.common.constant.HttpConstant;
 import org.hum.jmitm.common.util.HttpMessageUtil;
 import org.hum.jmitm.common.util.NettyUtils;
 import org.hum.jmitm.common.util.HttpMessageUtil.InetAddress;
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.facade.PipeContext;
 import org.hum.jmitm.proxy.facade.PipeInvokeChain;
 import org.hum.jmitm.proxy.mock.MockHandler;
@@ -72,7 +72,7 @@ public class ProxyHandshakeHandler extends SimpleChannelInboundHandler<HttpReque
 		fullPipeHandler.clientParsed(wtContext);
 		
     	if (wtContext.getProtocol() == Protocol.HTTPS) {
-    		if (WiredogCoreConfigProvider.get().isParseHttps()) {
+    		if (JmitmCoreConfigProvider.get().isParseHttps()) {
         		// SSL
         		SslHandler sslHandler = new SslHandler(HttpSslContextFactory.createSSLEngine(InetAddress.getHost()));
     			sslHandler.handshakeFuture().addListener(sslHandshakeResult -> {

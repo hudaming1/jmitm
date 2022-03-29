@@ -3,9 +3,9 @@ package org.hum.jmitm.provider;
 import org.hum.jmitm.console.common.chain.PipeManagerInvokeChain;
 import org.hum.jmitm.console.common.chain.SessionManagerInvokeChain;
 import org.hum.jmitm.console.http.ConsoleServer;
-import org.hum.jmitm.console.http.config.WiredogConsoleConfig;
+import org.hum.jmitm.console.http.config.JmitmConsoleConfig;
 import org.hum.jmitm.console.websocket.WebSocketServer;
-import org.hum.jmitm.proxy.config.WiredogCoreConfig;
+import org.hum.jmitm.proxy.config.JmitmCoreConfig;
 import org.hum.jmitm.proxy.mock.MockHandler;
 import org.hum.jmitm.proxy.server.DefaultServer;
 
@@ -13,13 +13,13 @@ import io.netty.channel.ChannelFuture;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WiredogServerProvider {
+public class JmitmServerProvider {
 	
 	private DefaultServer proxyServer;
 	private ConsoleServer consoleServer;
 	private WebSocketServer webSocketServer;
 	
-	public WiredogServerProvider(WiredogCoreConfig coreConfig, WiredogConsoleConfig consoleConfig) {
+	public JmitmServerProvider(JmitmCoreConfig coreConfig, JmitmConsoleConfig consoleConfig) {
 		PipeManagerInvokeChain pipeManagerInvokeChain = new PipeManagerInvokeChain(null, consoleConfig.getPipeHistory());
 		// proxy-server
 		this.proxyServer = new DefaultServer(coreConfig);

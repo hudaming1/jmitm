@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.jmitm.console.http.vo.config.ConsoleConfigVO;
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 
 import com.alibaba.fastjson.JSON;
 
@@ -21,7 +21,7 @@ public class ConsoleConfigQueryServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.getWriter().print(JSON.toJSONString(new ConsoleConfigVO(WiredogCoreConfigProvider.get().isParseHttps(), WiredogCoreConfigProvider.get().isOpenMasterMockStwich())));
+		resp.getWriter().print(JSON.toJSONString(new ConsoleConfigVO(JmitmCoreConfigProvider.get().isParseHttps(), JmitmCoreConfigProvider.get().isOpenMasterMockStwich())));
 		resp.getWriter().flush();
 		resp.getWriter().close();
 	}

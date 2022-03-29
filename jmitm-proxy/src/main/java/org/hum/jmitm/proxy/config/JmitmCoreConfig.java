@@ -8,7 +8,7 @@ import org.hum.jmitm.proxy.mock.Mock;
 import lombok.Data;
 
 @Data
-public class WiredogCoreConfig {
+public class JmitmCoreConfig {
 
 	// 监听端口
 	private int port;

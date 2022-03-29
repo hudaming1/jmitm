@@ -18,9 +18,9 @@ import org.hum.jmitm.console.common.codec.IContentCodec;
 import org.hum.jmitm.console.common.codec.impl.CodecFactory;
 import org.hum.jmitm.console.http.ConsoleServer;
 import org.hum.jmitm.console.http.helper.ConsoleHelper;
-import org.hum.jmitm.console.http.vo.WiredogSessionDetailVO;
-import org.hum.jmitm.console.http.vo.WiredogSessionListQueryVO;
-import org.hum.jmitm.console.http.vo.WiredogSessionListVO;
+import org.hum.jmitm.console.http.vo.JmitmSessionDetailVO;
+import org.hum.jmitm.console.http.vo.JmitmSessionListQueryVO;
+import org.hum.jmitm.console.http.vo.JmitmSessionListVO;
 
 import io.netty.handler.codec.http.HttpHeaders;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SessionService {
 	
-	private final static WiredogSessionListQueryVO QUERY = new WiredogSessionListQueryVO();
+	private final static JmitmSessionListQueryVO QUERY = new JmitmSessionListQueryVO();
 	
-	public List<WiredogSessionListVO> list(WiredogSessionListQueryVO query) {
+	public List<JmitmSessionListVO> list(JmitmSessionListQueryVO query) {
 		// HTTP和Websocket共用一个Query
 		changeCondition(query);
 		
-		List<WiredogSessionListVO> sessionList = new ArrayList<>();
+		List<JmitmSessionListVO> sessionList = new ArrayList<>();
 		SessionManagerInvokeChain.getAll().forEach(session -> {
 			if (!isMatch(session)) {
 				return ;
@@ -57,7 +57,7 @@ public class SessionService {
 		return true;
 	}
 	
-	private void changeCondition(WiredogSessionListQueryVO newCondition) {
+	private void changeCondition(JmitmSessionListQueryVO newCondition) {
 		QUERY.setHost(newCondition.getHost());
 		QUERY.setKeyword(newCondition.getKeyword());
 		QUERY.setPipeId(newCondition.getPipeId());
@@ -90,9 +90,9 @@ public class SessionService {
 		return SessionManagerInvokeChain.getById(id);
 	}
 	
-	public WiredogSessionDetailVO getById(Long id) {
+	public JmitmSessionDetailVO getById(Long id) {
 		try {
-			WiredogSessionDetailVO detailVo = new WiredogSessionDetailVO();
+			JmitmSessionDetailVO detailVo = new JmitmSessionDetailVO();
 			Session simpleSession = SessionManagerInvokeChain.getById(id);
 			detailVo.setRequestHeader(HttpRequestCodec.encodeWithoutBody(simpleSession.getRequest(), HttpConstant.RETURN_LINE));
 			detailVo.setCreateTime(DateUtils.formatTime(new Date(simpleSession.getRequestTime())));

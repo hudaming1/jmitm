@@ -3,7 +3,7 @@ package org.hum.jmitm.console.http.vo;
 import lombok.Data;
 
 @Data
-public class WiredogSessionListQueryVO {
+public class JmitmSessionListQueryVO {
 
 	private String keyword;
 	private String host;

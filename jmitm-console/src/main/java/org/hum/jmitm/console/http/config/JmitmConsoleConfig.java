@@ -3,7 +3,7 @@ package org.hum.jmitm.console.http.config;
 import lombok.Data;
 
 @Data
-public class WiredogConsoleConfig {
+public class JmitmConsoleConfig {
 
 	private Integer httpPort;
 	private Integer webSocketPort;

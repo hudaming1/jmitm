@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.jmitm.console.http.vo.MockListVO;
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.mock.Mock;
 import org.hum.jmitm.proxy.mock.MockStatus;
 
@@ -26,7 +26,7 @@ public class MockListQueryServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		
-		List<Mock> mockList = WiredogCoreConfigProvider.get().getMockList();
+		List<Mock> mockList = JmitmCoreConfigProvider.get().getMockList();
 		List<MockListVO> mockVoList = new ArrayList<MockListVO>();
 		if (mockList != null && !mockList.isEmpty()) {
 			mockList.forEach(item -> {

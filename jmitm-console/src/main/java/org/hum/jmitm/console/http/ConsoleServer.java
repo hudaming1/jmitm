@@ -4,14 +4,14 @@ import java.util.Objects;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.hum.jmitm.console.http.config.WiredogConsoleConfig;
+import org.hum.jmitm.console.http.config.JmitmConsoleConfig;
 
 public class ConsoleServer {
 
 	private static Server server;
-	public static WiredogConsoleConfig wiredogConsoleConfig;
+	public static JmitmConsoleConfig wiredogConsoleConfig;
 	
-	public ConsoleServer(WiredogConsoleConfig config) {
+	public ConsoleServer(JmitmConsoleConfig config) {
 		wiredogConsoleConfig = config;
 		server = new Server(config.getHttpPort());
 		server.setHandler(getWebAppContext(config));
@@ -25,7 +25,7 @@ public class ConsoleServer {
 		server.stop();
 	}
 
-	private static WebAppContext getWebAppContext(WiredogConsoleConfig config) {
+	private static WebAppContext getWebAppContext(JmitmConsoleConfig config) {
 		WebAppContext context = new WebAppContext();
 		context.setResourceBase(Objects.toString(config.getWebRoot(), ConsoleServer.class.getResource("/webroot").getFile()));
 		context.setDescriptor(Objects.toString(config.getWebXmlPath(), ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile())); 

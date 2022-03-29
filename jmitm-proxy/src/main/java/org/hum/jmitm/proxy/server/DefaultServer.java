@@ -1,10 +1,10 @@
 package org.hum.jmitm.proxy.server;
 
-import org.hum.jmitm.common.exception.WiredogException;
+import org.hum.jmitm.common.exception.JmitmException;
 import org.hum.jmitm.common.util.NamedThreadFactory;
 import org.hum.jmitm.common.util.NettyUtils;
-import org.hum.jmitm.proxy.config.WiredogCoreConfig;
-import org.hum.jmitm.proxy.config.WiredogCoreConfigProvider;
+import org.hum.jmitm.proxy.config.JmitmCoreConfig;
+import org.hum.jmitm.proxy.config.JmitmCoreConfigProvider;
 import org.hum.jmitm.proxy.facade.InvokeChainInit;
 import org.hum.jmitm.proxy.mock.MockHandler;
 import org.hum.jmitm.proxy.pipe.chain.ContextManagerInvokeChain;
@@ -31,21 +31,21 @@ public class DefaultServer implements Server {
 	
 	private InvokeChainInit invokeChainInit;
 
-	public DefaultServer(WiredogCoreConfig config) {
-		WiredogCoreConfigProvider.init(config);
+	public DefaultServer(JmitmCoreConfig config) {
+		JmitmCoreConfigProvider.init(config);
 	}
 
 	@Override
 	public ChannelFuture start() {
 		// Configure the server.
 		EventLoopGroup bossGroup = NettyUtils.initEventLoopGroup(1, new NamedThreadFactory("wt-boss-thread"));
-		int frontPipeThreadPoolCount = WiredogCoreConfigProvider.get().getThreads() / 2;
+		int frontPipeThreadPoolCount = JmitmCoreConfigProvider.get().getThreads() / 2;
 		EventLoopGroup masterThreadPool = NettyUtils.initEventLoopGroup(frontPipeThreadPoolCount, new NamedThreadFactory("wt-worker-thread"));
 		try {
 			ServerBootstrap bootStrap = new ServerBootstrap();
 			bootStrap.option(ChannelOption.SO_BACKLOG, 1024);
 			bootStrap.group(bossGroup, masterThreadPool).channel(NioServerSocketChannel.class);
-			if (WiredogCoreConfigProvider.get().isDebug()) {
+			if (JmitmCoreConfigProvider.get().isDebug()) {
 				bootStrap.handler(new LoggingHandler(LogLevel.DEBUG));
 			}
 			// singleton
@@ -59,10 +59,10 @@ public class DefaultServer implements Server {
 				}
 			});
 
-			return bootStrap.bind(WiredogCoreConfigProvider.get().getPort());
+			return bootStrap.bind(JmitmCoreConfigProvider.get().getPort());
 		} catch (Exception e) {
-			log.error("start occur error, config=" + WiredogCoreConfigProvider.get(), e);
-			throw new WiredogException("DefaultServer start failed.", e);
+			log.error("start occur error, config=" + JmitmCoreConfigProvider.get(), e);
+			throw new JmitmException("DefaultServer start failed.", e);
 		}
 	}
 	
@@ -81,6 +81,6 @@ public class DefaultServer implements Server {
 	}
 	
 	public int getListeningPort() {
-		return WiredogCoreConfigProvider.get().getPort();
+		return JmitmCoreConfigProvider.get().getPort();
 	}
 }

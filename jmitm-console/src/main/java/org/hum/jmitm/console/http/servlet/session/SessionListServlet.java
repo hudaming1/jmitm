@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.jmitm.console.http.service.SessionService;
-import org.hum.jmitm.console.http.vo.WiredogSessionListQueryVO;
+import org.hum.jmitm.console.http.vo.JmitmSessionListQueryVO;
 
 import com.alibaba.fastjson.JSON;
 
@@ -24,7 +24,7 @@ public class SessionListServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String pipeId = req.getParameter("pipe_id");
 		
-		WiredogSessionListQueryVO query = new WiredogSessionListQueryVO();
+		JmitmSessionListQueryVO query = new JmitmSessionListQueryVO();
 		query.setPipeId(pipeId == null ? null : Long.parseLong(pipeId));
 		query.setHost(req.getParameter("host"));
 		query.setKeyword(req.getParameter("keyword"));

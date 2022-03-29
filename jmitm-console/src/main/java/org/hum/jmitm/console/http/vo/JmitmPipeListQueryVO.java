@@ -5,7 +5,7 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class WiredogPipeListQueryVO implements Serializable {
+public class JmitmPipeListQueryVO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	

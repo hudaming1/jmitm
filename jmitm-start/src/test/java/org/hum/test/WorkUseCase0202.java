@@ -1,6 +1,6 @@
 package org.hum.test;
 
-import org.hum.jmitm.provider.WiredogBuilder;
+import org.hum.jmitm.provider.JmitmBuilder;
 import org.hum.jmitm.proxy.mock.CatchRequest;
 import org.hum.jmitm.proxy.mock.Mock;
 
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class WorkUseCase0202 {
 	
 	public static void main(String[] args) throws Exception {
-		WiredogBuilder wtBuilder = new WiredogBuilder();
+		JmitmBuilder wtBuilder = new JmitmBuilder();
 		wtBuilder.parseHttps(true);
 		wtBuilder.proxyPort(52007).threads(400);
 		wtBuilder.consoleHttpPort(8888).consoleWsPort(52996);

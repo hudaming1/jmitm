@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hum.jmitm.console.http.service.PipeService;
-import org.hum.jmitm.console.http.vo.WiredogPipeListQueryVO;
+import org.hum.jmitm.console.http.vo.JmitmPipeListQueryVO;
 
 import com.alibaba.fastjson.JSON;
 
@@ -23,7 +23,7 @@ public class PipeListServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		resp.setHeader("Content-Type", "application/json");
-		WiredogPipeListQueryVO queryVo = new WiredogPipeListQueryVO();
+		JmitmPipeListQueryVO queryVo = new JmitmPipeListQueryVO();
 		String isActive = req.getParameter("active") ;
 		if (isActive != null) {
 			queryVo.setActive(Boolean.parseBoolean(isActive));

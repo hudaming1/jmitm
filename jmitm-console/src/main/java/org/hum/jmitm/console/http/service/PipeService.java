@@ -11,9 +11,9 @@ import java.util.Map;
 
 import org.hum.jmitm.console.common.chain.PipeManagerInvokeChain;
 import org.hum.jmitm.console.http.helper.ConsoleHelper;
-import org.hum.jmitm.console.http.vo.WiredogPipeDetailVO;
-import org.hum.jmitm.console.http.vo.WiredogPipeListQueryVO;
-import org.hum.jmitm.console.http.vo.WiredogPipeListVO;
+import org.hum.jmitm.console.http.vo.JmitmPipeDetailVO;
+import org.hum.jmitm.console.http.vo.JmitmPipeListQueryVO;
+import org.hum.jmitm.console.http.vo.JmitmPipeListVO;
 import org.hum.jmitm.proxy.facade.PipeContext;
 import org.hum.jmitm.proxy.pipe.enumtype.PipeStatus;
 
@@ -21,9 +21,9 @@ public class PipeService {
 	
 	private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
-	public List<WiredogPipeListVO> list(WiredogPipeListQueryVO queryVo) {
+	public List<JmitmPipeListVO> list(JmitmPipeListQueryVO queryVo) {
 		Collection<PipeContext> all = PipeManagerInvokeChain.getAll();
-		List<WiredogPipeListVO> requestList = new ArrayList<>();
+		List<JmitmPipeListVO> requestList = new ArrayList<>();
 		all.forEach(item -> {
 			if (queryVo.isActive() && item.getCurrentStatus() == PipeStatus.Closed) {
 				 return ;
@@ -33,12 +33,12 @@ public class PipeService {
 		return requestList;
 	}
 
-	public WiredogPipeDetailVO getById(Long id) {
+	public JmitmPipeDetailVO getById(Long id) {
 		PipeContext pipe = PipeManagerInvokeChain.getById(id);
 		if (pipe == null) {
-			return new WiredogPipeDetailVO();
+			return new JmitmPipeDetailVO();
 		}
-		WiredogPipeDetailVO detailVo = new WiredogPipeDetailVO();
+		JmitmPipeDetailVO detailVo = new JmitmPipeDetailVO();
 		List<Map<String, String>> pipeEventMapList = new ArrayList<>();
 		pipe.getEventList().forEach(item -> {
 			Map<String, String> map = new HashMap<>();

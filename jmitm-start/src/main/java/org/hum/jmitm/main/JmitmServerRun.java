@@ -5,21 +5,24 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import org.hum.jmitm.console.common.codec.impl.CodecFactory;
-import org.hum.jmitm.provider.WiredogBuilder;
+import org.hum.jmitm.provider.JmitmBuilder;
 import org.hum.jmitm.proxy.mock.CatchRequest;
 import org.hum.jmitm.proxy.mock.CatchResponse;
 import org.hum.jmitm.proxy.mock.Mock;
 import org.hum.jmitm.proxy.mock.wiredog.HttpResponse;
 
+import com.alibaba.fastjson.JSON;
+
+import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class WiredogServerRun {
+public class JmitmServerRun {
 	
 	public static void main(String[] args) throws Exception {
-		WiredogBuilder wtBuilder = new WiredogBuilder();
+		JmitmBuilder wtBuilder = new JmitmBuilder();
 		wtBuilder.parseHttps(true);
-		wtBuilder.proxyPort(52007).threads(100);
+		wtBuilder.proxyPort(8888).threads(100);
 		wtBuilder.consoleHttpPort(8080).consoleWsPort(52996);
 		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
@@ -30,7 +33,9 @@ public class WiredogServerRun {
 				// DEMO3：拦截所有响应，对响应打标记
 				mockDemo3(),
 				// DEMO4：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
-				mockDemo4()
+				mockDemo4(),
+				// 
+				mockRMGS()
 				);
 		
 		wtBuilder.build().start();
@@ -76,7 +81,7 @@ public class WiredogServerRun {
 	
 	private static byte[] readFile(String file) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(new File(WiredogServerRun.class.getResource(file).getFile()));
+			FileInputStream fileInputStream = new FileInputStream(new File(JmitmServerRun.class.getResource(file).getFile()));
 			byte[] bytes = new byte[fileInputStream.available()];
 			fileInputStream.read(bytes);
 			fileInputStream.close();
@@ -93,6 +98,15 @@ public class WiredogServerRun {
 			return "wiredog.com".equals(request.host());
 		}).rebuildRequest(request -> {
 			return request.header("Host", "localhost:8080");
+		}).mock();
+	}
+	
+	private static Mock mockRMGS() {
+		return new CatchRequest().eval(request -> {
+			return "datatest.mijiaoyu.cn".equals(request.host()) && "/teachingplan/teaching/aimdatasave".equals(request.uri()) && HttpMethod.POST.equals(request.method());
+		}).rebuildRequest(request -> {
+			System.out.println("mock");
+			return request.header("Host", "localhost:2100").uri("/teaching/aimdatasave");
 		}).mock();
 	}
 }
