@@ -1,10 +1,10 @@
 package org.hum.jmitm.proxy.mock;
 
+import org.hum.jmitm.proxy.mock.codec.HttpResponse;
+import org.hum.jmitm.proxy.mock.codec.HttpResponseInterceptor;
+import org.hum.jmitm.proxy.mock.codec.HttpResponseRebuild;
 import org.hum.jmitm.proxy.mock.netty.NettyResponseInterceptor;
 import org.hum.jmitm.proxy.mock.netty.NettyResponseRebuild;
-import org.hum.jmitm.proxy.mock.wiredog.HttpResponse;
-import org.hum.jmitm.proxy.mock.wiredog.HttpResponseInterceptor;
-import org.hum.jmitm.proxy.mock.wiredog.HttpResponseRebuild;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 

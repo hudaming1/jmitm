@@ -35,7 +35,10 @@ public class JmitmServerRun {
 				// DEMO4：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo4(),
 				// 
-				mockRMGS()
+//				mockRMGSSchedule()
+//				mockRMGSSchedule4UAT()
+//				mockComServiceSchedule(),
+				mockClue()
 				);
 		
 		wtBuilder.build().start();
@@ -101,12 +104,66 @@ public class JmitmServerRun {
 		}).mock();
 	}
 	
-	private static Mock mockRMGS() {
+	private static Mock mockClue() {
 		return new CatchRequest().eval(request -> {
-			return "datatest.mijiaoyu.cn".equals(request.host()) && "/teachingplan/teaching/aimdatasave".equals(request.uri()) && HttpMethod.POST.equals(request.method());
+			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/clue/") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
 		}).rebuildRequest(request -> {
-			System.out.println("mock");
-			return request.header("Host", "localhost:2100").uri("/teaching/aimdatasave");
+			System.out.println("bingo");
+			request.host("localhost:3400");
+			request.uri(request.uri().replaceFirst("/clue/", "/"));
+			System.out.println(request.uri());
+			return request;
+		}).rebuildResponse(resp -> {
+			resp.header("Access-Control-Allow-Origin", "*");
+			return resp;
+		}).mock();
+	}
+	
+	private static Mock mockComServiceSchedule() {
+		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
+		return new CatchRequest().eval(request -> {
+			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/user/") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
+		}).rebuildRequest(request -> {
+			System.out.println("bingo");
+			request.host("localhost:1100");
+			request.uri(request.uri().replaceFirst("/user/", "/"));
+			System.out.println(request.uri());
+			return request;
+		}).rebuildResponse(resp -> {
+			resp.header("Access-Control-Allow-Origin", "*");
+			return resp;
+		}).mock();
+	}
+	
+	private static Mock mockRMGSSchedule() {
+		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
+		return new CatchRequest().eval(request -> {
+			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/schedule") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
+		}).rebuildRequest(request -> {
+			System.out.println("bingo");
+			request.host("localhost:1800");
+			request.uri(request.uri().replaceFirst("/schedule", ""));
+			System.out.println(request.uri());
+			return request;
+		}).rebuildResponse(resp -> {
+			resp.header("Access-Control-Allow-Origin", "*");
+			return resp;
+		}).mock();
+	}
+	
+	private static Mock mockRMGSSchedule4UAT() {
+		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
+		return new CatchRequest().eval(request -> {
+			return request.host().contains("datauat.mijiaoyu.cn") && request.uri().startsWith("/schedule") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
+		}).rebuildRequest(request -> {
+			System.out.println("bingo");
+			request.host("localhost:1800");
+			request.uri(request.uri().replaceFirst("/schedule", ""));
+			System.out.println(request.uri());
+			return request;
+		}).rebuildResponse(resp -> {
+			resp.header("Access-Control-Allow-Origin", "*");
+			return resp;
 		}).mock();
 	}
 }

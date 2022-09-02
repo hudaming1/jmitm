@@ -1,4 +1,4 @@
-package org.hum.jmitm.proxy.mock.wiredog;
+package org.hum.jmitm.proxy.mock.codec;
 
 import org.hum.jmitm.common.constant.HttpConstant;
 
