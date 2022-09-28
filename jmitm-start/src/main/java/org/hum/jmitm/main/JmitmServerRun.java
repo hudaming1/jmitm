@@ -103,7 +103,8 @@ public class JmitmServerRun {
 	
 	private static Mock mockRMGS() {
 		return new CatchRequest().eval(request -> {
-			return "datatest.mijiaoyu.cn".equals(request.host()) && "/teachingplan/teaching/aimdatasave".equals(request.uri()) && HttpMethod.POST.equals(request.method());
+			return ("datatest.miji"
+					+ "aoyu.cn").equals(request.host()) && "/teachingplan/teaching/aimdatasave".equals(request.uri()) && HttpMethod.POST.equals(request.method());
 		}).rebuildRequest(request -> {
 			System.out.println("mock");
 			return request.header("Host", "localhost:2100").uri("/teaching/aimdatasave");
