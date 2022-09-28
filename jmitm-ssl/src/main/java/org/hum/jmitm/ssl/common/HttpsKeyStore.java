@@ -29,6 +29,6 @@ public class HttpsKeyStore {
 }
 
 class Arguments {
-	public static String certificatePassword = "wiretiger@123";
-	public static String keystorePassword = "wiretiger@123";
+	public static String certificatePassword = "jmitm@123";
+	public static String keystorePassword = "jmitm@123";
 }

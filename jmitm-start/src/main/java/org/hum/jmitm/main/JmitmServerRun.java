@@ -9,7 +9,7 @@ import org.hum.jmitm.provider.JmitmBuilder;
 import org.hum.jmitm.proxy.mock.CatchRequest;
 import org.hum.jmitm.proxy.mock.CatchResponse;
 import org.hum.jmitm.proxy.mock.Mock;
-import org.hum.jmitm.proxy.mock.wiredog.HttpResponse;
+import org.hum.jmitm.proxy.mock.codec.HttpResponse;
 
 import com.alibaba.fastjson.JSON;
 
@@ -35,10 +35,11 @@ public class JmitmServerRun {
 				// DEMO4：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
 				mockDemo4(),
 				// 
-//				mockRMGSSchedule()
+				mockRMGSSchedule(),
+				mockTeachingPlan()
+//				mockClue()
 //				mockRMGSSchedule4UAT()
 //				mockComServiceSchedule(),
-				mockClue()
 				);
 		
 		wtBuilder.build().start();
@@ -127,6 +128,22 @@ public class JmitmServerRun {
 			System.out.println("bingo");
 			request.host("localhost:1100");
 			request.uri(request.uri().replaceFirst("/user/", "/"));
+			System.out.println(request.uri());
+			return request;
+		}).rebuildResponse(resp -> {
+			resp.header("Access-Control-Allow-Origin", "*");
+			return resp;
+		}).mock();
+	}
+	
+	private static Mock mockTeachingPlan() {
+		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
+		return new CatchRequest().eval(request -> {
+			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/teachingplan") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
+		}).rebuildRequest(request -> {
+			System.out.println("bingo");
+			request.host("localhost:2100");
+			request.uri(request.uri().replaceFirst("/teachingplan", ""));
 			System.out.println(request.uri());
 			return request;
 		}).rebuildResponse(resp -> {
