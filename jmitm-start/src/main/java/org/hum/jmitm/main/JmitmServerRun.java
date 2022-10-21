@@ -43,7 +43,12 @@ public class JmitmServerRun {
 
 	private static Mock mockDemo4() {
 		return new CatchRequest().eval(request -> {
-			return "www.baidu.com".equals(request.host()) && "/".equals(request.uri());
+			// PC版首页注入
+			String uri = request.uri().indexOf("?") > 0 ? request.uri().substring(0, request.uri().indexOf("?")) : request.uri();
+			return ("www.baidu.com".equals(request.host()) && "/".equals(request.uri())
+					||
+					// 移动版首页注入
+					("m.baidu.com".equals(request.host()) && "/".equals(uri)));
 		}).rebuildResponse(response -> {
 			log.info("inject js...");
 			// 注入的JS代码

@@ -25,6 +25,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.Callable;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -101,8 +102,17 @@ public class CA_Creator implements Callable<byte[]> {
 		ext.set("subject_name", names);
 		extensions.add(ext);
 		
-		sun.security.x509.CertificateIssuerExtension ext2 = new sun.security.x509.CertificateIssuerExtension(false, null);
-		
+		extensions.add(new sun.security.x509.BasicConstraintsExtension(false, 0));
+		// keyUsageExt : digitalSignature && keyEncipherment - > 10100000 
+//		extensions.add(new sun.security.x509.KeyUsageExtension(false, new byte[] { 1, 0, 1, 0, 0, 0, 0, 0 }));
+		extensions.add(new sun.security.x509.KeyUsageExtension(new boolean[] { true, false, true, false, false, false, false, false }));
+		// keyExtendedKeyUsage : ServerAuth && ClientAuth
+		Vector<sun.security.util.ObjectIdentifier> idenVector = new Vector<>();
+		idenVector.add(new sun.security.util.ObjectIdentifier("1.3.6.1.5.5.7.3.1")); // ServerAuth
+		idenVector.add(new sun.security.util.ObjectIdentifier("1.3.6.1.5.5.7.3.2")); // ClientAuth
+		extensions.add(new sun.security.x509.ExtendedKeyUsageExtension(idenVector));
+//		extensions.add(new sun.security.x509.AuthorityKeyIdentifierExtension());
+//		extensions.add(new sun.security.x509.SubjectKeyIdentifierExtension());
 		
 		// 这个序列号要动态生成
 		Certificate serverCert = generateV3(issuer, serverSubject, new BigInteger(System.currentTimeMillis() + ""),
@@ -148,7 +158,7 @@ public class CA_Creator implements Callable<byte[]> {
 	
 	@Override
 	public byte[] call() throws Exception {
-//		return _create(domain);
-		return GenCertAndKey.createCert(new X500Name("C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm"), domain);
+		return _create(domain);
+//		return GenCertAndKey.createCert(new X500Name("C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm"), domain);
 	}
 }

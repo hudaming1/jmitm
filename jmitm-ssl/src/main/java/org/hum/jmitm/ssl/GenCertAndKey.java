@@ -1,5 +1,6 @@
 package org.hum.jmitm.ssl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.Reader;
@@ -7,6 +8,7 @@ import java.io.StringWriter;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -110,7 +112,7 @@ public class GenCertAndKey {
 //		tbsGen.setSignature(new AlgorithmIdentifier(PKCSObjectIdentifiers.sha256WithRSAEncryption, DERNull.INSTANCE)); // 签名算法标识等于颁发者证书的密钥算法标识\
 		tbsGen.setSignature(getSignAlgo(issuer.getSubjectPublicKeyInfo().getAlgorithm()));
 		TBSCertificate tbs = tbsGen.generateTBSCertificate();
-		Certificate certificate = assembleCert(tbs, issuer.getSubjectPublicKeyInfo(), issuerPrivateKey);
+		org.bouncycastle.asn1.x509.Certificate certificate = assembleCert(tbs, issuer.getSubjectPublicKeyInfo(), issuerPrivateKey);
 		
 		// 写出证书
 //		Writer certWriter = new FileWriter(targetCert);
@@ -127,6 +129,12 @@ public class GenCertAndKey {
 		pemWriterKey.writeObject(new PemObject("RSA PRIVATE KEY", key.getPrivate().getEncoded()));
 		pemWriterKey.flush();
 		pemWriterKey.close();
+		
+		KeyStore store = KeyStore.getInstance("PKCS12");
+		store.load(null, null);
+		// store.setKeyEntry(domain, key.getPrivate(), "".toCharArray(), new Certificate[] { certificate });
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		store.store(baos, "".toCharArray());
 
 		return sw.getBuffer().toString().getBytes();
 	}
@@ -205,5 +213,10 @@ public class GenCertAndKey {
 		signer.initVerify(publicKey);
 		signer.update(inData);
 		return signer.verify(signature);
+	}
+	
+	public static void main(String[] args) {
+		System.out.println(KeyPurposeId.id_kp_serverAuth);
+		System.out.println(KeyPurposeId.id_kp_clientAuth);
 	}
 }
