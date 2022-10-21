@@ -32,3 +32,5 @@ class Arguments {
 	public static String certificatePassword = "wiretiger@123";
 	public static String keystorePassword = "wiretiger@123";
 }
+
+

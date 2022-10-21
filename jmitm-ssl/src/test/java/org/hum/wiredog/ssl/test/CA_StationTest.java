@@ -1,6 +1,8 @@
 package org.hum.wiredog.ssl.test;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import org.hum.jmitm.ssl.CA_Station;
 
@@ -8,18 +10,12 @@ public class CA_StationTest {
 
 	public static void main(String args[]) throws Exception {
 		long start = System.currentTimeMillis();
-		ByteArrayInputStream byteArrayInputStream = CA_Station.createWithCache("www.163.com");
-		System.out.println(byteArrayInputStream.available() + ":" + (System.currentTimeMillis() - start));
-		for (int i = 0 ;i < 5 ;i ++) {
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					long start = System.currentTimeMillis();
-					ByteArrayInputStream byteArrayInputStream = CA_Station.createWithCache("firefox.dns.nextdns.io");
-					System.out.println(byteArrayInputStream.available() + ":" + (System.currentTimeMillis() - start));
-				}
-			}).start();
-		}
-		System.in.read();
+		ByteArrayInputStream bis = CA_Station.createWithCache("hudaming996.com");
+		byte[] certBytes = new byte[bis.available()];
+		bis.read(certBytes);
+		
+		FileOutputStream fos = new FileOutputStream(new File("/tmp/huming996.crt"));
+		fos.write(certBytes);
+		fos.flush();
 	}
 }

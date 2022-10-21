@@ -49,6 +49,7 @@ public class CA_Creator implements Callable<byte[]> {
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
 	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+	
 	static {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
@@ -79,19 +80,8 @@ public class CA_Creator implements Callable<byte[]> {
 		return bytes;
 	}
 
-	// 用KeyEntry形式存储一个私钥以及对应的证书，并把CA证书加入到它的信任证书列表里面。
-	public static ByteArrayOutputStream store(PrivateKey key, Certificate cert, Certificate caCert, String name)
-			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		KeyStore store = KeyStore.getInstance("PKCS12");
-		store.load(null, null);
-		store.setKeyEntry(name, key, CA_PASS.toCharArray(), new Certificate[] { cert });
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		store.store(baos, CA_PASS.toCharArray());
-		return baos;
-	}
-
 	// 用ke所代表的CA给subject签发证书，并存储到名称为name的jks文件里面。
-	public static ByteArrayOutputStream gen(String domain, PrivateKeyEntry caPrivateKey, String serverSubject, String name) throws Exception {
+	private static ByteArrayOutputStream gen(String domain, PrivateKeyEntry caPrivateKey, String serverSubject, String name) throws Exception {
 		sun.security.x509.X509CertImpl caCert = (sun.security.x509.X509CertImpl) caPrivateKey.getCertificate();
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(2048);
@@ -110,6 +100,10 @@ public class CA_Creator implements Callable<byte[]> {
 		names.add(new sun.security.x509.GeneralName(new UnsafeDNSName(domain)));
 		ext.set("subject_name", names);
 		extensions.add(ext);
+		
+		sun.security.x509.CertificateIssuerExtension ext2 = new sun.security.x509.CertificateIssuerExtension(false, null);
+		
+		
 		// 这个序列号要动态生成
 		Certificate serverCert = generateV3(issuer, serverSubject, new BigInteger(System.currentTimeMillis() + ""),
 				new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24),
@@ -119,7 +113,7 @@ public class CA_Creator implements Callable<byte[]> {
 		return store(keyPair.getPrivate(), serverCert, caPrivateKey.getCertificate(), name);
 	}
 
-	public static Certificate generateV3(String issuer, String subject, BigInteger serial, Date notBefore,
+	private static Certificate generateV3(String issuer, String subject, BigInteger serial, Date notBefore,
 			Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions)
 			throws OperatorCreationException, CertificateException, IOException {
 		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(RFC4519Style.INSTANCE, issuer),
@@ -139,6 +133,17 @@ public class CA_Creator implements Callable<byte[]> {
 		X509Certificate theCert = (X509Certificate) cf.generateCertificate(is1);
 		is1.close();
 		return theCert;
+	}
+
+	// 用KeyEntry形式存储一个私钥以及对应的证书，并把CA证书加入到它的信任证书列表里面。
+	private static ByteArrayOutputStream store(PrivateKey key, Certificate cert, Certificate caCert, String name)
+			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		KeyStore store = KeyStore.getInstance("PKCS12");
+		store.load(null, null);
+		store.setKeyEntry(name, key, CA_PASS.toCharArray(), new Certificate[] { cert });
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		store.store(baos, CA_PASS.toCharArray());
+		return baos;
 	}
 	
 	@Override
