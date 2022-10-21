@@ -1,15 +1,12 @@
-package org.hum.wiredog.ssl.test.bc2;
+package org.hum.jmitm.ssl;
 
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.Reader;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
@@ -45,63 +42,18 @@ import org.bouncycastle.asn1.x509.*;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 
 public class GenCertAndKey {
+	
 	public static final String BC = BouncyCastleProvider.PROVIDER_NAME;
+	private static final String caCertFilePath = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/ca/RootCA.crt";
+	private static final String caKeyFilePath = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/ca/CA_Key.pem";
+	private static final long expirationDay = 365;
 	public static int BITS = 2048;
+	
 	static {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	public static void createCARootCert(X500Name subject, String certFilePath, String keyFilePath, int expirationDay)
-			throws Exception {
-		// 生成私钥
-		SecureRandom random = new SecureRandom();
-		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", BC);
-		keyPairGenerator.initialize(BITS, random);
-		KeyPair key = keyPairGenerator.generateKeyPair();
-
-		SubjectPublicKeyInfo subjectPublicKeyInfo = SubjectPublicKeyInfo.getInstance(key.getPublic().getEncoded());
-		BcX509ExtensionUtils extUtils = new BcX509ExtensionUtils();
-		ExtensionsGenerator extensionsGenerator = new ExtensionsGenerator();
-		extensionsGenerator.addExtension(Extension.basicConstraints, true, new BasicConstraints(true)); // ca cert
-		extensionsGenerator.addExtension(Extension.keyUsage, true,
-				new KeyUsage(KeyUsage.digitalSignature | KeyUsage.keyCertSign | KeyUsage.cRLSign));
-		extensionsGenerator.addExtension(Extension.subjectKeyIdentifier, false,
-				extUtils.createSubjectKeyIdentifier(subjectPublicKeyInfo));
-		extensionsGenerator.addExtension(Extension.authorityKeyIdentifier, false,
-				extUtils.createAuthorityKeyIdentifier(subjectPublicKeyInfo));
-		V3TBSCertificateGenerator tbsGen = new V3TBSCertificateGenerator();
-		tbsGen.setSerialNumber(new ASN1Integer(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE));
-		tbsGen.setIssuer(subject);
-
-		Date notBefore = new Date();
-		Date notAfter = new Date(System.currentTimeMillis() + 1000L * 60L * 60L * 24L * expirationDay); // xx 天
-
-		tbsGen.setStartDate(new Time(notBefore, Locale.CHINA));
-		tbsGen.setEndDate(new Time(notAfter, Locale.CHINA));
-		tbsGen.setSubject(subject);
-		tbsGen.setSubjectPublicKeyInfo(subjectPublicKeyInfo);
-		tbsGen.setExtensions(extensionsGenerator.generate());
-		tbsGen.setSignature(getSignAlgo(subjectPublicKeyInfo.getAlgorithm())); // 签名算法标识等于密钥算法标识
-		TBSCertificate tbs = tbsGen.generateTBSCertificate();
-		Certificate certificate = assembleCert(tbs, subjectPublicKeyInfo, key.getPrivate());
-
-		// 写出证书
-		Writer certWriter = new FileWriter(certFilePath);
-		PemWriter pemWriterCert = new PemWriter(certWriter);
-		pemWriterCert.writeObject(new PemObject("CERTIFICATE", certificate.getEncoded()));
-		pemWriterCert.flush();
-		pemWriterCert.close();
-
-		// 写出私钥
-		Writer w = new FileWriter(keyFilePath);
-		PemWriter pemWriterKey = new PemWriter(w);
-		pemWriterKey.writeObject(new PemObject("RSA PRIVATE KEY", key.getPrivate().getEncoded()));
-		pemWriterKey.flush();
-		pemWriterKey.close();
-	}
-
-	public static void createCert(X500Name subject, String caCertFilePath, String caKeyFilePath, String targetCert,
-			String targetKey, int expirationDay) throws Exception {
+	public static byte[] createCert(X500Name subject, String domain) throws Exception {
 		// 生成私钥
 		SecureRandom random = new SecureRandom();
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", BC);
@@ -159,21 +111,24 @@ public class GenCertAndKey {
 		tbsGen.setSignature(getSignAlgo(issuer.getSubjectPublicKeyInfo().getAlgorithm()));
 		TBSCertificate tbs = tbsGen.generateTBSCertificate();
 		Certificate certificate = assembleCert(tbs, issuer.getSubjectPublicKeyInfo(), issuerPrivateKey);
-
+		
 		// 写出证书
-		Writer certWriter = new FileWriter(targetCert);
-		PemWriter pemWriterCert = new PemWriter(certWriter);
+//		Writer certWriter = new FileWriter(targetCert);
+		StringWriter sw = new StringWriter();
+		PemWriter pemWriterCert = new PemWriter(sw);
 		pemWriterCert.writeObject(new PemObject("CERTIFICATE", certificate.getEncoded()));
 		pemWriterCert.flush();
 		pemWriterCert.close();
+		
 
 		// 写出私钥
-		Writer w = new FileWriter(targetKey);
-		PemWriter pemWriterKey = new PemWriter(w);
+//		Writer w = new FileWriter(targetKey);
+		PemWriter pemWriterKey = new PemWriter(sw);
 		pemWriterKey.writeObject(new PemObject("RSA PRIVATE KEY", key.getPrivate().getEncoded()));
 		pemWriterKey.flush();
 		pemWriterKey.close();
 
+		return sw.getBuffer().toString().getBytes();
 	}
 
 	private static PKCS10CertificationRequest generateCSR(X500Name subject, PublicKey publicKey,
@@ -250,21 +205,5 @@ public class GenCertAndKey {
 		signer.initVerify(publicKey);
 		signer.update(inData);
 		return signer.verify(signature);
-	}
-
-	public static void main(String[] args) throws Exception {
-		try {
-			String caCert = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/ca/RootCA.crt";
-			String caKey = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/ca/CA_Key.pem";
-//			createCARootCert(new X500Name(subject), caCert, caKey, 365);
-
-			String serverCert = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/app/server.pem";
-			String serverKey = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/test/java/org/hum/wiredog/ssl/test/bc2/app/server.key.pem";
-			String subject = "C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm";
-			createCert(new X500Name(subject), caCert, caKey, serverCert, serverKey, 365);
-		} catch (NoSuchAlgorithmException | NoSuchProviderException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 }
