@@ -26,6 +26,7 @@ public class HttpSslContextFactory {
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, HttpsKeyStore.getCertificatePassword());
 			serverContext = SSLContext.getInstance(PROTOCOL);
+			// serverContext = SSLContext.getInstance("TLSv1.2", "BC");
 			serverContext.init(kmf.getKeyManagers(), null, null);
 		} catch (Exception e) {
 			log.error("Failed to initialize the server SSLContext", e);

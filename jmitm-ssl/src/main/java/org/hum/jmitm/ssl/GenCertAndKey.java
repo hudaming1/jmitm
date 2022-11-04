@@ -55,26 +55,27 @@ public class GenCertAndKey {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	public static byte[] createCert(X500Name subject, String domain) throws Exception {
+	public static ByteArrayOutputStream createCert(X500Name subject, String domain) throws Exception {
 		// 生成私钥
 		SecureRandom random = new SecureRandom();
 		KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA", BC);
 		keyPairGenerator.initialize(BITS, random);
 		KeyPair key = keyPairGenerator.generateKeyPair();
 
-		// 加载证书
+		// 加载CA
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		FileInputStream in = new FileInputStream(caCertFilePath);
 		java.security.cert.Certificate c = cf.generateCertificate(in);
 
 		X509Certificate x509Cert = (X509Certificate) c;
 
+		// 这部分代码就是读取了CA的私钥信息
 		Reader reader = new FileReader(caKeyFilePath);
 		PemReader pemReader = new PemReader(reader);
 		PemObject pemObject = pemReader.readPemObject();
-		byte[] data = pemObject.getContent();
+		byte[] caPrivateKeyBytes = pemObject.getContent();
 		KeyFactory kf = KeyFactory.getInstance("RSA");
-		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(data);
+		PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(caPrivateKeyBytes);
 		PrivateKey issuerPrivateKey = kf.generatePrivate(keySpec);
 		pemReader.close();
 
@@ -94,10 +95,9 @@ public class GenCertAndKey {
 		extensionsGenerator.addExtension(Extension.authorityKeyIdentifier, false, extUtils.createAuthorityKeyIdentifier(issuer)); // 授权密钥标识
 		extensionsGenerator.addExtension(Extension.subjectKeyIdentifier, false, extUtils.createSubjectKeyIdentifier(csr.getSubjectPublicKeyInfo())); // 使用者密钥标识
 
-		GeneralName name1 = new GeneralName(GeneralName.iPAddress, "39.96.83.46");
-		GeneralName name2 = new GeneralName(GeneralName.dNSName, "hudaming996.com");
-		GeneralName[] name = { name1, name2 };
-		GeneralNames subjectAltNames = new GeneralNames(name);
+		// GeneralName name1 = new GeneralName(GeneralName.iPAddress, "39.96.83.46");
+		GeneralName name2 = new GeneralName(GeneralName.dNSName, domain);
+		GeneralNames subjectAltNames = new GeneralNames(new GeneralName[] { name2 });
 		extensionsGenerator.addExtension(Extension.subjectAlternativeName, false, subjectAltNames);
 		V3TBSCertificateGenerator tbsGen = new V3TBSCertificateGenerator();
 		tbsGen.setSerialNumber(new ASN1Integer(UUID.randomUUID().getMostSignificantBits() & Long.MAX_VALUE));
@@ -107,7 +107,6 @@ public class GenCertAndKey {
 		tbsGen.setSubject(csr.getSubject());
 		tbsGen.setSubjectPublicKeyInfo(csr.getSubjectPublicKeyInfo());
 		tbsGen.setExtensions(extensionsGenerator.generate());
-		System.out.println(issuer.getSubjectPublicKeyInfo().getAlgorithm());
 
 //		tbsGen.setSignature(new AlgorithmIdentifier(PKCSObjectIdentifiers.sha256WithRSAEncryption, DERNull.INSTANCE)); // 签名算法标识等于颁发者证书的密钥算法标识\
 		tbsGen.setSignature(getSignAlgo(issuer.getSubjectPublicKeyInfo().getAlgorithm()));
@@ -132,11 +131,12 @@ public class GenCertAndKey {
 		
 		KeyStore store = KeyStore.getInstance("PKCS12");
 		store.load(null, null);
-		// store.setKeyEntry(domain, key.getPrivate(), "".toCharArray(), new Certificate[] { certificate });
+		// TODO sun.misc.x509的Certificate和BC的Certificate怎么兼容转换呢？
+		// store.setKeyEntry("N/A", key.getPrivate(), "".toCharArray(), new Certificate[] { certificate });
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		store.store(baos, "".toCharArray());
 
-		return sw.getBuffer().toString().getBytes();
+		return baos;
 	}
 
 	private static PKCS10CertificationRequest generateCSR(X500Name subject, PublicKey publicKey,

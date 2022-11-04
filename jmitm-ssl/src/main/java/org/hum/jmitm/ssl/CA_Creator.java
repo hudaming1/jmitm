@@ -127,7 +127,7 @@ public class CA_Creator implements Callable<byte[]> {
 		
 		
 		// 这个序列号要动态生成
-		Certificate serverCert = generateV3(issuer, "CN=" + domain, new BigInteger(System.currentTimeMillis() + ""),
+		Certificate serverCert = ___generateAppCert(issuer, "CN=" + domain, new BigInteger(System.currentTimeMillis() + ""),
 				new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24),
 				new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 * 32), keyPair.getPublic(), // 待签名的公钥
 				caPrivateKey.getPrivateKey()// CA的私钥
@@ -136,20 +136,16 @@ public class CA_Creator implements Callable<byte[]> {
 		return store(keyPair.getPrivate(), serverCert, caPrivateKey.getCertificate());
 	}
 
-	private static Certificate generateV3(String issuer, String subject, BigInteger serial, Date notBefore,
-			Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions)
-			throws OperatorCreationException, CertificateException, IOException {
-		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(RFC4519Style.INSTANCE, issuer),
-				serial, notBefore, notAfter, new X500Name(subject), publicKey);
+	private static Certificate ___generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
+		
+		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(RFC4519Style.INSTANCE, issuer), serial, notBefore, notAfter, new X500Name(subject), publicKey);
 		// 这里不要使用SHA1算法，Chrome浏览器会提示「NET::ERR_CERT_WEAK_SIGNATURE_ALGORITHM」意为使用了过期的加密算法
 		ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(privKey);
-		// privKey是CA的私钥，publicKey是待签名的公钥，那么生成的证书就是被CA签名的证书。
-		if (extensions != null) {
-			for (Extension ext : extensions) {
-				builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(),
-						ASN1Primitive.fromByteArray(ext.getValue()));
-			}
+
+		for (Extension ext : extensions) {
+			builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ASN1Primitive.fromByteArray(ext.getValue()));
 		}
+		
 		X509CertificateHolder holder = builder.build(sigGen);
 		CertificateFactory cf = CertificateFactory.getInstance("X.509");
 		InputStream is1 = new ByteArrayInputStream(holder.toASN1Structure().getEncoded());
@@ -176,6 +172,13 @@ public class CA_Creator implements Callable<byte[]> {
 	@Override
 	public byte[] call() throws Exception {
 		return _create(domain);
-//		return GenCertAndKey.createCert(new X500Name("C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm"), domain);
+//		return _create2(domain);
+	}
+	
+	private byte[] _create2(String domain) throws Exception {
+		ByteArrayOutputStream baos = GenCertAndKey.createCert(new X500Name("C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm"), domain);
+		byte[] bytes = baos.toByteArray();
+		baos.close();
+		return bytes;
 	}
 }
