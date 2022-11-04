@@ -8,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class HttpsKeyStore {
+	
+	private static final char[] APP_CERT_PASS = "".toCharArray();
+	private static final char[] APP_KEY_PASS = "".toCharArray();
 
 	public static InputStream getKeyStoreStream(String domain) {
 		try {
@@ -20,17 +23,10 @@ public class HttpsKeyStore {
 	}
 
 	public static char[] getCertificatePassword() {
-		return Arguments.certificatePassword.toCharArray();
+		return APP_CERT_PASS;
 	}
 
 	public static char[] getKeyStorePassword() {
-		return Arguments.keystorePassword.toCharArray();
+		return APP_KEY_PASS;
 	}
 }
-
-class Arguments {
-	public static String certificatePassword = "wiretiger@123";
-	public static String keystorePassword = "wiretiger@123";
-}
-
-

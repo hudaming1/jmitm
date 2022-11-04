@@ -1,6 +1,5 @@
 package org.hum.jmitm.ssl;
 
-import java.io.InputStream;
 import java.security.KeyStore;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -23,8 +22,7 @@ public class HttpSslContextFactory {
 		SSLContext serverContext = null;
 		try {
 			KeyStore ks = KeyStore.getInstance("PKCS12");
-			InputStream serverKeyInputStream = HttpsKeyStore.getKeyStoreStream(domain);
-			ks.load(serverKeyInputStream, HttpsKeyStore.getKeyStorePassword());
+			ks.load(HttpsKeyStore.getKeyStoreStream(domain), HttpsKeyStore.getKeyStorePassword());
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(ks, HttpsKeyStore.getCertificatePassword());
 			serverContext = SSLContext.getInstance(PROTOCOL);

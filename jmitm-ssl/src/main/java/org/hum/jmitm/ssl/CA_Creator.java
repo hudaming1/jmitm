@@ -39,16 +39,19 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.hum.jmitm.ssl.common.HttpsKeyStore;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.security.x509.GeneralNames;
 
 @Slf4j
+@SuppressWarnings("restriction")
 public class CA_Creator implements Callable<byte[]> {
 	
 	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
+	// CA文件（里面包含了私钥和机构信息，这个私钥对应的公钥CA已经种到了客户端）
 	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
 	
 	static {
@@ -67,60 +70,70 @@ public class CA_Creator implements Callable<byte[]> {
 	}
 
 	private static byte[] _create(String domain) throws Exception {
-		// 读取CA证书的JKS文件
+		// 读取CA证书的JKS文件 （这里应该可以缓存起来，因为CA是一直不变的）
 		KeyStore caStore = KeyStore.getInstance("PKCS12");
-		File caFile = new File(CA_FILE);
-		caStore.load(new FileInputStream(caFile), CA_PASS.toCharArray());
+		caStore.load(new FileInputStream(new File(CA_FILE)), CA_PASS.toCharArray());
 
-		// 给alice签发证书并存为server_cert.p12的文件
+		// 根据CA的路径，从文件中读取出CA的私钥信息
 		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
-		String serverSubject = "CN=" + domain;
-		ByteArrayOutputStream baos = gen(domain, caPrivateKey, serverSubject, CERT_ALIAS);
+		
+		
+		// 有了CA的私钥，和要签发证书的域名，我们就可以创建一个证书请求并用私钥签发
+		ByteArrayOutputStream baos = generateAppCert(domain, caPrivateKey);
 		byte[] bytes = baos.toByteArray();
 		baos.close();
 		return bytes;
 	}
 
 	// 用ke所代表的CA给subject签发证书，并存储到名称为name的jks文件里面。
-	private static ByteArrayOutputStream gen(String domain, PrivateKeyEntry caPrivateKey, String serverSubject, String name) throws Exception {
+	
+	private static ByteArrayOutputStream generateAppCert(String domain, PrivateKeyEntry caPrivateKey) throws Exception {
+
 		sun.security.x509.X509CertImpl caCert = (sun.security.x509.X509CertImpl) caPrivateKey.getCertificate();
+		
+		// 生成一组非对称加密键值对，后续作为动态网站证书的公钥和私钥
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(2048);
 		KeyPair keyPair = kpg.generateKeyPair();
 
-		KeyStore store = KeyStore.getInstance("PKCS12");
-		store.load(null, null);
-
 		sun.security.x509.X500Name caX500Name = (sun.security.x509.X500Name) caCert.getSubjectDN();
 		// 这里取了rfc2253，下面用的是rfc4519，两者格式能兼容？
 		String issuer = caX500Name.getRFC2253Name();
+		
 		//
 		List<Extension> extensions = new ArrayList<>();
-		sun.security.x509.SubjectAlternativeNameExtension ext = new sun.security.x509.SubjectAlternativeNameExtension();
+		
+		// 证书名称
 		GeneralNames names = new GeneralNames();
 		names.add(new sun.security.x509.GeneralName(new UnsafeDNSName(domain)));
-		ext.set("subject_name", names);
-		extensions.add(ext);
-		
+		extensions.add(new sun.security.x509.SubjectAlternativeNameExtension(names));
 		extensions.add(new sun.security.x509.BasicConstraintsExtension(false, 0));
 		// keyUsageExt : digitalSignature && keyEncipherment - > 10100000 
 //		extensions.add(new sun.security.x509.KeyUsageExtension(false, new byte[] { 1, 0, 1, 0, 0, 0, 0, 0 }));
 		extensions.add(new sun.security.x509.KeyUsageExtension(new boolean[] { true, false, true, false, false, false, false, false }));
-		// keyExtendedKeyUsage : ServerAuth && ClientAuth
 		Vector<sun.security.util.ObjectIdentifier> idenVector = new Vector<>();
 		idenVector.add(new sun.security.util.ObjectIdentifier("1.3.6.1.5.5.7.3.1")); // ServerAuth
 		idenVector.add(new sun.security.util.ObjectIdentifier("1.3.6.1.5.5.7.3.2")); // ClientAuth
 		extensions.add(new sun.security.x509.ExtendedKeyUsageExtension(idenVector));
+		
+		// TODO 授权密钥标识
 //		extensions.add(new sun.security.x509.AuthorityKeyIdentifierExtension());
+		// TODO 使用者密钥标识
 //		extensions.add(new sun.security.x509.SubjectKeyIdentifierExtension());
 		
+		// TODO 需要增加SCT 
+		// 《深度解读：证书中的SCT编码》https://www.sslchina.com/deep-dive-in-sct-encoding/
+		// 《RFC6962》 https://www.rfc-editor.org/rfc/inline-errata/rfc6962.html
+		
+		
 		// 这个序列号要动态生成
-		Certificate serverCert = generateV3(issuer, serverSubject, new BigInteger(System.currentTimeMillis() + ""),
+		Certificate serverCert = generateV3(issuer, "CN=" + domain, new BigInteger(System.currentTimeMillis() + ""),
 				new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24),
 				new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 * 32), keyPair.getPublic(), // 待签名的公钥
 				caPrivateKey.getPrivateKey()// CA的私钥
 				, extensions);
-		return store(keyPair.getPrivate(), serverCert, caPrivateKey.getCertificate(), name);
+		
+		return store(keyPair.getPrivate(), serverCert, caPrivateKey.getCertificate());
 	}
 
 	private static Certificate generateV3(String issuer, String subject, BigInteger serial, Date notBefore,
@@ -146,13 +159,17 @@ public class CA_Creator implements Callable<byte[]> {
 	}
 
 	// 用KeyEntry形式存储一个私钥以及对应的证书，并把CA证书加入到它的信任证书列表里面。
-	private static ByteArrayOutputStream store(PrivateKey key, Certificate cert, Certificate caCert, String name)
+	private static ByteArrayOutputStream store(PrivateKey appPrivateKey, Certificate appCert, Certificate caCert)
 			throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		
 		KeyStore store = KeyStore.getInstance("PKCS12");
 		store.load(null, null);
-		store.setKeyEntry(name, key, CA_PASS.toCharArray(), new Certificate[] { cert });
+		// 我这里都是根据的域名进行读取，因此key的alias就没有用到了
+		store.setKeyEntry("N/A", appPrivateKey, HttpsKeyStore.getKeyStorePassword(), new Certificate[] { appCert });
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		store.store(baos, CA_PASS.toCharArray());
+		store.store(baos, HttpsKeyStore.getCertificatePassword());
+		
+		// 这里返回的是网站域名与之对应的公钥私钥+证书信息了，下一次使用是在org.hum.jmitm.ssl.HttpSslContextFactory.createSSLEngine
 		return baos;
 	}
 	

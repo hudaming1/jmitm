@@ -23,6 +23,7 @@ public class CA_Station {
 	public static ByteArrayInputStream createWithCache(String domain) {
 		FutureTask<byte[]> futureTask = CERT_CACHE.get(domain);
 		if (futureTask == null) {
+			// GenCertAndKey.createCert(subject, domain)
 			futureTask = new FutureTask<byte[]>(new CA_Creator(domain));
 			FutureTask<byte[]> task = CERT_CACHE.putIfAbsent(domain, futureTask);
 			if (task != null) {
