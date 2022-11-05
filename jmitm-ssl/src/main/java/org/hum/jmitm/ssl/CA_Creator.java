@@ -106,6 +106,8 @@ public class CA_Creator implements Callable<byte[]> {
 		// 证书名称
 		GeneralNames names = new GeneralNames();
 		names.add(new sun.security.x509.GeneralName(new UnsafeDNSName(domain)));
+		
+		// 因为不同浏览器在对证书校验时，采用的规范有所不同，所以我们将一些常见的字段都赋上值
 		extensions.add(new sun.security.x509.SubjectAlternativeNameExtension(names));
 		extensions.add(new sun.security.x509.BasicConstraintsExtension(false, 0));
 		// keyUsageExt : digitalSignature && keyEncipherment - > 10100000 
@@ -116,12 +118,21 @@ public class CA_Creator implements Callable<byte[]> {
 		idenVector.add(new sun.security.util.ObjectIdentifier("1.3.6.1.5.5.7.3.2")); // ClientAuth
 		extensions.add(new sun.security.x509.ExtendedKeyUsageExtension(idenVector));
 		
-		// TODO 授权密钥标识
+		
+		// TODO 这里放进去怎么报错呢？
+		byte[] sctBytes = new byte[] { 4, -126, 1, 104, 1, 102, 0, 117, 0, -24, 62, -48, -38, 62, -11, 6, 53, 50, -25, 87, 40, -68, -119, 107, -55, 3, -45, -53, -47, 17, 107, -20, -21, 105, -31, 119, 125, 109, 6, -67, 110, 0, 0, 1, 127, 41, -93, -77, -6, 0, 0, 4, 3, 0, 70, 48, 68, 2, 32, 32, -78, -118, 56, -30, 35, -83, -8, -119, 28, 32, -71, -4, 7, 14, 72, 9, -70, 66, -94, -67, 75, 114, -124, -22, 20, -55, 111, 89, 15, -78, -16, 2, 32, 51, 37, -32, 24, 99, -124, 32, 64, -50, -102, 89, 77, 48, -63, -84, -18, 31, -119, 11, -98, 24, -102, 105, -50, 108, 3, 16, 64, -14, -26, 40, 120, 0, 118, 0, 111, 83, 118, -84, 49, -16, 49, 25, -40, -103, 0, -92, 81, 21, -1, 119, 21, 28, 17, -39, 2, -63, 0, 41, 6, -115, -78, 8, -102, 55, -39, 19, 0, 0, 1, 127, 41, -93, -78, -26, 0, 0, 4, 3, 0, 71, 48, 69, 2, 33, 0, -43, 102, -82, -95, 96, -3, 76, -124, 10, -62, -61, -84, 118, 22, 115, -89, 59, -108, 56, 102, -38, -69, -77, -90, -36, -92, 57, 25, 32, 30, 70, -113, 2, 32, 87, -62, 1, -80, -31, -28, -47, -75, -64, 83, -33, -119, 19, -79, 66, 18, -112, 18, 75, -128, -22, 56, -39, -127, -44, -22, 38, -51, 57, -119, 35, 12, 0, 117, 0, 85, -127, -44, -62, 22, -112, 54, 1, 74, -22, 11, -101, 87, 60, 83, -16, -64, -28, 56, 120, 112, 37, 8, 23, 47, -93, -86, 29, 7, 19, -45, 12, 0, 0, 1, 127, 41, -93, -76, 27, 0, 0, 4, 3, 0, 70, 48, 68, 2, 32, 48, -5, 57, 1, -47, 90, -113, 112, 0, -79, 115, 1, -59, -96, 98, 43, -103, 80, -50, -40, 54, -36, -107, 20, -71, -90, -41, -94, 94, -31, 14, 86, 2, 32, 33, -13, -63, -26, 82, -24, -99, -119, -126, -8, 31, -93, -58, -12, -52, -62, 69, -38, 92, 48, -117, 13, 95, -18, 23, -18, 43, -118, -113, 55, -79, -55 };
+		// extensions.add(new sun.security.x509.Extension(new sun.security.util.ObjectIdentifier("1.3.6.1.4.1.11129.2.4.2"), false, sctBytes));
+		
+		// TODO 授权密钥标识 AuthorityKey_Id
 //		extensions.add(new sun.security.x509.AuthorityKeyIdentifierExtension());
 		// TODO 使用者密钥标识
 //		extensions.add(new sun.security.x509.SubjectKeyIdentifierExtension());
 		
 		// TODO 需要增加SCT 
+		// 《证书透明记录作为强制检查项》https://www.sslchina.com/2018-april/
+		// 《Java中的证书透明度验证》https://codeantenna.com/a/zQaIVBU5UD
+		// 《SCT如何防止证书伪造》https://www.sohu.com/a/402489518_298038
+		// 《证书透明度开发者网站》https://certificate.transparency.dev/
 		// 《深度解读：证书中的SCT编码》https://www.sslchina.com/deep-dive-in-sct-encoding/
 		// 《RFC6962》 https://www.rfc-editor.org/rfc/inline-errata/rfc6962.html
 		
@@ -143,7 +154,11 @@ public class CA_Creator implements Callable<byte[]> {
 		ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(privKey);
 
 		for (Extension ext : extensions) {
-			builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ASN1Primitive.fromByteArray(ext.getValue()));
+			if (ext.getId().equals("1.3.6.1.4.1.11129.2.4.2")) {
+				builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
+			} else {
+				builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ASN1Primitive.fromByteArray(ext.getValue()));
+			}
 		}
 		
 		X509CertificateHolder holder = builder.build(sigGen);
