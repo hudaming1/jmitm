@@ -74,8 +74,6 @@ public class GetCert {
 			return;
 		}
 
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-
 		System.out.println();
 		System.out.println("Server sent " + chain.length + " certificate(s):");
 		System.out.println();
@@ -89,31 +87,19 @@ public class GetCert {
 			System.out.println("   sha1    " + toHexString(sha1.digest()));
 			md5.update(cert.getEncoded());
 			System.out.println("   md5     " + toHexString(md5.digest()));
-			System.out.println();
+			if (cert.getNonCriticalExtensionOIDs() != null) {
+				for (String extId : cert.getNonCriticalExtensionOIDs()) {
+					System.out.println("   ext" + extId + "\t:" + cert.getExtensionValue(extId));
+				}
+			}
+			if (cert.getExtendedKeyUsage() != null) {
+				for (String extId : cert.getExtendedKeyUsage()) {
+					System.out.println("   ext" + extId + "\t:" + cert.getExtensionValue(extId));
+				}
+			}
+//			System.out.println("   ext2 " + certImpl.getc);
 		}
 
-		System.out.println("Enter certificate to add to trusted keystore or 'q' to quit: [1]");
-		String line = reader.readLine().trim();
-		int k;
-		try {
-			k = (line.length() == 0) ? 0 : Integer.parseInt(line) - 1;
-		} catch (NumberFormatException e) {
-			System.out.println("KeyStore not changed");
-			return;
-		}
-
-		X509Certificate cert = chain[k];
-		String alias = host + "-" + (k + 1);
-		ks.setCertificateEntry(alias, cert);
-
-		OutputStream out = new FileOutputStream("jssecacerts");
-		ks.store(out, passphrase);
-		out.close();
-
-		System.out.println();
-		System.out.println(cert);
-		System.out.println();
-		System.out.println("Added certificate to keystore 'jssecacerts' using alias '" + alias + "'");
 	}
 
 	private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
