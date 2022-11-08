@@ -108,10 +108,6 @@ public class CA_Creator implements Callable<byte[]> {
 		Set<String> caExtOids = serverRealCert.getCriticalExtensionOIDs();
 		
 		
-		System.out.println("getNonCriticalExtensionOIDs:" + serverRealCert.getNonCriticalExtensionOIDs().size() + "=" + serverRealCert.getNonCriticalExtensionOIDs());
-		System.out.println("getCriticalExtensionOIDs:" + serverRealCert.getCriticalExtensionOIDs().size() + "=" + serverRealCert.getCriticalExtensionOIDs());
-		System.out.println("getExtendedKeyUsage:" + serverRealCert.getExtendedKeyUsage().size() + "=" + serverRealCert.getExtendedKeyUsage());
-		
 		if (serverRealCert.getNonCriticalExtensionOIDs() != null) {
 			for (String extId : serverRealCert.getNonCriticalExtensionOIDs()) {
 				// ExtendedKeyUsages在下面循环中添加，这里就不再重复添加
@@ -186,7 +182,6 @@ public class CA_Creator implements Callable<byte[]> {
  				} else {
  					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
  				}
-				System.out.println(ext.getId() + " added to cert.");
 			} catch (Exception ce) {
 				log.error("extension[" + ext.getId() + "] is error", ce);
 			}

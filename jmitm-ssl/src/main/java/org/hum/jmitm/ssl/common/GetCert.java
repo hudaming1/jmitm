@@ -71,7 +71,6 @@ public class GetCert {
 		SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
 		socket.setSoTimeout(10000);
 		try {
-			System.out.println("Starting SSL handshake...");
 			socket.startHandshake();
 			socket.close();
 		} catch (SSLException ignore) {

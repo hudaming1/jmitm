@@ -12,6 +12,7 @@ import org.hum.jmitm.proxy.mock.Mock;
 import org.hum.jmitm.proxy.mock.wiredog.HttpResponse;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
