@@ -179,7 +179,9 @@ public class CA_Creator implements Callable<byte[]> {
 			try {
 				if (ext.getId().equals("1.3.6.1.4.1.11129.2.4.2")) {
 					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
- 				} else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
+ 				}
+				// 2.5.29.31 = CRLDistributionPoints；2.5.29.32 = CertificatePolicies；1.3.6.1.5.5.7.1.1 = AuthorityInfoAccess(AIA)
+				else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
  					continue;
  				} else {
  					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
