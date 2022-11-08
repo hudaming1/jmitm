@@ -23,7 +23,6 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.Extension;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +30,6 @@ import java.util.Vector;
 import java.util.concurrent.Callable;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.cert.X509CertificateHolder;
@@ -46,13 +44,11 @@ import org.hum.jmitm.ssl.common.HttpsKeyStore;
 
 import lombok.extern.slf4j.Slf4j;
 import sun.security.util.ObjectIdentifier;
-import sun.security.x509.GeneralNames;
 
 @Slf4j
 @SuppressWarnings("restriction")
 public class CA_Creator implements Callable<byte[]> {
 	
-	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
 	// CA文件（里面包含了私钥和机构信息，这个私钥对应的公钥CA已经种到了客户端）
@@ -111,9 +107,17 @@ public class CA_Creator implements Callable<byte[]> {
 		
 		Set<String> caExtOids = serverRealCert.getCriticalExtensionOIDs();
 		
-		// TODO 克隆证书时老有问题，需要一点一点排查
+		
+		System.out.println("getNonCriticalExtensionOIDs:" + serverRealCert.getNonCriticalExtensionOIDs().size() + "=" + serverRealCert.getNonCriticalExtensionOIDs());
+		System.out.println("getCriticalExtensionOIDs:" + serverRealCert.getCriticalExtensionOIDs().size() + "=" + serverRealCert.getCriticalExtensionOIDs());
+		System.out.println("getExtendedKeyUsage:" + serverRealCert.getExtendedKeyUsage().size() + "=" + serverRealCert.getExtendedKeyUsage());
+		
 		if (serverRealCert.getNonCriticalExtensionOIDs() != null) {
 			for (String extId : serverRealCert.getNonCriticalExtensionOIDs()) {
+				// ExtendedKeyUsages在下面循环中添加，这里就不再重复添加
+				if ("2.5.29.37".equals(extId) || "2.5.29.35".equals(extId)) {
+					continue;
+				}
 				String[] split = extId.split("\\.");
 				int[] oid = new int[split.length];
 				for (int i = 0 ;i < split.length ;i ++) {
@@ -121,7 +125,6 @@ public class CA_Creator implements Callable<byte[]> {
 				}
 				try {
 					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), serverRealCert.getExtensionValue(extId)));
-					System.out.println(extId + " add extensions");
 				} catch (Exception ce) {
 					System.err.println(extId  + " is error");
 					ce.printStackTrace();
@@ -138,7 +141,6 @@ public class CA_Creator implements Callable<byte[]> {
 				}
 				try {
 					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), serverRealCert.getExtensionValue(extId)));
-					System.out.println(extId + " add extensions");
 				} catch (Exception ce) {
 					System.err.println(extId  + " is error");
 					ce.printStackTrace();
@@ -150,11 +152,12 @@ public class CA_Creator implements Callable<byte[]> {
 		if (serverRealCert.getExtendedKeyUsage() != null) {
 			for (String extId : serverRealCert.getExtendedKeyUsage()) {
 				idenVector.add(new sun.security.util.ObjectIdentifier(extId));
-				System.out.println("extId ......" + extId + " idenVector");
 			}
 		}
 		extensions.add(new sun.security.x509.ExtendedKeyUsageExtension(idenVector));
 		
+		// 将自身的标识和颁发者的关联上
+		extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(new int[] { 2, 5, 29, 35 }), false, caCert.getExtensionValue("2.5.29.35")));
 		
 		// 这个序列号要动态生成
 		Certificate serverCert = ___generateAppCert(issuer, serverRealCert.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
@@ -163,7 +166,7 @@ public class CA_Creator implements Callable<byte[]> {
 				caPrivateKey.getPrivateKey()// CA的私钥
 				, extensions);
 		
-		return store(keyPair.getPrivate(), serverCert, caPrivateKey.getCertificate());
+		return store(keyPair.getPrivate(), serverCert, caCert);
 	}
 
 	private static Certificate ___generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
@@ -176,11 +179,10 @@ public class CA_Creator implements Callable<byte[]> {
 			try {
 				if (ext.getId().equals("1.3.6.1.4.1.11129.2.4.2")) {
 					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
-//				} else if (ext.getId().equals("2.5.29.37")) {
-//					// ignore extended key usage
+ 				} else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
+ 					continue;
  				} else {
- 					// builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ASN1Primitive.fromByteArray(ext.getValue()));
- 					 builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
+ 					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
  				}
 				System.out.println(ext.getId() + " added to cert.");
 			} catch (Exception ce) {
