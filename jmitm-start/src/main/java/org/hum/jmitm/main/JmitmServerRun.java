@@ -34,9 +34,7 @@ public class JmitmServerRun {
 				// DEMO3：拦截所有响应，对响应打标记
 				mockDemo3(),
 				// DEMO4：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
-				mockDemo4(),
-				// 
-				mockRMGSSchedule()
+				mockDemo4()
 				);
 		
 		wtBuilder.build().start();
@@ -105,97 +103,6 @@ public class JmitmServerRun {
 		}).rebuildRequest(request -> {
 			return request.header("Host", "localhost:8080");
 		}).mock();
-	}
-	
-	private static Mock mockRMGS() {
-		return new CatchRequest().eval(request -> {
-			return ("datatest.miji"
-					+ "aoyu.cn").equals(request.host()) && "/teachingplan/teaching/aimdatasave".equals(request.uri()) && HttpMethod.POST.equals(request.method());
-		}).rebuildRequest(request -> {
-			System.out.println("mock");
-			return request.header("Host", "localhost:2100").uri("/teaching/aimdatasave");
-		}).mock();
-	}
-
-	
-	private static Mock mockClue() {
-		return new CatchRequest().eval(request -> {
-			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/clue/") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
-		}).rebuildRequest(request -> {
-			System.out.println("bingo");
-			request.host("localhost:3400");
-			request.uri(request.uri().replaceFirst("/clue/", "/"));
-			System.out.println(request.uri());
-			return request;
-		}).rebuildResponse(resp -> {
-			resp.header("Access-Control-Allow-Origin", "*");
-			return resp;
-		}).mock();
-	}
-	
-	private static Mock mockComServiceSchedule() {
-		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
-		return new CatchRequest().eval(request -> {
-			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/user/") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
-		}).rebuildRequest(request -> {
-			System.out.println("bingo");
-			request.host("localhost:1100");
-			request.uri(request.uri().replaceFirst("/user/", "/"));
-			System.out.println(request.uri());
-			return request;
-		}).rebuildResponse(resp -> {
-			resp.header("Access-Control-Allow-Origin", "*");
-			return resp;
-		}).mock();
-	}
-	
-	private static Mock mockTeachingPlan() {
-		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
-		return new CatchRequest().eval(request -> {
-			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/teachingplan") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
-		}).rebuildRequest(request -> {
-			System.out.println("bingo");
-			request.host("localhost:2100");
-			request.uri(request.uri().replaceFirst("/teachingplan", ""));
-			System.out.println(request.uri());
-			return request;
-		}).rebuildResponse(resp -> {
-			resp.header("Access-Control-Allow-Origin", "*");
-			return resp;
-		}).mock();
-	}
-	
-	private static Mock mockRMGSSchedule() {
-		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
-		return new CatchRequest().eval(request -> {
-			return request.host().contains("datatest.mijiaoyu.cn") && request.uri().startsWith("/schedule") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
-		}).rebuildRequest(request -> {
-			System.out.println("bingo");
-			request.host("localhost:1800");
-			request.uri(request.uri().replaceFirst("/schedule", ""));
-			System.out.println(request.uri());
-			return request;
-		}).rebuildResponse(resp -> {
-			resp.header("Access-Control-Allow-Origin", "*");
-			return resp;
-		}).mock();
-	}
-	
-	private static Mock mockRMGSSchedule4UAT() {
-		// https://datatest.mijiaoyu.cn/contract/contract/selectStudentPermissions?stuId=34388
-		return new CatchRequest().eval(request -> {
-			return request.host().contains("datauat.mijiaoyu.cn") && request.uri().startsWith("/schedule") && (HttpMethod.GET.equals(request.method()) || HttpMethod.POST.equals(request.method()));
-		}).rebuildRequest(request -> {
-			System.out.println("bingo");
-			request.host("localhost:1800");
-			request.uri(request.uri().replaceFirst("/schedule", ""));
-			System.out.println(request.uri());
-			return request;
-		}).rebuildResponse(resp -> {
-			resp.header("Access-Control-Allow-Origin", "*");
-			return resp;
-		}).mock();
-	}
-}
+	}}
 
 
