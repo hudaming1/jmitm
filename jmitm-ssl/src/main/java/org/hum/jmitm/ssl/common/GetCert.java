@@ -37,6 +37,8 @@ public class GetCert {
 				System.out.println("   extension " + extId + "\t:" + Arrays.toString(cert.getExtensionValue(extId)));
 			}
 		}
+		
+		System.out.println(toHexString(cert.getExtensionValue("2.5.29.17")));
 	}
 	
 	public static X509Certificate getCert(String host) throws Exception {
