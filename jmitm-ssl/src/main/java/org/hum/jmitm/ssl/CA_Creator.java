@@ -155,6 +155,16 @@ public class CA_Creator implements Callable<byte[]> {
 		// 将自身的标识和颁发者的关联上
 		extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(new int[] { 2, 5, 29, 35 }), false, caCert.getExtensionValue("2.5.29.35")));
 		
+		// 11.09: 经网上查资料，2020年就有人反馈微信小程序Android不能抓包，主要原因是微信7.0以下会新任系统提供的证书库，而7.0以上微信只信任自己配置的证书库
+		//        《吾爱破解——charles实现小程序抓包》https://www.52pojie.cn/forum.php?mod=viewthread&tid=1145984
+		// 11.09：微信小程序Android版证书鉴权规则
+		//        1. 安卓系统 7.0 以下版本，不管微信任意版本，都会信任系统提供的证书
+		//        2. 安卓系统 7.0 以上版本，微信 7.0 以下版本，微信会信任系统提供的证书
+		//        3. 安卓系统 7.0 以上版本，微信 7.0 以上版本，微信只信任它自己配置的证书列表
+		//        《糯米php》https://www.nuomiphp.com/t/610a997683d02b3e50144efa.html
+		// 11.10：如果Android需要抓微信小程序的包，需要Root后安装TrustMeAlready，将用户受信RootCA升级成系统内置RootCA
+
+		
 		// 这个序列号要动态生成
 		Certificate serverCert = ___generateAppCert(issuer, serverRealCert.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
 				serverRealCert.getNotBefore(),
@@ -175,10 +185,10 @@ public class CA_Creator implements Callable<byte[]> {
 			try {
 				if (ext.getId().equals("1.3.6.1.4.1.11129.2.4.2")) {
 					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
- 				}
+// 				}
 				// 2.5.29.31 = CRLDistributionPoints；2.5.29.32 = CertificatePolicies；1.3.6.1.5.5.7.1.1 = AuthorityInfoAccess(AIA)
-				else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
- 					continue;
+//				else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
+// 					continue;
  				} else {
  					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
  				}
