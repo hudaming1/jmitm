@@ -39,7 +39,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.hum.jmitm.ssl.common.GetCert;
+import org.hum.jmitm.ssl.common.CertUtils;
 import org.hum.jmitm.ssl.common.HttpsKeyStore;
 
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +91,7 @@ public class CA_Creator implements Callable<byte[]> {
 
 		sun.security.x509.X509CertImpl caCert = (sun.security.x509.X509CertImpl) caPrivateKey.getCertificate();
 		
-		X509Certificate serverRealCert = GetCert.getCert(domain);
+		X509Certificate serverRealCert = CertUtils.getCert(domain);
 		
 		// 生成一组非对称加密键值对，后续作为动态网站证书的公钥和私钥
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -223,14 +223,5 @@ public class CA_Creator implements Callable<byte[]> {
 	@Override
 	public byte[] call() throws Exception {
 		return _create(domain);
-//		return _create2(domain);
-	}
-	
-	@SuppressWarnings("unused")
-	private byte[] _create2(String domain) throws Exception {
-		ByteArrayOutputStream baos = GenCertAndKey.createCert(new X500Name("C = CN, ST = BeiJing, L = BeiJing, O = Apple Inc, OU = Dev, CN = jmitm"), domain);
-		byte[] bytes = baos.toByteArray();
-		baos.close();
-		return bytes;
 	}
 }

@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -19,27 +18,7 @@ import javax.net.ssl.X509TrustManager;
 /**
  * 从网站获取java所需的证书，调用时传入域名。
  */
-public class GetCert {
-
-	public static void main(String[] args) throws Exception {
-		X509Certificate cert = getCert("www.baidu.com");
-
-		System.out.println("   Subject " + cert.getSubjectDN());
-		System.out.println("   Issuer  " + cert.getIssuerDN());
-		
-		if (cert.getNonCriticalExtensionOIDs() != null) {
-			for (String extId : cert.getNonCriticalExtensionOIDs()) {
-				System.out.println("   extension " + extId + "\t:" + Arrays.toString(cert.getExtensionValue(extId)));
-			}
-		}
-		if (cert.getExtendedKeyUsage() != null) {
-			for (String extId : cert.getExtendedKeyUsage()) {
-				System.out.println("   extension " + extId + "\t:" + Arrays.toString(cert.getExtensionValue(extId)));
-			}
-		}
-		
-		System.out.println(toHexString(cert.getExtensionValue("2.5.29.17")));
-	}
+public class CertUtils {
 	
 	public static X509Certificate getCert(String host) throws Exception {
 		int port = 443;
@@ -86,19 +65,6 @@ public class GetCert {
 		// issuer 置换
 		// 有效期 保留
 		return chain[0];
-	}
-
-	private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
-
-	private static String toHexString(byte[] bytes) {
-		StringBuilder sb = new StringBuilder(bytes.length * 3);
-		for (int b : bytes) {
-			b &= 0xff;
-			sb.append(HEXDIGITS[b >> 4]);
-			sb.append(HEXDIGITS[b & 15]);
-			sb.append(' ');
-		}
-		return sb.toString();
 	}
 
 	private static class SavingTrustManager implements X509TrustManager {
