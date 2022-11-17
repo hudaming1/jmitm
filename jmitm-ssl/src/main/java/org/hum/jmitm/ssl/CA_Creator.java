@@ -77,7 +77,6 @@ public class CA_Creator implements Callable<byte[]> {
 		// 根据CA的路径，从文件中读取出CA的私钥信息
 		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
 		
-		
 		// 有了CA的私钥，和要签发证书的域名，我们就可以创建一个证书请求并用私钥签发
 		ByteArrayOutputStream baos = generateAppCert(domain, caPrivateKey);
 		byte[] bytes = baos.toByteArray();
@@ -168,9 +167,7 @@ public class CA_Creator implements Callable<byte[]> {
 	private static Certificate ___generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
 		
 		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(RFC4519Style.INSTANCE, issuer), serial, notBefore, notAfter, new X500Name(RFC4519Style.INSTANCE, subject), publicKey);
-		// 这里不要使用SHA1算法，Chrome浏览器会提示「NET::ERR_CERT_WEAK_SIGNATURE_ALGORITHM」意为使用了过期的加密算法
 		ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(privKey);
-
 		for (Extension ext : extensions) {
  			builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
 		}

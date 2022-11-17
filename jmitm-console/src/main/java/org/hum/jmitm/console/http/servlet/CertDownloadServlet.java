@@ -34,7 +34,7 @@ public class CertDownloadServlet extends HttpServlet {
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		resp.setHeader("content-disposition", "attachment;filename=wiredog.cer");
+		resp.setHeader("content-disposition", "attachment;filename=peacemaker.cer");
 		ServletOutputStream out = resp.getOutputStream();
 		out.write(CERT_ARRAY);
 		out.flush();
