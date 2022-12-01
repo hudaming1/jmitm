@@ -53,6 +53,7 @@ public class CA_Creator implements Callable<byte[]> {
 	private static final String CA_PASS = "wiretiger@123";
 	// CA文件（里面包含了私钥和机构信息，这个私钥对应的公钥CA已经种到了客户端）
 	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+//	private static final String CA_FILE = CA_Station.class.getResource("/cert/jmitm_ca.p12").getFile();
 	
 	static {
 		try {
