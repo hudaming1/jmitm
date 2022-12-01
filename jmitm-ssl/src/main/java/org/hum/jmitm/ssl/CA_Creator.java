@@ -49,11 +49,14 @@ import sun.security.util.ObjectIdentifier;
 @SuppressWarnings("restriction")
 public class CA_Creator implements Callable<byte[]> {
 	
-	private static final String CA_ALIAS = "1";
-	private static final String CA_PASS = "wiretiger@123";
+//	private static final String CA_ALIAS = "1";
+//	private static final String CA_PASS = "wiretiger@123";
 	// CA文件（里面包含了私钥和机构信息，这个私钥对应的公钥CA已经种到了客户端）
-	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
-//	private static final String CA_FILE = CA_Station.class.getResource("/cert/jmitm_ca.p12").getFile();
+//	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+
+	public static final String CA_ALIAS = "jmitm";
+	public static final char[] CA_PASS = "".toCharArray();
+	public static final String CA_FILE = CA_Station.class.getResource("/cert/jmitm_ca.p12").getFile();
 	
 	static {
 		try {
@@ -73,10 +76,10 @@ public class CA_Creator implements Callable<byte[]> {
 	private static byte[] _create(String domain) throws Exception {
 		// 读取CA证书的JKS文件 （这里应该可以缓存起来，因为CA是一直不变的）
 		KeyStore caStore = KeyStore.getInstance("PKCS12");
-		caStore.load(new FileInputStream(new File(CA_FILE)), CA_PASS.toCharArray());
+		caStore.load(new FileInputStream(new File(CA_FILE)), CA_PASS);
 
 		// 根据CA的路径，从文件中读取出CA的私钥信息
-		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
+		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS));
 		
 		// 有了CA的私钥，和要签发证书的域名，我们就可以创建一个证书请求并用私钥签发
 		ByteArrayOutputStream baos = generateAppCert(domain, caPrivateKey);

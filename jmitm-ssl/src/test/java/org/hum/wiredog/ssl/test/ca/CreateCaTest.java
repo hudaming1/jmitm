@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
-import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
@@ -31,18 +30,14 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import org.hum.jmitm.ssl.CA_Creator;
 
 public class CreateCaTest {
 	static {
 		Security.addProvider(new BouncyCastleProvider());
 	}
 
-	// openssl pkcs12 -in atlas-ca.p12 -nokeys -out cert.crt
-	private static final char[] PASS = "".toCharArray();
-
+	@SuppressWarnings("restriction")
 	public static void main(String[] args) {
 		try {
 			KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
@@ -54,20 +49,22 @@ public class CreateCaTest {
 			String subject = issuer;
 			
 			List<Extension> extensions = new ArrayList<>();
-			extensions.add(new sun.security.x509.BasicConstraintsExtension(true, 0));
+			extensions.add(new sun.security.x509.BasicConstraintsExtension(true, 1));
 			// 秘钥用途：Digital Signature, Certificate Signing, CRL Signing (标志位含义参考：KeyUsageExtension.set方法)
 			extensions.add(new sun.security.x509.KeyUsageExtension(new boolean[] { true, false, false, false, false, true, true, false }));
+			// oid=2.5.29.35:主题标识，签证时将该值签到子证书上
+			extensions.add(new sun.security.x509.AuthorityKeyIdentifierExtension(new sun.security.x509.KeyIdentifier(keyPair.getPublic()), null, null));
 			
 			// issuer 与 subject相同的证书就是CA证书
 			Certificate cert = generateV3(issuer, subject, new BigInteger(System.nanoTime() + ""),
 					new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24),
 					new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 * 32), keyPair.getPublic(), // 待签名的公钥
 					keyPair.getPrivate(), extensions);
-			store.setKeyEntry("jmitm", keyPair.getPrivate(), PASS, new Certificate[] { cert });
+			store.setKeyEntry(CA_Creator.CA_ALIAS, keyPair.getPrivate(), CA_Creator.CA_PASS, new Certificate[] { cert });
 			cert.verify(keyPair.getPublic());
 			File file = new File("/tmp/jmitm_ca.p12");
 			if (file.exists() || file.createNewFile()) {
-				store.store(new FileOutputStream(file), PASS);
+				store.store(new FileOutputStream(file), CA_Creator.CA_PASS);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
