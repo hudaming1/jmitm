@@ -1,6 +1,8 @@
 package org.hum.wiredog.ssl.test.ca;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +25,7 @@ import java.util.List;
 
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.cert.X509v3CertificateBuilder;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
@@ -45,7 +48,7 @@ public class CreateCaTest {
 			KeyPair keyPair = kpg.generateKeyPair();
 			KeyStore store = KeyStore.getInstance("PKCS12");
 			store.load(null, null);
-			String issuer = "C=CN,ST=HeBei,L=Qinhuangdao,E=512657752@qq.com,CN=Jmitm";
+			String issuer = "C=CN,ST=HeBei,L=Qinhuangdao,O=Jmitm,CN=Jmitm";
 			String subject = issuer;
 			
 			List<Extension> extensions = new ArrayList<>();
@@ -56,7 +59,7 @@ public class CreateCaTest {
 			extensions.add(new sun.security.x509.AuthorityKeyIdentifierExtension(new sun.security.x509.KeyIdentifier(keyPair.getPublic()), null, null));
 			
 			// issuer 与 subject相同的证书就是CA证书
-			Certificate cert = generateV3(issuer, subject, new BigInteger(System.nanoTime() + ""),
+			Certificate cert = CA_Creator.generateAppCert(issuer, subject, new BigInteger(System.nanoTime() + ""),
 					new Date(System.currentTimeMillis() - 1000 * 60 * 60 * 24),
 					new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 365 * 32), keyPair.getPublic(), // 待签名的公钥
 					keyPair.getPrivate(), extensions);
@@ -66,28 +69,18 @@ public class CreateCaTest {
 			if (file.exists() || file.createNewFile()) {
 				store.store(new FileOutputStream(file), CA_Creator.CA_PASS);
 			}
+			
+			// openssl pkcs12 -in /tmp/jmitm_ca.p12 -nokeys -out /tmp/cert.crt
+			X509Certificate x509cert = (X509Certificate) cert;
+			File certFile = new File("/tmp/certfile.crt");
+			FileOutputStream fos = new FileOutputStream(certFile);
+			fos.write(x509cert.getTBSCertificate());
+//			fos.write(x509cert.getSubjectX500Principal().getEncoded());
+			fos.flush();
+			fos.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		// openssl pkcs12 -in /tmp/jmitm_ca.p12 -nokeys -out /tmp/cert.crt
-
-		// openssl x509 -in /tmp/cert.crt -out /tmp/my_key_store.cer -outform der
-
-	}
-	
-	public static Certificate generateV3(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
-
-		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(issuer), serial, notBefore, notAfter, new X500Name(subject), publicKey);
-		ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(privKey);
-		for (Extension ext : extensions) {
- 			builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
-		}
-		X509CertificateHolder holder = builder.build(sigGen);
-		CertificateFactory cf = CertificateFactory.getInstance("X.509");
-		InputStream is1 = new ByteArrayInputStream(holder.toASN1Structure().getEncoded());
-		X509Certificate theCert = (X509Certificate) cf.generateCertificate(is1);
-		is1.close();
-		return theCert;
 	}
 }

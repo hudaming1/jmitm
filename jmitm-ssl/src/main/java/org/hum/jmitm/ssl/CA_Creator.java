@@ -159,7 +159,7 @@ public class CA_Creator implements Callable<byte[]> {
 		extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(new int[] { 2, 5, 29, 35 }), false, caCert.getExtensionValue("2.5.29.35")));
 		
 		// 这个序列号要动态生成
-		Certificate serverCert = ___generateAppCert(issuer, serverRealCert.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
+		Certificate serverCert = generateAppCert(issuer, serverRealCert.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
 				serverRealCert.getNotBefore(),
 				serverRealCert.getNotAfter(), keyPair.getPublic(), // 待签名的公钥
 				caPrivateKey.getPrivateKey()// CA的私钥
@@ -168,7 +168,7 @@ public class CA_Creator implements Callable<byte[]> {
 		return store(keyPair.getPrivate(), serverCert, caCert);
 	}
 
-	private static Certificate ___generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
+	public static Certificate generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
 		
 		X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(new X500Name(RFC4519Style.INSTANCE, issuer), serial, notBefore, notAfter, new X500Name(RFC4519Style.INSTANCE, subject), publicKey);
 		ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").setProvider("BC").build(privKey);
