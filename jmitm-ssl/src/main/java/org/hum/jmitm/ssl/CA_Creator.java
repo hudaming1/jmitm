@@ -49,10 +49,11 @@ import sun.security.util.ObjectIdentifier;
 @SuppressWarnings("restriction")
 public class CA_Creator implements Callable<byte[]> {
 	
-	private static final String CA_ALIAS = "1";
-	private static final String CA_PASS = "wiretiger@123";
+	private static final String CA_ALIAS = "JmitmRootCA";
+	private static final String CA_PASS = "";
 	// CA文件（里面包含了私钥和机构信息，这个私钥对应的公钥CA已经种到了客户端）
-	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+	private static final String CA_FILE = "/Users/hudaming/Workspace/GitHub/jmitm/jmitm-ssl/src/main/resources/cert20241126/root_ca.p12"; 
+	// private static final String CA_FILE = CA_Station.class.getResource("/cert20241126/root_ca.p12").getFile();
 	
 	static {
 		try {
@@ -77,7 +78,6 @@ public class CA_Creator implements Callable<byte[]> {
 		// 根据CA的路径，从文件中读取出CA的私钥信息
 		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
 		
-		
 		// 有了CA的私钥，和要签发证书的域名，我们就可以创建一个证书请求并用私钥签发
 		ByteArrayOutputStream baos = generateAppCert(domain, caPrivateKey);
 		byte[] bytes = baos.toByteArray();
@@ -91,36 +91,28 @@ public class CA_Creator implements Callable<byte[]> {
 
 		sun.security.x509.X509CertImpl caCert = (sun.security.x509.X509CertImpl) caPrivateKey.getCertificate();
 		
-		X509Certificate serverRealCert = GetCert.getCert(domain);
+		// 伪造了网站证书，但是公钥私钥需要由jmitmCA加签才可以
+		X509Certificate websiteCertificateModel = GetCert.getCert(domain);
 		
 		// 生成一组非对称加密键值对，后续作为动态网站证书的公钥和私钥
 		KeyPairGenerator kpg = KeyPairGenerator.getInstance("RSA");
 		kpg.initialize(2048);
-		KeyPair keyPair = kpg.generateKeyPair();
-
-		sun.security.x509.X500Name caX500Name = (sun.security.x509.X500Name) caCert.getSubjectDN();
-		// 这里取了rfc2253，下面用的是rfc4519，两者格式能兼容？
-		String issuer = caX500Name.getRFC2253Name();
+		KeyPair websiteKeyPair = kpg.generateKeyPair();
 		
-		//
+		/** 下面主要是生成证书的扩展 extensions  **/
 		List<Extension> extensions = new ArrayList<>();
 		
-		Set<String> caExtOids = serverRealCert.getCriticalExtensionOIDs();
+		Set<String> caExtOids = websiteCertificateModel.getCriticalExtensionOIDs();
 		
-		
-		if (serverRealCert.getNonCriticalExtensionOIDs() != null) {
-			for (String extId : serverRealCert.getNonCriticalExtensionOIDs()) {
-				// ExtendedKeyUsages在下面循环中添加，这里就不再重复添加
-				if ("2.5.29.37".equals(extId) || "2.5.29.35".equals(extId)) {
-					continue;
-				}
+		if (websiteCertificateModel.getNonCriticalExtensionOIDs() != null) {
+			for (String extId : websiteCertificateModel.getNonCriticalExtensionOIDs()) {
 				String[] split = extId.split("\\.");
 				int[] oid = new int[split.length];
 				for (int i = 0 ;i < split.length ;i ++) {
 					oid[i] = Integer.parseInt(split[i]);
 				}
 				try {
-					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), serverRealCert.getExtensionValue(extId)));
+					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), websiteCertificateModel.getExtensionValue(extId)));
 				} catch (Exception ce) {
 					System.err.println(extId  + " is error");
 					ce.printStackTrace();
@@ -128,15 +120,15 @@ public class CA_Creator implements Callable<byte[]> {
 			}
 		}
 
-		if (serverRealCert.getCriticalExtensionOIDs() != null) {
-			for (String extId : serverRealCert.getCriticalExtensionOIDs()) {
+		if (websiteCertificateModel.getCriticalExtensionOIDs() != null) {
+			for (String extId : websiteCertificateModel.getCriticalExtensionOIDs()) {
 				String[] split = extId.split("\\.");
 				int[] oid = new int[split.length];
 				for (int i = 0 ;i < split.length ;i ++) {
 					oid[i] = Integer.parseInt(split[i]);
 				}
 				try {
-					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), serverRealCert.getExtensionValue(extId)));
+					extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(oid), caExtOids.contains(extId), websiteCertificateModel.getExtensionValue(extId)));
 				} catch (Exception ce) {
 					System.err.println(extId  + " is error");
 					ce.printStackTrace();
@@ -145,8 +137,8 @@ public class CA_Creator implements Callable<byte[]> {
 		}
 		
 		Vector<sun.security.util.ObjectIdentifier> idenVector = new Vector<>();
-		if (serverRealCert.getExtendedKeyUsage() != null) {
-			for (String extId : serverRealCert.getExtendedKeyUsage()) {
+		if (websiteCertificateModel.getExtendedKeyUsage() != null) {
+			for (String extId : websiteCertificateModel.getExtendedKeyUsage()) {
 				idenVector.add(new sun.security.util.ObjectIdentifier(extId));
 			}
 		}
@@ -155,14 +147,19 @@ public class CA_Creator implements Callable<byte[]> {
 		// 将自身的标识和颁发者的关联上
 		extensions.add(new sun.security.x509.Extension(ObjectIdentifier.newInternal(new int[] { 2, 5, 29, 35 }), false, caCert.getExtensionValue("2.5.29.35")));
 		
+		
+		sun.security.x509.X500Name caX500Name = (sun.security.x509.X500Name) caCert.getSubjectDN();
+		// 这里取了rfc2253，下面用的是rfc4519，两者格式能兼容？
+		String issuer = caX500Name.getRFC2253Name();
+		
 		// 这个序列号要动态生成
-		Certificate serverCert = ___generateAppCert(issuer, serverRealCert.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
-				serverRealCert.getNotBefore(),
-				serverRealCert.getNotAfter(), keyPair.getPublic(), // 待签名的公钥
+		Certificate serverCert = ___generateAppCert(issuer, websiteCertificateModel.getSubjectDN().getName(), new BigInteger(System.nanoTime() + ""),
+				websiteCertificateModel.getNotBefore(),
+				websiteCertificateModel.getNotAfter(), websiteKeyPair.getPublic(), // 待签名的公钥
 				caPrivateKey.getPrivateKey()// CA的私钥
 				, extensions);
 		
-		return store(keyPair.getPrivate(), serverCert, caCert);
+		return store(websiteKeyPair.getPrivate(), serverCert, caCert);
 	}
 
 	private static Certificate ___generateAppCert(String issuer, String subject, BigInteger serial, Date notBefore, Date notAfter, PublicKey publicKey, PrivateKey privKey, List<Extension> extensions) throws OperatorCreationException, CertificateException, IOException {
@@ -180,6 +177,9 @@ public class CA_Creator implements Callable<byte[]> {
 				else if ("2.5.29.31".equals(ext.getId()) || "2.5.29.32".equals(ext.getId()) || "1.3.6.1.5.5.7.1.1".equals(ext.getId())) {
  					continue;
  				} else {
+ 					if (builder.hasExtension(new ASN1ObjectIdentifier(ext.getId()))) {
+ 						continue;
+ 					}
  					builder.addExtension(new ASN1ObjectIdentifier(ext.getId()), ext.isCritical(), ext.getValue());
  				}
 			} catch (Exception ce) {

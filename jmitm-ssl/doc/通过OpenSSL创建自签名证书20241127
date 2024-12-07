@@ -1,0 +1,44 @@
+###【创建 CA 的密钥和根证书】
+1.生成 CA 私钥
+openssl genrsa -out root_ca.key 2048
+
+2.创建 CA 根证书
+openssl req -x509 -new -nodes -key root_ca.key -sha256 -days 3650 -out root_ca.crt
+
+###【为网站生成密钥和证书签名请求 (CSR)】
+1.生成网站私钥
+openssl genrsa -out website.key 2048
+
+2.创建证书签名请求 (CSR)
+openssl req -new -key website.key -out website.csr
+
+注意：Common Name (CN) 应填写网站的域名，例如 www.example.com。
+
+3.创建配置文件，例如 v3.ext，包含以下内容：
+
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectAltName = @alt_names    # 这里的@alt_names是变量名
+[alt_names]
+DNS.1 = www.example.com
+DNS.2 = example.com
+
+注意：
+  ① subjectAltName 是必需的，用于定义证书支持的域名。
+  ② DNS.1 和 DNS.2 是域名列表。
+
+4.使用 CA 签发证书
+openssl x509 -req -in website.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out website.crt -days 365 -sha256 -extfile v3.ext
+
+
+
+###【验证证书内容】
+openssl x509 -in website.crt -text -noout
+
+最终生成的几个文件中website.crt和website.key放到应用服务器下，ca.crt种到本地客户端中，让浏览器可以信任该ca颁发的证书
+
+
+####【将crt和key打包成p12文件】
+openssl pkcs12 -export -out root_ca.p12 -inkey ca.key -in root_ca.crt -name "JmitmRootCA"

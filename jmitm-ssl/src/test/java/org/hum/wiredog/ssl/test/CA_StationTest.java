@@ -9,13 +9,13 @@ import org.hum.jmitm.ssl.CA_Station;
 public class CA_StationTest {
 
 	public static void main(String args[]) throws Exception {
-		long start = System.currentTimeMillis();
-		ByteArrayInputStream bis = CA_Station.createWithCache("hudaming996.com");
+		ByteArrayInputStream bis = CA_Station.createWithCache("163.com");
 		byte[] certBytes = new byte[bis.available()];
 		bis.read(certBytes);
 		
 		FileOutputStream fos = new FileOutputStream(new File("/tmp/huming996.crt"));
 		fos.write(certBytes);
 		fos.flush();
+		System.out.println("123123");
 	}
 }

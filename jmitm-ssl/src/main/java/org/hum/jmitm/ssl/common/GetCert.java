@@ -3,10 +3,10 @@ package org.hum.jmitm.ssl.common;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLException;
@@ -16,64 +16,66 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * 从网站获取java所需的证书，调用时传入域名。
  */
+@Slf4j
 public class GetCert {
 
-	public static void main(String[] args) throws Exception {
-		X509Certificate cert = getCert("www.baidu.com");
+	// JDK CA的密码：/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/security/cacerts
+	private static final char[] JDK_KEYSTORE_DEFAULT_PASSWORD = "changeit".toCharArray(); // 这个密码是JDK默认的TLS库密码
+	// FIXME 这里只能复刻远端443端口的证书，如果远端的SSL是其他端口，则会失败
+	private static final int DEFAULT_SSL_PORT = 443;
+	
+	private static X509TrustManager defaultTrustManager = null;
+	// init keystore
+	static {
+		try {
 
-		System.out.println("   Subject " + cert.getSubjectDN());
-		System.out.println("   Issuer  " + cert.getIssuerDN());
-		
-		if (cert.getNonCriticalExtensionOIDs() != null) {
-			for (String extId : cert.getNonCriticalExtensionOIDs()) {
-				System.out.println("   extension " + extId + "\t:" + Arrays.toString(cert.getExtensionValue(extId)));
+			File file = new File("jssecacerts");
+			if (file.isFile() == false) {
+				char SEP = File.separatorChar;
+				File dir = new File(System.getProperty("java.home") + SEP + "lib" + SEP + "security");
+				file = new File(dir, "jssecacerts");
+				if (file.isFile() == false) {
+					file = new File(dir, "cacerts");
+				}
 			}
+			InputStream in = new FileInputStream(file);
+			KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+			ks.load(in, JDK_KEYSTORE_DEFAULT_PASSWORD);
+			in.close();
+			
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(ks);
+			defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+		} catch (Exception ce) {
+			log.error("init KeyStore occured exception...", ce);
+			System.exit(-1);
 		}
-		if (cert.getExtendedKeyUsage() != null) {
-			for (String extId : cert.getExtendedKeyUsage()) {
-				System.out.println("   extension " + extId + "\t:" + Arrays.toString(cert.getExtensionValue(extId)));
-			}
-		}
-		
-		System.out.println(toHexString(cert.getExtensionValue("2.5.29.17")));
 	}
 	
 	public static X509Certificate getCert(String host) throws Exception {
-		int port = 443;
-		// JDK CA的密码：/Library/Java/JavaVirtualMachines/jdk1.8.0_181.jdk/Contents/Home/jre/lib/security/cacerts
-		char[] passphrase = "changeit".toCharArray();
-
-		File file = new File("jssecacerts");
-		if (file.isFile() == false) {
-			char SEP = File.separatorChar;
-			File dir = new File(System.getProperty("java.home") + SEP + "lib" + SEP + "security");
-			file = new File(dir, "jssecacerts");
-			if (file.isFile() == false) {
-				file = new File(dir, "cacerts");
-			}
-		}
-		InputStream in = new FileInputStream(file);
-		KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-		ks.load(in, passphrase);
-		in.close();
 
 		SSLContext context = SSLContext.getInstance("TLS");
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		tmf.init(ks);
-		X509TrustManager defaultTrustManager = (X509TrustManager) tmf.getTrustManagers()[0];
+		
 		SavingTrustManager tm = new SavingTrustManager(defaultTrustManager);
 		context.init(null, new TrustManager[] { tm }, null);
+		
+		// 这里建立远端连接是为了复刻website证书使用
 		SSLSocketFactory factory = context.getSocketFactory();
 
-		SSLSocket socket = (SSLSocket) factory.createSocket(host, port);
-		socket.setSoTimeout(10000);
+		SSLSocket socket = (SSLSocket) factory.createSocket();
+		socket.setSoTimeout(1000);
+		socket.connect(new InetSocketAddress(host, DEFAULT_SSL_PORT));
 		try {
 			socket.startHandshake();
 			socket.close();
 		} catch (SSLException ignore) {
+			// 这里为什么会抛出“javax.net.ssl.SSLProtocolException: Unsupported handshake message: certificate”异常呢？
+			// ignore.printStackTrace();
 		}
 
 		X509Certificate[] chain = tm.chain;
@@ -82,23 +84,7 @@ public class GetCert {
 			return null;
 		}
 		
-		// Subject 保留
-		// issuer 置换
-		// 有效期 保留
 		return chain[0];
-	}
-
-	private static final char[] HEXDIGITS = "0123456789abcdef".toCharArray();
-
-	private static String toHexString(byte[] bytes) {
-		StringBuilder sb = new StringBuilder(bytes.length * 3);
-		for (int b : bytes) {
-			b &= 0xff;
-			sb.append(HEXDIGITS[b >> 4]);
-			sb.append(HEXDIGITS[b & 15]);
-			sb.append(' ');
-		}
-		return sb.toString();
 	}
 
 	private static class SavingTrustManager implements X509TrustManager {
